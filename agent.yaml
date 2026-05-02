@@ -1,0 +1,24 @@
+version: 1
+agent:
+  extend: default
+  tools:
+    # Kimi CLI 默认工具
+    - "kimi_cli.tools.shell:Shell"
+    - "kimi_cli.tools.web:SearchWeb"
+    - "kimi_cli.tools.web:FetchURL"
+    - "kimi_cli.tools.file:ReadFile"
+    - "kimi_cli.tools.file:WriteFile"
+    - "kimi_cli.tools.file:Glob"
+    - "kimi_cli.tools.file:Grep"
+    - "kimi_cli.tools.file:StrReplaceFile"
+    - "kimi_cli.tools.todo:SetTodoList"
+    - "kimi_cli.tools.think:Think"
+
+    # MolCraft Agent 自定义化学工具
+    - "molcraft_agent.tools:GenerateMolecules"
+    - "molcraft_agent.tools:DockMolecules"
+    - "molcraft_agent.tools:PlanSynthesis"
+    - "molcraft_agent.tools:EvaluateMolecule"
+
+    # 迭代报告工具（Agent 主动报告迭代完成）
+    - "molcraft_agent.tools:ReportIteration"
