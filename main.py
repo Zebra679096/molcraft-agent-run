@@ -10,8 +10,9 @@
     cd molcraft-agent
     source .venv/bin/activate
     python main.py                    # 默认 1 次迭代，最长 90 分钟
-    python main.py --iterations 3   # 迭代 3 次
-    python main.py --max-minutes 60 # 最长 60 分钟
+    python main.py --iterations 3     # 迭代 3 次
+    python main.py --max-minutes 60   # 最长 60 分钟
+    python main.py --max-steps 1000   # 每轮最多 1000 步
 """
 import argparse
 import asyncio
@@ -131,6 +132,12 @@ async def main() -> None:
         default=90,
         help="最大运行时间（分钟）。默认 90 分钟。",
     )
+    parser.add_argument(
+        "--max-steps",
+        type=int,
+        default=1000,
+        help="每轮最大步数。默认 1000 步。",
+    )
     args = parser.parse_args()
 
     program = load_program()
@@ -167,7 +174,7 @@ async def main() -> None:
             program,
             agent_file=AGENT_YAML,
             yolo=True,
-            max_steps_per_turn=50,
+            max_steps_per_turn=args.max_steps,
         ):
             if stop_event.is_set():
                 break
