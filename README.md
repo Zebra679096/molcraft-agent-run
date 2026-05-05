@@ -41,7 +41,22 @@ source .venv/bin/activate
 
 ### 2. 运行方式
 
-#### 方式 A：Agent 模式（推荐 —— 自主科研模式）
+#### 方案 A：Pipeline 模式（直接生成结果）
+
+如果你需要**直接产出** `result.csv` 和 `result.log`，不需要迭代优化，用这个模式：
+
+```bash
+source .venv/bin/activate
+
+# 生成 50 个分子，取对接得分前 10 的做逆合成规划
+python tools/pipeline.py --n-generate 50 --n-top 10
+```
+
+Pipeline 是纯脚本执行，不调用 LLM，走确定性流程：分子生成 → 对接筛选 → 逆合成路线规划。结果直接输出到 `output/`。
+
+#### 方案 B：Agent 模式（迭代优化）
+
+如果你希望 Agent **自主迭代**优化分子，提升对接得分和合成可行性，用这个模式：
 
 ```bash
 source .venv/bin/activate
@@ -68,8 +83,6 @@ Agent 产出将保存在 `docs/` 和 `output/` 目录中。
 **运行控制**：通过 `--iterations`（默认 1）和 `--max-minutes`（默认 90）双重限制，防止 Agent 无限运行。
 
 **人类迭代策略**：编辑 `program.md` 即可调整 Agent 行为，无需修改代码。
-
-> 注：`tools/pipeline.py` 提供纯脚本运行入口，不调用 LLM，仅用于快速验证环境或本地调试。
 
 ### 3. 打包提交
 
