@@ -61,7 +61,7 @@ Pipeline 是纯脚本执行，不调用 LLM，走确定性流程：分子生成 
 ```bash
 source .venv/bin/activate
 
-# 默认运行 1 次迭代（约 30-60 分钟），最长 90 分钟
+# 默认运行 1 次迭代（约 30-60 分钟），最长 90 分钟，每轮最多 1000 步
 python main.py
 
 # 迭代 3 次
@@ -69,6 +69,9 @@ python main.py --iterations 3
 
 # 最长运行 60 分钟
 python main.py --max-minutes 60
+
+# 每轮最多 500 步（Kimi CLI 默认步数上限）
+python main.py --max-steps 500
 ```
 
 Agent 将读取 `program.md` 中的指令，自主执行：
@@ -80,7 +83,7 @@ Agent 将读取 `program.md` 中的指令，自主执行：
 
 Agent 产出将保存在 `docs/` 和 `output/` 目录中。
 
-**运行控制**：通过 `--iterations`（默认 1）和 `--max-minutes`（默认 90）双重限制，防止 Agent 无限运行。
+**运行控制**：通过 `--iterations`（默认 1）、`--max-minutes`（默认 90）和 `--max-steps`（默认 1000）三重限制，防止 Agent 无限运行。
 
 **人类迭代策略**：编辑 `program.md` 即可调整 Agent 行为，无需修改代码。
 
