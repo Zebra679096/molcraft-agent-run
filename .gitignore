@@ -41,6 +41,5 @@ AGENTS.md
 *.dot
 
 # Agent 运行时生成的文件（不应提交）
-docs/*.md
 data/receptor.pdbqt
 tutorial/images/运行结果截图.png
