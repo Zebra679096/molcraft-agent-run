@@ -181,6 +181,21 @@
 7. **更新 experiments.jsonl**：
    追加本轮的完整记录（时间戳、假设、修改、结果）。
 
+8. **Git 状态管理（二次commit）**：
+   本轮实验结束后，根据验证结果决定代码去留：
+   - **验证成功**（核心指标提升 ≥ 5% 或无退化）→ 保留本轮修改与产出：
+     ```bash
+     Shell: python3 tools/git_advance.py --round X --best-be Y.ZZ --status keep
+     ```
+     这会产生第二次 commit，记录本轮最佳结合能与实验状态。
+   - **验证失败**（指标下降或代码崩溃）→ 回退到修改前的备份状态：
+     ```bash
+     Shell: python3 tools/git_advance.py --round X --best-be Y.ZZ --status discard
+     ```
+     这会 stash 当前修改并 soft reset 到备份 commit，工作区回到修改前。
+
+   > 原则：修改前的备份 commit 是「保险绳」，实验后的二次 commit 是「里程碑」。每轮迭代至少产生两次 commit 记录（backup + round-x），确保科研过程可追溯。
+
 ---
 
 ## 5. 迭代循环（科研闭环）
