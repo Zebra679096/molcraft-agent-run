@@ -16,15 +16,6 @@ env/
 # 环境变量（包含密钥）
 .env
 
-# 输出结果
-output/*.csv
-output/*.log
-output/*.zip
-
-# 实验记录（运行时生成，不纳入版本控制）
-experiments.jsonl
-agent_run.log
-
 # IDE
 .vscode/
 .idea/
@@ -34,12 +25,9 @@ agent_run.log
 # 系统文件
 .DS_Store
 Thumbs.db
-result.zip
-AGENTS.md
 
 # Graphviz 源文件（只保留生成的 PNG）
 *.dot
 
-# Agent 运行时生成的文件（不应提交）
+# Agent 运行时生成的文件
 data/receptor.pdbqt
-tutorial/images/运行结果截图.png
