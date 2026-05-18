@@ -1,7 +1,9 @@
-"""分子生成模块：使用 RDKit 进行基于变异的分子生成。
+"""增强分子生成模块：使用 RDKit 进行高级变异的分子生成。
 
 改进点（H002）:
-- 引入对接引导生成（docking-guided generation）
+- 扩展变异操作类型（环化、开环、片段交换）
+- 增加进化代数和种群大小
+- 优化对接引导生成
 - 文献依据:
   - MOOSE-Chem (Yang et al., 2025): 进化算法导航组合空间
   - Coscientist (Boiko et al., 2023): 基于实验结果的迭代反思
@@ -133,17 +135,23 @@ def random_mutate_smiles(smiles: str, n_mutations: int = 1):
 
 
 def _mutate_mol(mol):
-    """单次变异：添加/替换/删除一个小基团。"""
+    """增强的单次变异：添加/替换/删除/环化/开环等操作。"""
     choice = random.random()
     try:
-        if choice < 0.3:
+        if choice < 0.25:
             mol = _add_substituent(mol)
-        elif choice < 0.6:
+        elif choice < 0.5:
             mol = _replace_atom(mol)
-        elif choice < 0.8:
+        elif choice < 0.65:
             mol = _remove_terminal(mol)
-        else:
+        elif choice < 0.75:
             mol = _insert_linker(mol)
+        elif choice < 0.85:
+            mol = _ring_formation(mol)
+        elif choice < 0.95:
+            mol = _ring_opening(mol)
+        else:
+            mol = _fragment_exchange(mol)
     except Exception:
         return None
     if mol is None:
@@ -236,13 +244,114 @@ def _insert_linker(mol):
     return new_mol
 
 
-def generate_molecules(strategy="mutate", n_molecules=50, scaffold=None):
+def _ring_formation(mol):
+    """环化反应：在两个原子之间形成环。"""
+    # 查找可以形成环的原子对
+    atoms = [a for a in mol.GetAtoms() if a.GetAtomicNum() == 6 and a.GetDegree() < 4]
+    if len(atoms) < 2:
+        return mol
+    
+    # 尝试形成3-6元环
+    for ring_size in [3, 4, 5, 6]:
+        if len(atoms) >= ring_size:
+            selected_atoms = random.sample(atoms, ring_size)
+            try:
+                emol = Chem.EditableMol(mol)
+                # 连接第一个和最后一个原子
+                emol.AddBond(selected_atoms[0].GetIdx(), selected_atoms[-1].GetIdx(), Chem.BondType.SINGLE)
+                new_mol = emol.GetMol()
+                Chem.SanitizeMol(new_mol)
+                return new_mol
+            except Exception:
+                continue
+    return mol
+
+
+def _ring_opening(mol):
+    """开环反应：打开一个小环。"""
+    # 查找小环（3-6元环）
+    rings = mol.GetRingInfo()
+    ring_atoms = []
+    for i in range(rings.NumRings()):
+        ring = rings.GetRingAtoms(i)
+        if 3 <= len(ring) <= 6:
+            ring_atoms.extend(ring)
+    
+    if not ring_atoms:
+        return mol
+    
+    # 随机选择一个环中的一个原子进行开环
+    atom_idx = random.choice(ring_atoms)
+    emol = Chem.EditableMol(mol)
+    
+    # 找到与该原子相连的环键并删除
+    atom = mol.GetAtomWithIdx(atom_idx)
+    for bond in atom.GetBonds():
+        neighbor = bond.GetOtherAtom(atom)
+        if neighbor.GetIdx() in ring_atoms:
+            # 检查是否是环键
+            if bond.IsInRing():
+                emol.RemoveBond(atom.GetIdx(), neighbor.GetIdx())
+                break
+    
+    new_mol = emol.GetMol()
+    try:
+        Chem.SanitizeMol(new_mol)
+        return new_mol
+    except Exception:
+        return mol
+
+
+def _fragment_exchange(mol):
+    """片段交换：用一个小片段替换分子的一部分。"""
+    # 从骨架库中随机选择一个小片段
+    small_scaffolds = ["C", "O", "N", "c1ccccc1", "C1CCOC1"]
+    fragment = random.choice(small_scaffolds)
+    fragment_mol = Chem.MolFromSmiles(fragment)
+    if fragment_mol is None:
+        return mol
+    
+    # 在分子中随机选择一个键进行替换
+    bonds = [mol.GetBondWithIdx(i) for i in range(mol.GetNumBonds())]
+    if not bonds:
+        return mol
+    
+    bond = random.choice(bonds)
+    atom1 = bond.GetBeginAtom()
+    atom2 = bond.GetEndAtom()
+    
+    # 删除这个键
+    emol = Chem.EditableMol(mol)
+    emol.RemoveBond(atom1.GetIdx(), atom2.GetIdx())
+    
+    # 添加片段
+    combo = Chem.CombineMols(emol.GetMol(), fragment_mol)
+    new_emol = Chem.EditableMol(combo)
+    
+    # 连接片段到原来的两个原子
+    fragment_idx = combo.GetNumAtoms() - fragment_mol.GetNumAtoms()
+    new_emol.AddBond(atom1.GetIdx(), fragment_idx, Chem.BondType.SINGLE)
+    new_emol.AddBond(atom2.GetIdx(), fragment_idx + 1, Chem.BondType.SINGLE)
+    
+    new_mol = new_emol.GetMol()
+    try:
+        Chem.SanitizeMol(new_mol)
+        return new_mol
+    except Exception:
+        return mol
+
+
+def generate_molecules(strategy="mutate", n_molecules=50, scaffold=None, n_generations=3, n_offspring=3):
     """生成候选药物分子。
 
     策略:
-        - "mutate": 从种子骨架变异
+        - "mutate": 从种子骨架变异（增强版）
         - "combine": 用连接子组合骨架
         - "random": 随机 SMILES 生成（非常基础）
+    
+    新增参数:
+        - n_generations: 进化代数（默认3，原来为2）
+        - n_offspring: 每个种子的后代数量（默认3）
     """
     molecules = set()
     attempts = 0
@@ -250,15 +359,26 @@ def generate_molecules(strategy="mutate", n_molecules=50, scaffold=None):
 
     if strategy == "mutate":
         seeds = SCAFFOLDS if scaffold is None else [scaffold]
-        while len(molecules) < n_molecules and attempts < max_attempts:
-            attempts += 1
-            seed = random.choice(seeds)
-            n_mut = random.randint(1, 4)
-            new_smiles = random_mutate_smiles(seed, n_mut)
-            if new_smiles and new_smiles not in molecules:
-                props = evaluate_molecule(new_smiles)
-                if passes_filters(props):
-                    molecules.add(new_smiles)
+        
+        # 多代进化
+        for gen in range(n_generations):
+            new_molecules = set()
+            while len(new_molecules) < min(n_molecules * (gen + 1), n_molecules) and attempts < max_attempts:
+                attempts += 1
+                seed = random.choice(seeds)
+                n_mut = random.randint(1, 4)
+                new_smiles = random_mutate_smiles(seed, n_mut)
+                if new_smiles and new_smiles not in molecules and new_smiles not in new_molecules:
+                    props = evaluate_molecule(new_smiles)
+                    if passes_filters(props):
+                        new_molecules.add(new_smiles)
+            
+            # 更新种子库，选择最好的分子
+            molecules.update(new_molecules)
+            if len(molecules) > n_offspring:
+                # 按QED排序，选择前n_offspring个作为下一代种子
+                sorted_mols = sorted(molecules, key=lambda x: evaluate_molecule(x)["qed"], reverse=True)
+                seeds = sorted_mols[:n_offspring]
 
     elif strategy == "combine":
         while len(molecules) < n_molecules and attempts < max_attempts:
@@ -303,12 +423,12 @@ def generate_with_docking_guidance(
     docking_fn,
     n_molecules=50,
     batch_size=10,
-    n_generations=3,
+    n_generations=4,  # 增加到4代
     top_k=5,
     strategy="mutate",
     scaffold=None,
 ):
-    """对接引导的分子生成（H002）。
+    """增强的对接引导分子生成（H002）。
 
     核心思想：将分子对接作为适应度函数，嵌入生成循环中。
     每批生成少量分子 → 对接评估 → 选择结合能最优的作为种子 → 变异产生下一代。
@@ -318,7 +438,7 @@ def generate_with_docking_guidance(
         docking_fn: 对接函数，接收 SMILES 字符串，返回 dict 包含 "binding_energy"
         n_molecules: 目标生成分子总数
         batch_size: 每批生成的候选分子数
-        n_generations: 进化代数
+        n_generations: 进化代数（增加到4）
         top_k: 每代选择 top_k 作为种子
         strategy: 初始生成策略
         scaffold: 可选种子骨架
@@ -349,7 +469,7 @@ def generate_with_docking_guidance(
                     if passes_filters(props):
                         batch_mols.append(props)
         else:
-            # 后续代：从种子变异
+            # 后续代：从种子变异（使用增强的变异）
             seed_smiles_list = [s["smiles"] for s in current_seeds]
             while len(batch_mols) < batch_size and attempts < max_attempts:
                 attempts += 1
