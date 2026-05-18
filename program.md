@@ -21,11 +21,15 @@
 - **plan_synthesis**(smiles) — 逆合成路线规划
 - **evaluate_molecule**(smiles) — 评估QED/SA/MW等性质
 - **Shell** — 执行命令（timeout可设600）
-- **WriteFile** / **ReadFile** — 文件操作
+- **WriteFile** / **ReadFile** — 文件操作（ReadFile的line_offset必须>=1）
 - **ReportIteration** — 报告迭代完成（必须调用！）
 - 不要使用 StrReplaceFile
 
-## 执行步骤（严格按顺序执行，不要读论文）
+## 参考资料
+
+论文摘要已提取到 papers/summary.md，如需参考可读取（从第1行开始），无需读取原始论文全文。
+
+## 执行步骤（严格按顺序执行）
 
 ### 步骤1：生成分子
 调用 generate_molecules(strategy="mutate", n=50)
@@ -70,3 +74,5 @@ ReportIteration(round_num=1, hypothesis_id="H001", success=true, summary="完成
 - 每次对接不超过25个分子
 - 优先保证非trivial路线数量
 - 目标：至少10个分子，结合能<-7 kcal/mol
+- ReadFile的line_offset参数必须>=1，不能为0
+- 不要读取原始论文全文，使用papers/summary.md即可
