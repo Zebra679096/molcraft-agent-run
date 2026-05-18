@@ -1,0 +1,21 @@
+mol_smiles,route
+Cc1cccc(NC(=O)C2COCC2c2ccccc2)c1,O=C(O)C1COCC1c1ccccc1.Cc1cccc(N)c1>>Cc1cccc(NC(=O)C2COCC2c2ccccc2)c1
+O=C(Nc1ccccc1)C12COC3CC1C32c1ccccc1,CC1C(c2ccccc2)C1(CO)C(=O)O.O=C(O)C1C2CC(Cl)C21c1ccccc1>>O=C(O)C12COC3CC1C32c1ccccc1 | O=C(O)C12COC3CC1C32c1ccccc1.Nc1ccccc1>>O=C(Nc1ccccc1)C12COC3CC1C32c1ccccc1
+O=C(Nc1ccccc1)C12COCC1(c1ccccc1)C2F,O=C(O)C1(CO)C(F)C1c1ccccc1.O=C(O)C1C(F)C1(CCl)c1ccccc1>>O=C(O)C12COCC1(c1ccccc1)C2F | O=C(O)C12COCC1(c1ccccc1)C2F.Nc1ccccc1>>O=C(Nc1ccccc1)C12COCC1(c1ccccc1)C2F
+O=C(Nc1ccccc1)C12COCC1(c1ccccc1)C2,O=C(O)C12COCC1(c1ccccc1)C2.Nc1ccccc1>>O=C(Nc1ccccc1)C12COCC1(c1ccccc1)C2
+Cc1cc(C)c(S(=O)(=O)Nc2ccccc2)c(Cl)c1,Cc1cc(C)c(S(=O)(=O)Cl)c(Cl)c1.Nc1ccccc1>>Cc1cc(C)c(S(=O)(=O)Nc2ccccc2)c(Cl)c1
+Cc1ccc(S(=O)(=O)Nc2ccccc2)c(Cl)c1Cl,Cc1ccc(S(=O)(=O)Cl)c(Cl)c1Cl.Nc1ccccc1>>Cc1ccc(S(=O)(=O)Nc2ccccc2)c(Cl)c1Cl
+O=C(Nc1ccccc1)C1COCC1c1ccccc1,O=C(O)C1COCC1c1ccccc1.Nc1ccccc1>>O=C(Nc1ccccc1)C1COCC1c1ccccc1
+O=S(=O)(Nc1ccc(F)cn1)c1cc(Cl)c(F)cn1,O=S(=O)(Cl)c1cc(Cl)c(F)cn1.Nc1ccc(F)cn1>>O=S(=O)(Nc1ccc(F)cn1)c1cc(Cl)c(F)cn1
+O=S(=O)(Nc1ccccc1)C1=CC2COCC2C=C(F)C=C1,NS(=O)(=O)C1=CC(CCl)CC=C(F)C=C1.O>>NS(=O)(=O)C1=CC(CO)CC=C(F)C=C1 | Brc1ccccc1.NS(=O)(=O)C1=CC(CO)CC=C(F)C=C1>>O=S(=O)(Nc1ccccc1)C1=CC(CO)CC=C(F)C=C1 | CC(C=C(F)C=CC(C=O)S(N)(=O)=O)CCl.C=CC(F)=CC(CCl)CCP>>NS(=O)(=O)C1=CCC(CCl)C=C(F)C=C1 | Brc1ccccc1.NS(=O)(=O)C1=CCC(CCl)C=C(F)C=C1>>O=S(=O)(Nc1ccccc1)C1=CCC(CCl)C=C(F)C=C1 | O=S(=O)(Nc1ccccc1)C1=CC(CO)CC=C(F)C=C1.O=S(=O)(Nc1ccccc1)C1=CCC(CCl)C=C(F)C=C1>>O=S(=O)(Nc1ccccc1)C1=CC2COCC2C=C(F)C=C1
+Cc1ccc(S(=O)(=S)Nc2ccccc2)c(F)c1,Brc1ccccc1.Cc1ccc(S(N)(=O)=S)c(F)c1>>Cc1ccc(S(=O)(=S)Nc2ccccc2)c(F)c1
+Cc1c(F)cc(NS(=O)(=O)c2ccccc2)c(C)c1Cl,O=S(=O)(Cl)c1ccccc1.Cc1c(N)cc(F)c(C)c1Cl>>Cc1c(F)cc(NS(=O)(=O)c2ccccc2)c(C)c1Cl
+Cc1ccc(NS(=O)(=O)c2ccc(O)cc2)cc1Cl,O=S(=O)(Cl)c1ccc(O)cc1.Cc1ccc(N)cc1Cl>>Cc1ccc(NS(=O)(=O)c2ccc(O)cc2)cc1Cl
+O=S(=O)(Nc1cccc(Cl)c1)c1ccc(F)cc1Cl,O=S(=O)(Cl)c1ccc(F)cc1Cl.Nc1cccc(Cl)c1>>O=S(=O)(Nc1cccc(Cl)c1)c1ccc(F)cc1Cl
+Cc1ccccc1NS(=O)(=O)c1cc(F)ccc1F,O=S(=O)(Cl)c1cc(F)ccc1F.Cc1ccccc1N>>Cc1ccccc1NS(=O)(=O)c1cc(F)ccc1F
+Cc1ccc(NS(=O)c2ccccc2F)cc1Cl,Cc1ccc(Br)cc1Cl.NS(=O)c1ccccc1F>>Cc1ccc(NS(=O)c2ccccc2F)cc1Cl
+Cc1ccc(NS(=O)(=O)c2ccccc2)cc1Cl,O=S(=O)(Cl)c1ccccc1.Cc1ccc(N)cc1Cl>>Cc1ccc(NS(=O)(=O)c2ccccc2)cc1Cl
+Cc1ccc(S(=O)Nc2ccccc2Cl)cc1,Clc1ccccc1Br.Cc1ccc(S(N)=O)cc1>>Cc1ccc(S(=O)Nc2ccccc2Cl)cc1
+O=S(=O)(Nc1cccc(O)c1)c1ccc(F)cc1Cl,O=S(=O)(Cl)c1ccc(F)cc1Cl.Nc1cccc(O)c1>>O=S(=O)(Nc1cccc(O)c1)c1ccc(F)cc1Cl
+O=S(=O)(Nc1ccccc1F)c1ccccc1Cl,O=S(=O)(Cl)c1ccccc1Cl.Nc1ccccc1F>>O=S(=O)(Nc1ccccc1F)c1ccccc1Cl
+Cc1ccc(NS(=O)C2=C3C=C3C=CC3COCC23)cc1Cl,NS(=O)C1=C2C=C2C=CC(CCl)C1.O>>NS(=O)C1=C2C=C2C=CC(CO)C1 | Cc1ccc(Br)cc1Cl.NS(=O)C1=C2C=C2C=CC(CO)C1>>Cc1ccc(NS(=O)C2=C3C=C3C=CC(CO)C2)cc1Cl | C=CC=CCC(CCl)C(C=O)S(N)=O.PC1C=C1C=CCCCCl>>NS(=O)C1=C2C=C2C=CCC1CCl | Cc1ccc(Br)cc1Cl.NS(=O)C1=C2C=C2C=CCC1CCl>>Cc1ccc(NS(=O)C2=C3C=C3C=CCC2CCl)cc1Cl | Cc1ccc(NS(=O)C2=C3C=C3C=CC(CO)C2)cc1Cl.Cc1ccc(NS(=O)C2=C3C=C3C=CCC2CCl)cc1Cl>>Cc1ccc(NS(=O)C2=C3C=C3C=CC3COCC23)cc1Cl

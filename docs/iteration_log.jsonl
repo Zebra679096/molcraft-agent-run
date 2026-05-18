@@ -1,1 +1,0 @@
-{"round_num": 1, "hypothesis_id": "H001-H003", "success": true, "summary": "扩充逆合成规则至58条，引入3代进化迭代pipeline，添加对接引导生成模式。最佳结合能-8.494 kcal/mol，非trivial路线比例90%", "timestamp": "2026-05-18T12:04:00"}
