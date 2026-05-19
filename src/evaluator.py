@@ -73,8 +73,12 @@ def estimate_sa_score(mol):
     return min(score, 10.0)
 
 
-def passes_filters(props: dict, min_qed=0.3, max_mw=500, min_mw=150, max_logp=5.0):
-    """检查分子是否通过基础类药性质过滤。"""
+def passes_filters(props: dict, min_qed=0.3, max_mw=500, min_mw=150, max_logp=5.0, max_sa=6.0):
+    """检查分子是否通过基础类药性质过滤。
+
+    注意: max_sa 默认 6.0，与竞赛硬零分条件一致（SAScore>6 零分）。
+    之前版本误用 8.0，现已修正。
+    """
     if not props.get("valid"):
         return False
     if props["qed"] < min_qed:
@@ -83,6 +87,6 @@ def passes_filters(props: dict, min_qed=0.3, max_mw=500, min_mw=150, max_logp=5.
         return False
     if props["logp"] > max_logp:
         return False
-    if props["sa_score"] > 8.0:
+    if props["sa_score"] > max_sa:
         return False
     return True

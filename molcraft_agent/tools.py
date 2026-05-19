@@ -22,6 +22,8 @@ from docking import batch_dock
 from synthesis_v2 import plan_synthesis_v2
 from evaluator import evaluate_molecule
 from receptor import prepare_receptor
+from evolution import run_evolution, refine_top_molecules, compute_fitness
+from literature_seeds import generate_literature_seeds
 from molcraft_agent.experiments import (
     append_experiment,
     get_latest_round,
@@ -268,4 +270,239 @@ class ReportIteration(CallableTool2):
                 output="",
                 message=str(exc),
                 brief="迭代记录失败",
+            )
+
+
+# ============================================================
+# 新增工具：RAG冷启动 + 进化搜索 + 精修
+# ============================================================
+
+
+class SeedFromLiteratureParams(BaseModel):
+    n_seeds: int = Field(
+        default=20,
+        description="目标种子数量，建议 15-30",
+    )
+    strategy: str = Field(
+        default="diverse",
+        description="种子生成策略: diverse(多样性), cns(CNS渗透性优先), focused(药效团聚焦)",
+    )
+
+
+class SeedFromLiterature(CallableTool2):
+    name: str = "seed_from_literature"
+    description: str = (
+        "从文献和药物化学知识库中提取活性骨架作为种子分子（RAG冷启动）。"
+        "包含CNS药物常见骨架（吲哚、喹唑啉、哌啶、磺酰胺等），以及从竞赛论文中提取的信息。"
+        "运行时间约 5-15 秒。返回种子分子的 SMILES 和性质评估。"
+    )
+    params: type[BaseModel] = SeedFromLiteratureParams
+
+    async def __call__(self, params: SeedFromLiteratureParams) -> ToolReturnValue:
+        try:
+            seeds = await asyncio.to_thread(
+                generate_literature_seeds,
+                n_seeds=params.n_seeds,
+                strategy=params.strategy,
+            )
+            result = {
+                "count": len(seeds),
+                "strategy": params.strategy,
+                "seeds": [
+                    {
+                        "smiles": s["smiles"],
+                        "qed": s["qed"],
+                        "sa_score": s["sa_score"],
+                        "mw": s["mw"],
+                        "tpsa": s.get("tpsa", 0),
+                    }
+                    for s in seeds
+                ],
+            }
+            append_experiment(
+                tool="seed_from_literature",
+                round_num=get_latest_round() + 1,
+                params={"n_seeds": params.n_seeds, "strategy": params.strategy},
+                result={"seed_count": len(seeds)},
+            )
+            return ToolOk(output=json.dumps(result, ensure_ascii=False))
+        except Exception as exc:
+            return ToolError(
+                output="",
+                message=str(exc),
+                brief="文献种子生成失败",
+            )
+
+
+class EvolveParams(BaseModel):
+    seed_smiles: list[str] | None = Field(
+        default=None,
+        description="种子分子SMILES列表（来自seed_from_literature或之前的结果），为空则使用默认骨架",
+    )
+    n_generations: int = Field(
+        default=8,
+        description="进化代数，建议 6-10。代数越多搜索越充分但耗时越长",
+    )
+    pop_size: int = Field(
+        default=30,
+        description="每代种群大小，建议 20-40",
+    )
+    n_elite: int = Field(
+        default=5,
+        description="每代精英保留数量，建议 3-8",
+    )
+    n_explore: int = Field(
+        default=10,
+        description="每代注入的全新探索个体数量，建议 5-15",
+    )
+    w_binding: float = Field(
+        default=0.5,
+        description="结合能权重(0-1)，越高越重视结合能优化",
+    )
+    w_qed: float = Field(
+        default=0.3,
+        description="QED权重(0-1)，越高越重视药物相似性",
+    )
+    w_sa: float = Field(
+        default=0.2,
+        description="SA score权重(0-1)，越高越重视可合成性",
+    )
+
+
+class EvolveMolecules(CallableTool2):
+    name: str = "evolve_molecules"
+    description: str = (
+        "运行多代进化搜索：种群多样性保证搜索广度，对接打分提供方向，"
+        "自适应变异从探索过渡到精修。"
+        "每次调用运行 n_generations 代进化，每代包含生成+对接+选择。"
+        "运行时间取决于代数和种群大小，通常 10-30 分钟。"
+        "返回所有评估过的分子，按综合适应度降序排列。"
+    )
+    params: type[BaseModel] = EvolveParams
+
+    async def __call__(self, params: EvolveParams) -> ToolReturnValue:
+        try:
+            result = await asyncio.to_thread(
+                run_evolution,
+                seed_smiles=params.seed_smiles,
+                n_generations=params.n_generations,
+                pop_size=params.pop_size,
+                n_elite=params.n_elite,
+                n_explore=params.n_explore,
+                w_binding=params.w_binding,
+                w_qed=params.w_qed,
+                w_sa=params.w_sa,
+            )
+            # 汇总输出（限制返回 top-50 以免过大）
+            top_results = result[:50]
+            output = {
+                "total_molecules": len(result),
+                "n_generations": params.n_generations,
+                "pop_size": params.pop_size,
+                "best_fitness": top_results[0]["fitness"] if top_results else None,
+                "best_binding_energy": top_results[0].get("binding_energy") if top_results else None,
+                "best_qed": top_results[0].get("qed") if top_results else None,
+                "best_sa": top_results[0].get("sa_score") if top_results else None,
+                "top_results": [
+                    {
+                        "smiles": m["smiles"],
+                        "binding_energy": m.get("binding_energy"),
+                        "qed": m.get("qed"),
+                        "sa_score": m.get("sa_score"),
+                        "fitness": m.get("fitness"),
+                        "mw": m.get("mw"),
+                        "generation": m.get("generation"),
+                        "source": m.get("source"),
+                    }
+                    for m in top_results
+                ],
+            }
+            append_experiment(
+                tool="evolve_molecules",
+                round_num=get_latest_round() + 1,
+                params={
+                    "n_generations": params.n_generations,
+                    "pop_size": params.pop_size,
+                    "n_elite": params.n_elite,
+                    "seed_count": len(params.seed_smiles) if params.seed_smiles else 0,
+                },
+                result={
+                    "total_molecules": len(result),
+                    "best_be": output["best_binding_energy"],
+                    "best_fitness": output["best_fitness"],
+                },
+            )
+            return ToolOk(output=json.dumps(output, ensure_ascii=False))
+        except Exception as exc:
+            return ToolError(
+                output="",
+                message=str(exc),
+                brief="进化搜索失败",
+            )
+
+
+class RefineParams(BaseModel):
+    top_smiles: list[str] = Field(
+        description="待精修的top分子SMILES列表，建议 5-15 个",
+    )
+    n_rounds: int = Field(
+        default=3,
+        description="精修轮次，建议 2-4",
+    )
+    n_offspring: int = Field(
+        default=5,
+        description="每个种子每轮产生的变体数，建议 3-8",
+    )
+
+
+class RefineMolecules(CallableTool2):
+    name: str = "refine_molecules"
+    description: str = (
+        "对top分子进行精修搜索：低变异强度 + 严格过滤。"
+        "在最优分子附近微调，期望找到结合能更好且性质更优的变体。"
+        "运行时间通常 5-15 分钟。返回精修后的分子列表。"
+    )
+    params: type[BaseModel] = RefineParams
+
+    async def __call__(self, params: RefineParams) -> ToolReturnValue:
+        try:
+            top_molecules = [{"smiles": s} for s in params.top_smiles]
+            result = await asyncio.to_thread(
+                refine_top_molecules,
+                top_molecules=top_molecules,
+                n_refine_rounds=params.n_rounds,
+                n_offspring_per_seed=params.n_offspring,
+            )
+            top_results = result[:30]
+            output = {
+                "total_molecules": len(result),
+                "n_rounds": params.n_rounds,
+                "best_fitness": top_results[0]["fitness"] if top_results else None,
+                "best_binding_energy": top_results[0].get("binding_energy") if top_results else None,
+                "top_results": [
+                    {
+                        "smiles": m["smiles"],
+                        "binding_energy": m.get("binding_energy"),
+                        "qed": m.get("qed"),
+                        "sa_score": m.get("sa_score"),
+                        "fitness": m.get("fitness"),
+                    }
+                    for m in top_results
+                ],
+            }
+            append_experiment(
+                tool="refine_molecules",
+                round_num=get_latest_round(),
+                params={"n_molecules": len(params.top_smiles), "n_rounds": params.n_rounds},
+                result={
+                    "total": len(result),
+                    "best_be": output["best_binding_energy"],
+                },
+            )
+            return ToolOk(output=json.dumps(output, ensure_ascii=False))
+        except Exception as exc:
+            return ToolError(
+                output="",
+                message=str(exc),
+                brief="分子精修失败",
             )
