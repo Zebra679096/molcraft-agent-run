@@ -50,24 +50,33 @@ def evaluate_molecule(smiles: str):
 
 
 def estimate_sa_score(mol):
-    """非常粗略的合成可及性估算（0-10，越低越好）。
-    基于片段复杂度和环系分析。
+    """使用 RDKit SAScore 计算合成可及性（0-10，越低越好）。
+
+    修复(H004): 使用 RDKit 内置的 SAScore 算法替代粗略启发式，
+    确保与竞赛评分系统使用的 SA 分数一致。
     """
-    # 统计稠环数量
+    try:
+        from rdkit.Chem import RDConfig
+        import os
+        sa_score_file = os.path.join(RDConfig.RDContribDir, 'SA_Score', 'sascore.py')
+        if os.path.exists(sa_score_file):
+            import importlib.util
+            spec = importlib.util.spec_from_file_location("sascore", sa_score_file)
+            sascore_module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(sascore_module)
+            # 移除 H 后再计算（SAScore 需要去氢分子）
+            mol_no_h = Chem.RemoveHs(mol)
+            return sascore_module.calculateScore(mol_no_h)
+    except Exception:
+        pass
+
+    # 回退: 使用粗略启发式
     ri = mol.GetRingInfo()
     atom_rings = ri.AtomRings()
     n_rings = len(atom_rings)
-
-    # 螺环中心
     spiro = Chem.rdMolDescriptors.CalcNumSpiroAtoms(mol)
-
-    # 桥头原子
     bridge = Chem.rdMolDescriptors.CalcNumBridgeheadAtoms(mol)
-
-    # 手性中心
     stereo = Chem.rdMolDescriptors.CalcNumAtomStereoCenters(mol)
-
-    # 基础启发式公式
     score = 1.0 + n_rings * 0.5 + spiro * 1.0 + bridge * 1.5 + stereo * 0.5
     score += Descriptors.NumRotatableBonds(mol) * 0.1
     return min(score, 10.0)

@@ -199,10 +199,12 @@ design_molecules(
 ### STEP 8: Retrosynthesis Planning (10-15 minutes)
 For top 25-30 molecules by binding energy:
 1. Call `plan_synthesis(smiles)` for each
-2. **CRITICAL**: Skip molecules with trivial routes (SMILES>>SMILES)
+2. **CRITICAL**: Check `trivial` field — skip molecules with trivial=true (route is SMILES>>SMILES)
 3. **CRITICAL**: Verify route final product matches mol_smiles exactly
-4. If < 10 non-trivial routes, plan for more molecules
-5. Prefer multi-step routes (higher starting_material_availability_score)
+4. **CRITICAL**: Route steps must be separated by `,` (comma), NOT ` | `
+5. **CRITICAL**: Each step must have atom balance — if `plan_synthesis` returns a route, it's already validated
+6. If < 10 non-trivial routes, plan for more molecules
+7. Prefer multi-step routes (higher starting_material_availability_score)
 
 ### STEP 9: Submit Results (1-2 minutes)
 Submit top 10-25 molecules with non-trivial routes. The tool auto-packages result.zip.
@@ -230,6 +232,11 @@ submit_results(molecules=[
    - Aromatic atoms use lowercase (c, n, o, s)
    - Ring closures must pair: `c1ccccc1` for benzene
 3. **Invalid SMILES = wasted tokens**: If design_molecules returns many invalid SMILES, double-check your SMILES syntax before the next round.
-4. **Route format**: `reactant1.reactant2>>product` for single step. Multi-step: `step1,step2,step3` where last step product = mol_smiles.
+4. **Route format** (CRITICAL — wrong format = route_score=0):
+   - Single step: `reactant1.reactant2>>product`
+   - Multi-step: `step1,step2,step3` — steps separated by COMMA (not ` | `)
+   - Last step's product MUST equal mol_smiles exactly
+   - Each step must have atom balance: reactant atoms >= product atoms
+   - NEVER use ` | ` as step separator — always use `,`
 5. **Convergence bonus**: Routes where two non-starting-material intermediates combine get +convergence_score.
 6. **Time management**: Total runtime ~90 minutes. Allocate time wisely across rounds.

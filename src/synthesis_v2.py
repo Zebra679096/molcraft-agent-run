@@ -1,56 +1,207 @@
-"""逆合成规划模块（第二版）：使用 SMARTS 反应模板生成 realistic 起始原料。
+"""逆合成规划模块（第三版）：修复原子平衡和路线格式问题。
 
-文献依据与改进说明:
-- LARC (Baker et al., 2025) 提出 Agent-as-a-Judge 逆合成框架，强调规则覆盖率
-  是逆合成质量的关键决定因素。
-- ChemCrow (Bran et al., 2024) 集成 18 个专家化学工具，证明工具丰富度直接
-  决定 Agent 能力边界。
-- 本模块将规则从 8 条扩充至 50+ 条，覆盖常见药物化学反应类型，
-  显著降低 trivial route 比例。
+关键修复（H004）:
+1. 路线分隔符: " | " → ","（与竞赛评分系统格式一致）
+2. 新增原子平衡验证: 每步反应物原子数必须覆盖产物原子数
+3. 精简逆合成规则: 只保留经过验证的可靠规则，移除产生原子不平衡的垃圾规则
+4. 改进 BRICS 回退: 增加 BRICS 碎片的原子平衡检查
+5. 路线最终产物验证: 确保最后一步产物 = 目标分子
 
-改进点（H003）:
-- 引入递归多步逆合成规划（max_depth=3）
-- 对单步断键后的中间体继续递归断键，直到得到简单起始原料
-- 文献依据: LARC (2025) 强调多步路线评审的重要性
+竞赛硬零分规则:
+- Balance_score = 0 → route_score = 0（原子不平衡）
+- 所有路线 trivial → route_score = 0
+- 最终产物 ≠ mol_smiles → route_score = 0
 """
-import re
+from collections import Counter
 from rdkit import Chem, rdBase
-from rdkit.Chem import AllChem, BRICS
+from rdkit.Chem import AllChem, BRICS, Descriptors
 
 rdBase.DisableLog('rdApp.error')
 rdBase.DisableLog('rdApp.warning')
 
 
+# ======================================================================
+# 工具函数
+# ======================================================================
+
 def _validate_smiles(smiles: str) -> bool:
     """验证 SMILES 字符串是否有效且可解析。"""
     if not smiles or len(smiles) < 1:
         return False
-    # 排除仅包含氢或自由基的无效产物
     if smiles in ('[H]', '[H][H]', 'H', '[Br]', '[Cl]', '[I]', '[F]'):
         return False
     mol = Chem.MolFromSmiles(smiles)
     return mol is not None
 
 
-def _try_route(smiles: str, r1: str, r2: str = None) -> str:
-    """尝试构建合成路线，验证所有反应物 SMILES。"""
+def _get_atom_counts(smiles: str) -> Counter | None:
+    """获取分子的原子计数（含氢原子），用于原子平衡验证。"""
+    mol = Chem.MolFromSmiles(smiles)
+    if mol is None:
+        return None
+    mol_h = Chem.AddHs(mol)
+    counts = Counter()
+    for atom in mol_h.GetAtoms():
+        counts[atom.GetSymbol()] += 1
+    return counts
+
+
+def _check_atom_balance(reactant_smiles_list: list, product_smiles: str,
+                        max_excess_atoms: int = 8) -> bool:
+    """验证反应的原子平衡：反应物原子必须覆盖产物原子。
+
+    对于有效的合成反应:
+    - 反应物中每种元素的原子数 >= 产物中对应元素的原子数
+    - 反应物总原子数与产物总原子数之差应在合理范围内
+      （允许 H2O、HCl 等小分子副产物的原子差）
+
+    Args:
+        reactant_smiles_list: 反应物 SMILES 列表
+        product_smiles: 产物 SMILES
+        max_excess_atoms: 反应物比产物多的最大允许原子数（含氢）
+
+    Returns:
+        bool: 原子是否平衡
+    """
+    reactant_counts = Counter()
+    for s in reactant_smiles_list:
+        c = _get_atom_counts(s)
+        if c is None:
+            return False
+        reactant_counts += c
+
+    product_counts = _get_atom_counts(product_smiles)
+    if product_counts is None:
+        return False
+
+    # 条件1: 反应物中每种元素 >= 产物中对应元素
+    for element, count in product_counts.items():
+        if reactant_counts.get(element, 0) < count:
+            return False
+
+    # 条件2: 总原子数差在合理范围内
+    total_reactant = sum(reactant_counts.values())
+    total_product = sum(product_counts.values())
+    if total_reactant < total_product:
+        return False
+    if total_reactant > total_product + max_excess_atoms:
+        return False
+
+    return True
+
+
+def _try_route(smiles: str, r1: str, r2: str = None) -> str | None:
+    """尝试构建合成路线，验证所有反应物 SMILES 和原子平衡。"""
     if not _validate_smiles(r1):
         return None
     if r2 is not None and not _validate_smiles(r2):
         return None
+
+    # 原子平衡验证
+    reactants = [r1] if r2 is None else [r1, r2]
+    if not _check_atom_balance(reactants, smiles):
+        return None
+
+    # 反应物不应等于产物（避免 trivial）
+    product_mol = Chem.MolFromSmiles(smiles)
+    if product_mol is None:
+        return None
+
     if r2:
         return f"{r1}.{r2}>>{smiles}"
     return f"{r1}>>{smiles}"
 
 
+# ======================================================================
+# 逆合成规则库（精简版 — 只保留经过验证的可靠规则）
+#
+# 设计原则:
+#   1. 每条规则必须有正确的原子映射，保证原子平衡
+#   2. 优先匹配更具体的结构（放在前面）
+#   3. 反应物应为商业可得的简单分子
+#   4. 所有规则在 _run_retro_rule 中额外通过原子平衡验证
+# ======================================================================
+
+RETRO_RULES = [
+    # ------------------- 磺酰胺类 (最可靠的断键) -------------------
+    # 芳基磺酰胺 — 磺酰氯 + 胺 → 磺酰胺 + HCl
+    ("[c][S;D4](=[O])(=[O])[N]", "[c:1][S:2](=[O])(=[O])[N:3]>>[c:1][S:2](=[O])(=[O])Cl.[N:3]"),
+
+    # ------------------- 酰胺类 (用简单可靠的 SMARTS) -------------------
+    # 通用酰胺断键 — 羧酸 + 胺 → 酰胺 + H2O
+    #   匹配所有 C(=O)-N 键（包括芳基-酰胺和烷基-酰胺）
+    #   原子平衡验证在 _run_retro_rule 中确保只有有效断键被接受
+    ("[C](=[O])[N;H0]", "[C:1](=[O])[N:2]>>[C:1](=O)O.[N:2]"),
+    ("[C](=[O])[N;H1]", "[C:1](=[O])[N:2]>>[C:1](=O)O.[N:2]"),
+
+    # ------------------- 酯类 -------------------
+    # 酯 — 羧酸 + 醇 → 酯 + H2O
+    ("[C](=[O])O[C;!c]", "[C:1](=[O])O[C:2]>>[C:1](=O)O.[C:2]O"),
+
+    # ------------------- 芳基胺 (Buchwald-Hartwig) -------------------
+    # 芳基仲胺 — 芳基溴 + 伯胺 → 芳胺 + HBr
+    ("[c][NX3;H1]", "[c:1][N;H1:2]>>[c:1]Br.[N;H1:2]"),
+    # 芳基叔胺 — 芳基溴 + 仲胺 → 芳胺 + HBr
+    ("[c][NX3;H0]", "[c:1][N;H0:2]>>[c:1]Br.[N;H0:2]"),
+
+    # ------------------- 芳基醚 (Ullmann/SNAr) -------------------
+    # 芳基烷基醚 — 芳基溴 + 醇 → 芳基醚 + HBr
+    ("[c]O[C;!c]", "[c:1]O[C:2]>>[c:1]Br.[C:2]O"),
+
+    # ------------------- 脲类 -------------------
+    # 脲 — 异氰酸酯 + 胺 → 脲
+    ("[N]C(=O)[N]", "[N:1]C(=O)[N:2]>>[N:1]C=O.[N:2]"),
+
+    # ------------------- 芳基磺酰胺（烷基磺酰胺） -------------------
+    # 烷基磺酰胺 — 磺酰氯 + 胺 → 磺酰胺 + HCl
+    ("[C][S;D4](=[O])(=[O])[N]", "[C:1][S:2](=[O])(=[O])[N:3]>>[C:1][S:2](=[O])(=[O])Cl.[N:3]"),
+]
+
+
+# 简单分子阈值
+_SIMPLE_SCAFFOLDS_SMARTS = [
+    "c1ccccc1",      # 苯
+    "c1ccncc1",      # 吡啶
+    "c1cccnc1",      # 吡啶变体
+    "C1CCOC1",       # THF
+    "C1CCCCC1",      # 环己烷
+    "C1CCNC1",       # 吡咯烷
+    "C1CCNCC1",      # 哌啶
+    "C1COCCN1",      # 吗啉
+]
+
+
+def _is_simple_molecule(smiles: str) -> bool:
+    """判断分子是否为足够简单的起始原料，无需继续逆合成。
+
+    修复(H004): 降低阈值，避免像苯磺酰哌啶(15个重原子)这样的
+    功能分子被误判为简单起始原料。只有真正的简单结构(≤10重原子)
+    或常见未取代杂环(≤12重原子)才停止递归。
+    """
+    mol = Chem.MolFromSmiles(smiles)
+    if mol is None:
+        return False
+    n_atoms = mol.GetNumAtoms()
+    # 重原子数 <= 10 视为简单起始原料
+    if n_atoms <= 10:
+        return True
+    # 匹配常见未取代杂环骨架（允许少量取代基，但总原子数 ≤ 12）
+    for s in _SIMPLE_SCAFFOLDS_SMARTS:
+        patt = Chem.MolFromSmarts(s)
+        if patt and mol.HasSubstructMatch(patt):
+            if n_atoms <= 12:
+                return True
+    return False
+
+
 def _run_retro_rule(mol, smarts_pattern, retro_smarts, smiles):
-    """通用逆合成规则执行函数。
+    """通用逆合成规则执行函数（带原子平衡验证）。
 
     Args:
         mol: 目标分子 RDKit Mol 对象
         smarts_pattern: 匹配目标分子的 SMARTS
         retro_smarts: 逆合成反应的 SMARTS
-        smiles: 目标分子的 SMILES（用于构建路线）
+        smiles: 目标分子的 SMILES
 
     Returns:
         dict 或 None: 成功时返回 {"route": ..., "reactants": [...], "steps": 1}
@@ -65,243 +216,85 @@ def _run_retro_rule(mol, smarts_pattern, retro_smarts, smiles):
     if not ps:
         return None
 
-    # 遍历所有可能的产物集，找到第一个产生有效SMILES的
+    # 遍历所有可能的产物集，找到第一个通过原子平衡验证的
     for product_set in ps:
         if not product_set:
             continue
         if len(product_set) >= 2:
             r1 = Chem.MolToSmiles(product_set[0])
             r2 = Chem.MolToSmiles(product_set[1])
+            # 原子平衡验证
+            if not _check_atom_balance([r1, r2], smiles):
+                continue
             route = _try_route(smiles, r1, r2)
-            reactants = [r1, r2]
+            if route:
+                return {"success": True, "route": route, "reactants": [r1, r2], "steps": 1}
         else:
             r1 = Chem.MolToSmiles(product_set[0])
+            # 单反应物也需要原子平衡
+            if not _check_atom_balance([r1], smiles):
+                continue
             route = _try_route(smiles, r1)
-            reactants = [r1]
-
-        if route:
-            return {"success": True, "route": route, "reactants": reactants, "steps": 1}
+            if route:
+                return {"success": True, "route": route, "reactants": [r1], "steps": 1}
 
     return None
 
 
-# 简单分子阈值：原子数 <= 10 或属于常见起始原料，停止递归
-_SIMPLE_SCAFFOLDS_SMARTS = [
-    "c1ccccc1",      # 苯
-    "c1ccncc1",      # 吡啶
-    "c1cccnc1",      # 吡啶变体
-    "C1CCOC1",       # THF
-    "C1CCCCC1",      # 环己烷
-    "C1CCNC1",       # 吡咯烷
-]
+def _brics_fragment(smiles: str) -> list:
+    """使用 BRICS 碎片化生成原子平衡的逆合成步骤。
 
+    BRICS 是 RDKit 内置的碎片化方法，基于化学合理的断键规则，
+    产生的碎片天然满足原子平衡要求。
 
-def _is_simple_molecule(smiles: str) -> bool:
-    """判断分子是否为足够简单的起始原料，无需继续逆合成。"""
+    Returns:
+        list of (reactant1, reactant2) 元组
+    """
     mol = Chem.MolFromSmiles(smiles)
     if mol is None:
-        return False
-    # 原子数 <= 10 视为简单
-    if mol.GetNumAtoms() <= 10:
-        return True
-    # 匹配常见简单骨架
-    for s in _SIMPLE_SCAFFOLDS_SMARTS:
-        patt = Chem.MolFromSmarts(s)
-        if patt and mol.HasSubstructMatch(patt):
-            # 但取代基不能太多
-            if mol.GetNumAtoms() <= 15:
-                return True
-    return False
+        return []
+
+    results = []
+    try:
+        # 使用 BRICS.BreakMol 进行碎片化
+        frags = BRICS.BreakMol(mol)
+        if not frags or len(frags) < 2:
+            return []
+
+        frag_smiles = []
+        for f in frags:
+            if f is None:
+                continue
+            s = Chem.MolToSmiles(f)
+            if _validate_smiles(s):
+                frag_smiles.append(s)
+
+        # 需要至少2个有效碎片
+        if len(frag_smiles) < 2:
+            return []
+
+        # 验证原子平衡
+        r1, r2 = frag_smiles[0], frag_smiles[1]
+        if _check_atom_balance([r1, r2], smiles):
+            results.append((r1, r2))
+
+    except Exception:
+        pass
+
+    return results
 
 
-# ======================================================================
-# 逆合成规则库 — 按反应类型分组，共 50+ 条规则
-# 设计原则：
-#   1. 优先匹配更具体的结构（放在前面）
-#   2. 覆盖常见药物化学键连方式
-#   3. 反应物应为商业可得的简单分子
-# ======================================================================
-
-RETRO_RULES = [
-    # ------------------- 磺酰胺类 -------------------
-    ("[S](=[O])(=[O])[N;!H0]", "[c:1][S](=[O])(=[O])[N:2]>>[c:1][S](=[O])(=[O])Cl.[N:2]"),
-    ("[S](=[O])(=[O])[N;H0]", "[c:1][S](=[O])(=[O])[N:2]>>[c:1][S](=[O])(=[O])Cl.[N:2]"),
-    # N-烷基磺酰胺
-    ("[S](=[O])(=[O])[N]([C])", "[c:1][S](=[O])(=[O])[N:2]>>[c:1][S](=[O])(=[O])Cl.[N:2]"),
-    
-    # ------------------- 酰胺类 -------------------
-    ("[C](=[O])[N;!H0]", "[C:1](=[O])[N:2]>>[C:1](=O)O.[N:2]"),
-    ("[C](=[O])[N;H0]", "[C:1](=[O])[N:2]>>[C:1](=O)O.[N:2]"),
-    
-    # ------------------- 酯类 -------------------
-    ("[C](=[O])O[!H0]", "[C:1](=[O])O[!H0:2]>>[C:1](=O)O.[O:2]"),
-    
-    # ------------------- 硫酯类 -------------------
-    ("[C](=[O])S[!H0]", "[C:1](=[O])S:2>>[C:1](=O)O.[S:2]"),
-    
-    # ------------------- 芳基醚 / 烷基醚 -------------------
-    ("[c]O[#6;!c]", "[c:1]O[#6;!c:2]>>[c:1]O.[C:2]Cl"),
-    ("[#6;!c]O[#6;!c]", "[#6;!c:1]O[#6;!c:2]>>[#6;!c:1]O.[#6;!c:2]Cl"),
-    
-    # ------------------- 胺类 -------------------
-    # 仲胺 — 还原胺化逆反应
-    ("[NX3;H1;!$(NC=O);!$(NS(=O)=O)]", "[C:1][N;H1:2][C:3]>>[C:1][N;H2:2].[C:3]=O"),
-    # 叔胺 — 烷基化逆反应
-    ("[NX3;H0;!$(NC=O);!$(NS(=O)=O)]", "[C:1][N:2][C:3]>>[C:1][N:2].[C:3]Cl"),
-    # 芳基仲胺 — Buchwald-Hartwig 简化
-    ("[c][NX3;H1]", "[c:1][N:2]>>[c:1]Br.[N:2]"),
-    # 芳基叔胺
-    ("[c][NX3;H0]", "[c:1][N:2]>>[c:1]Br.[N:2]"),
-    
-    # ------------------- 脲类 -------------------
-    ("[N;!H0]C(=O)[N;!H0]", "[N:1]C(=O)[N:2]>>[N:1].O=C=N[N:2]"),
-    
-    # ------------------- 氨基甲酸酯 -------------------
-    ("[N;!H0]C(=O)O", "[N:1]C(=O)O>>[N:1].O=C=O"),
-    
-    # ------------------- 硝基还原 -------------------
-    ("[N+](=O)[O-]", "[N+](=O)[O-]>>N"),
-    
-    # ------------------- 卤代芳烃 -------------------
-    # 芳基氟 — 亲核芳香取代逆反应
-    ("[c]F", "[c:1]F>>[c:1]Cl.F"),
-    # 芳基氯
-    ("[c]Cl", "[c:1]Cl>>[c:1]O.Cl"),
-    # 芳基溴
-    ("[c]Br", "[c:1]Br>>[c:1]O.Br"),
-    # 芳基碘
-    ("[c]I", "[c:1]I>>[c:1]O.I"),
-    
-    # ------------------- 酮 / 醛 -------------------
-    # 芳基酮 — Friedel-Crafts 酰化逆反应
-    ("[c]C(=O)[C;!c]", "[c:1]C(=O)[C:2]>>[c:1].[C:2]C(=O)Cl"),
-    # 二芳基酮
-    ("[c]C(=O)[c]", "[c:1]C(=O)[c:2]>>[c:1].[c:2]C(=O)Cl"),
-    # 醛
-    ("[CX3H1](=O)", "[C:1](=O)>>[C:1]O"),
-    
-    # ------------------- 醇类 -------------------
-    # 苄醇 — 还原逆反应
-    ("[c]C[OH]", "[c:1]C[OH]>>[c:1]C(=O)O"),
-    # 普通醇 — 水解逆反应（酯/环氧）
-    ("[C;!c][OH]", "[C:1][OH]>>[C:1]Cl.O"),
-    
-    # ------------------- 腈类 -------------------
-    ("[C]#N", "[C:1]#N>>[C:1](=O)O.N"),
-    
-    # ------------------- 杂环合成 -------------------
-    # 噻唑 — Hantzsch 噻唑合成逆反应
-    ("c1ncsc1", "c1ncsc1>>N.CS.C=O"),
-    # 咪唑
-    ("c1[nH]cnc1", "c1[nH]cnc1>>N.C=O.N"),
-    # 噁唑
-    ("c1ncoc1", "c1ncoc1>>N.C=O.O"),
-    # 吡啶（简化：从1,5-二羰基化合物）
-    ("c1ccncc1", "c1ccncc1>>O=C1CCCC(=O)C1.N"),
-    # 嘧啶
-    ("c1cncnc1", "c1cncnc1>>N.C=O.N.C=O"),
-    # 吡唑
-    ("c1cn[nH]c1", "c1cn[nH]c1>>N.N.C=O"),
-    # 三唑
-    ("c1n[nH]nn1", "c1n[nH]nn1>>N.N.N"),
-    # 苯并噻二唑
-    ("c1ccc2nsnc2c1", "c1ccc2nsnc2c1>>Nc1ccccc1N.S"),
-    
-    # ------------------- 缩合反应 -------------------
-    # 烯烃 — Wittig / 羟醛缩合逆反应
-    ("[C]=[C]", "[C:1]=[C:2]>>[C:1]C=O.[C:2]P"),
-    # 亚胺 / 席夫碱
-    ("[C]=[N]", "[C:1]=[N:2]>>[C:1]=O.[N:2]"),
-    
-    # ------------------- 硫醚 / 硫醇 -------------------
-    ("[c]S[!H0]", "[c:1][S:2]>>[c:1]Br.[S:2]"),
-    ("[C;!c]S[C;!c]", "[C:1][S:2]>>[C:1]Cl.[S:2]"),
-    
-    # ------------------- 重氮 / 叠氮 -------------------
-    ("[N]=[N]", "[N:1]=[N:2]>>[N:1].[N:2]"),
-    
-    # ------------------- 酰亚胺 -------------------
-    ("[C](=O)[N][C](=O)", "[C:1](=O)[N:2][C:3](=O)>>[C:1](=O)O.[N:2].[C:3](=O)O"),
-    
-    # ------------------- 肟 / 腙 -------------------
-    ("[C]=[N][OH]", "[C:1]=[N:2][OH]>>[C:1]=O.[N:2]O"),
-    ("[C]=[N][N]", "[C:1]=[N:2][N:3]>>[C:1]=O.[N:2][N:3]"),
-    
-    # ------------------- 碳酸酯 -------------------
-    ("O=C(OC)OC", "O=C(OC)OC>>CO.O=C=O"),
-    
-    # ------------------- 缩醛/缩酮 -------------------
-    # 缩醛水解
-    ("C(OCC)OCC", "[C:1]([O:2][C:3])([O:4][C:5])>>[C:1]=O.[O:2][C:3].[O:4][C:5]"),
-    # 缩酮水解
-    ("C1OCCO1", "C1OCCO1>>C=O.OCCO"),
-    
-    # ------------------- 特殊稠环骨架 -------------------
-    # 5,10-二氢吩嗪类 — 逆合成到 2,2\'-二氨基联苯
-    ("c1ccc2c(c1)CNc1ccccc1N2", "c1ccc2c(c1)CNc1ccccc1N2>>Nc1ccccc1-c1ccccc1N"),
-    
-    # ------------------- 偶联反应 -------------------
-    # Suzuki偶联 — 芳基硼酸 + 芳基卤 → 联芳基
-    ("[c][B]([O])[c]", "[c:1][B:2]([O])[c:3]>>[c:1].[c:3]B(O)O.[c:3]Br"),
-    # Heck反应 — 芳基卤 + 烯烃 → 芳基烯烃
-    ("[c][C]=[C]", "[c:1][C:2]=[C:3]>>[c:1].[C:2]=[C:3].Br"),
-    # Sonogashira偶联 — 芳基卤 + 端炔 → 芳基炔
-    ("[c][C]#C", "[c:1][C:2]#C>>[c:1].[C:2]#C.Br"),
-    # Buchwald-Hartwig偶联 — 芳基卤 + 胺 → 芳胺
-    ("[c][N;!H0]", "[c:1][N:2]>>[c:1]Br.[N:2]"),
-    # Ullmann偶联 — 芳基卤 → 联芳基
-    ("[c][c]", "[c:1][c:2]>>[c:1]Br.[c:2]Br"),
-    # Negishi偶联 — 芳基锌 + 芳基卤 → 联芳基
-    ("[c][c]", "[c:1][c:2]>>[c:1]ZnBr.[c:2]Br"),
-    
-    # ------------------- 还原胺化 -------------------
-    # 还原胺化 — 醛/酮 + 胺 → 仲/叔胺
-    ("[C](=O)[N;!H0]", "[C:1](=O)[N:2]>>[C:1].[N:2]"),
-    
-    # ------------------- 亲核取代 -------------------
-    # SNAr — 芳基卤 + 亲核试剂 → 取代芳基
-    ("[c][F]", "[c:1][F:2]>>[c:1].[F:2]"),
-    ("[c][Cl]", "[c:1][Cl:2]>>[c:1].[Cl:2]"),
-    ("[c][Br]", "[c:1][Br:2]>>[c:1].[Br:2]"),
-    
-    # ------------------- 硝化与卤代 -------------------
-    # 硝化 — 芳烃 → 硝基芳烃
-    ("[c]N(=O)=O", "[c:1]N(=O)=O>>[c:1].HNO3"),
-    # 卤代 — 芳烃 → 卤代芳烃
-    ("[c]Cl", "[c:1]Cl>>[c:1].Cl2"),
-    ("[c]Br", "[c:1]Br>>[c:1].Br2"),
-    
-    # ------------------- 氧化与还原 -------------------
-    # 氧化 — 醇 → 醛/酮/酸
-    ("[C][OH]", "[C:1][OH]>>[C:1].O"),
-    # 还原 — 硝基 → 氨基
-    ("[N]([O])[O]", "[N:1]([O])[O]>>[N:1].H2"),
-    # 还原 — 酮 → 醇
-    ("[C](=O)[C]", "[C:1](=O)[C:2]>>[C:1].[C:2]"),
-    # N-氧化物还原
-    ("[n+]([O-])", "[n+:1]([O-:2])>>[n:1].O"),
-    # 亚砜还原
-    ("[S](=O)", "[S:1](=O)>>[S:1].O"),
-    # 砜还原（限芳基砜）
-    ("[c][S](=O)(=O)[c]", "[c:1][S:2](=O)(=O)[c:3]>>[c:1][S:2][c:3].O"),
-    
-    # ------------------- 脱保护反应 -------------------
-    # Boc脱保护
-    ("[N]([C](=O)[O])[C]", "[N:1]([C:2](=O)[O])[C:3]>>[N:1].[C:2](=O)O.[C:3]"),
-    # CBz脱保护
-    ("[N]([C](=O)[O])[C]", "[N:1]([C:2](=O)[O])[C:3]>>[N:1].[C:2](=O)O.[C:3]"),
-    
-    # ------------------- 缩合反应 -------------------
-    # Knoevenagel缩合 — 醛 + 活泼亚甲基 → 烯烃
-    ("[C]=[C][C]", "[C:1]=[C:2][C:3]>>[C:1]=O.[C:2]=[C:3]"),
-]
-
-
-def plan_synthesis_recursive(smiles: str, max_depth: int = 3, current_depth: int = 0, visited: set = None):
-    """递归多步逆合成规划（H003）。
+def plan_synthesis_recursive(smiles: str, max_depth: int = 3,
+                             current_depth: int = 0, visited: set = None):
+    """递归多步逆合成规划（H004 修复版）。
 
     对目标分子应用单步逆合成规则，然后对得到的反应物（中间体）
     递归调用逆合成规划，直到得到足够简单的起始原料或达到最大深度。
+
+    关键改进:
+    - 路线格式: 步骤之间用 "," 分隔（竞赛评分要求）
+    - 原子平衡: 每步反应物原子必须覆盖产物原子
+    - BRICS 碎片化: 作为 SMARTS 规则的可靠回退
 
     Args:
         smiles: 目标分子 SMILES
@@ -332,11 +325,18 @@ def plan_synthesis_recursive(smiles: str, max_depth: int = 3, current_depth: int
     if mol is None:
         return {"success": False, "error": "无效的 SMILES"}
 
-    # 尝试所有逆合成规则
+    # 尝试 SMARTS 逆合成规则
     for smarts_pattern, retro_smarts in RETRO_RULES:
         result = _run_retro_rule(mol, smarts_pattern, retro_smarts, smiles)
         if result:
             reactants = result.get("reactants", [])
+            # 验证: 至少有2个不同反应物才视为非平凡
+            if len(reactants) < 2:
+                continue
+            if len(set(reactants)) < 2:
+                # 两个反应物相同 → 可能是偶联反应，也算非平凡
+                pass
+
             # 对每个反应物递归规划
             sub_routes = []
             all_trivial = True
@@ -348,24 +348,17 @@ def plan_synthesis_recursive(smiles: str, max_depth: int = 3, current_depth: int
                         all_trivial = False
 
             # 构建完整路线：先放子路线（非平凡的），再放当前步
+            # 关键修复: 用 "," 分隔，不用 " | "
             full_parts = []
             for sub in sub_routes:
                 if not sub.get("trivial", False):
                     full_parts.append(sub["route"])
             full_parts.append(result["route"])
-            full_route = " | ".join(full_parts)
+            full_route = ",".join(full_parts)
 
             total_steps = result["steps"] + sum(s.get("steps", 0) for s in sub_routes)
-            # 当前步真正断了键（有2个不同反应物）=> 非平凡
-            is_trivial = (
-                (all_trivial and len(reactants) == 1 and reactants[0] == smiles)
-                or (all_trivial and len(reactants) == 2 and reactants[0] == smiles and reactants[1] == smiles)
-            )
-            # 如果是BRICS断裂（2个不同产物），标记为非平凡
-            if len(reactants) >= 2 and len(set(reactants)) >= 2:
-                is_trivial = False
-            if len(reactants) == 1 and not _is_simple_molecule(reactants[0]):
-                is_trivial = False
+            # 2个不同反应物 → 非平凡
+            is_trivial = len(reactants) < 2 or (len(reactants) == 2 and reactants[0] == reactants[1] and all_trivial)
 
             return {
                 "success": True,
@@ -374,60 +367,98 @@ def plan_synthesis_recursive(smiles: str, max_depth: int = 3, current_depth: int
                 "trivial": is_trivial,
             }
 
-    # 回退: 用 BRICS 碎片化尝试找断键
-    try:
-        frags = BRICS.BreakMol(mol)
-        if frags and len(frags) >= 2:
-            frag_smiles = []
-            for f in frags:
-                if f is None:
-                    continue
-                s = Chem.MolToSmiles(f)
-                if _validate_smiles(s):
-                    frag_smiles.append(s)
-            if len(frag_smiles) >= 2:
-                reactants = ".".join(sorted(frag_smiles)[:2])
-                route = _try_route(smiles, reactants)
-                if route:
-                    # 对 BRICS 碎片也尝试递归
-                    sub_routes = []
-                    all_trivial = True
-                    for r in frag_smiles[:2]:
-                        sub = plan_synthesis_recursive(r, max_depth, current_depth + 1, visited.copy())
-                        if sub.get("success"):
-                            sub_routes.append(sub)
-                            if not sub.get("trivial", False):
-                                all_trivial = False
-                    full_parts = []
-                    for sub in sub_routes:
-                        if not sub.get("trivial", False):
-                            full_parts.append(sub["route"])
-                    full_parts.append(route)
-                    full_route = " | ".join(full_parts)
-                    total_steps = 1 + sum(s.get("steps", 0) for s in sub_routes)
-                    return {
-                        "success": True,
-                        "route": full_route,
-                        "steps": total_steps,
-                        "trivial": False,
-                    }
-    except Exception:
-        pass
+    # 回退: 用 BRICS 碎片化
+    brics_results = _brics_fragment(smiles)
+    for r1, r2 in brics_results:
+        route = f"{r1}.{r2}>>{smiles}"
+        # 验证原子平衡（_brics_fragment 已验证，再次确认）
+        if not _check_atom_balance([r1, r2], smiles):
+            continue
 
-    # 最终回退: 平凡路线
+        # 递归规划碎片
+        sub_routes = []
+        all_trivial = True
+        for r in [r1, r2]:
+            sub = plan_synthesis_recursive(r, max_depth, current_depth + 1, visited.copy())
+            if sub.get("success"):
+                sub_routes.append(sub)
+                if not sub.get("trivial", False):
+                    all_trivial = False
+
+        # 关键修复: 用 "," 分隔
+        full_parts = []
+        for sub in sub_routes:
+            if not sub.get("trivial", False):
+                full_parts.append(sub["route"])
+        full_parts.append(route)
+        full_route = ",".join(full_parts)
+        total_steps = 1 + sum(s.get("steps", 0) for s in sub_routes)
+
+        return {
+            "success": True,
+            "route": full_route,
+            "steps": total_steps,
+            "trivial": False,
+        }
+
+    # 最终回退: 平凡路线（标记为 trivial）
     return {"success": True, "route": f"{smiles}>>{smiles}", "steps": 0, "trivial": True}
 
 
 def plan_synthesis_v2(smiles: str):
     """使用 SMARTS 断键规则规划合成路线。
 
-    改进点（H003）：
-    - 引入递归多步逆合成规划（plan_synthesis_recursive）
-    - 对中间体继续断键，直到得到简单起始原料
-    - 路线格式: 步骤之间用 " | " 分隔
+    H004 改进:
+    - 路线格式: 步骤之间用 "," 分隔（与竞赛评分系统一致）
+    - 原子平衡验证: 每步反应物原子数必须覆盖产物原子数
+    - 精简规则库: 只保留经过验证的可靠断键规则
+    - BRICS 回退: 作为 SMARTS 规则的可靠补充
 
-    文献依据：
-    - LARC (2025): 规则覆盖率是逆合成质量的关键
-    - ChemCrow (2024): 工具丰富度决定 Agent 能力边界
+    路线格式示例:
+    - 单步: reactant1.reactant2>>product
+    - 多步: intermediate_reactants>>intermediate,target_reactants>>target
     """
     return plan_synthesis_recursive(smiles, max_depth=3, current_depth=0)
+
+
+# ======================================================================
+# 测试代码
+# ======================================================================
+
+def _test_synthesis():
+    """测试逆合成规划模块。"""
+    test_molecules = [
+        # 酰胺: 苯甲酰哌啶
+        "c1ccccc1C(=O)N2CCCCC2",
+        # 磺酰胺: 苯磺酰哌啶
+        "c1ccccc1S(=O)(=O)N2CCCCC2",
+        # 酯: 乙酸苯酯
+        "CC(=O)Oc1ccccc1",
+        # 芳胺: 苯胺基哌啶
+        "c1ccccc1N2CCCCC2",
+        # 喹唑啉-哌嗪-酰胺 (之前出错的类型)
+        "c1ccc2ncncc2c1N3CCN(C(=O)c4ccc(Cl)c(F)c4)CC3",
+        # 简单分子 (应该停止递归)
+        "c1ccccc1",
+    ]
+
+    for smi in test_molecules:
+        result = plan_synthesis_v2(smi)
+        print(f"\nTarget: {smi}")
+        print(f"  Success: {result.get('success')}")
+        print(f"  Route: {result.get('route')}")
+        print(f"  Steps: {result.get('steps')}")
+        print(f"  Trivial: {result.get('trivial')}")
+
+        # 验证路线格式
+        route = result.get("route", "")
+        if " | " in route:
+            print("  ⚠️ WARNING: 路线仍使用 ' | ' 分隔符！")
+        if "," in route:
+            print("  ✅ 多步路线，使用 ',' 分隔符")
+        if ">>" not in route:
+            print("  ⚠️ WARNING: 路线缺少 '>>' 分隔符！")
+
+
+if __name__ == "__main__":
+    _test_synthesis()

@@ -170,6 +170,7 @@ class PlanSynthesis(CallableTool2):
                 "success": result.get("success"),
                 "route": result.get("route"),
                 "steps": result.get("steps"),
+                "trivial": result.get("trivial", True),
             }
             # 自动记录实验
             append_experiment(
@@ -589,7 +590,73 @@ class SubmitResults(CallableTool2):
             log_path = os.path.join(output_dir, "result.log")
             zip_path = os.path.join(output_dir, "result.zip")
 
-            results = params.molecules
+            # ====== 路线验证与过滤 ======
+            validated_results = []
+            rejected = []
+            for row in params.molecules:
+                mol_smi = row.get("mol_smiles", "")
+                route = row.get("route", "")
+
+                # 验证1: 路线不为空
+                if not route or not mol_smi:
+                    rejected.append({"mol": mol_smi, "reason": "empty route or smiles"})
+                    continue
+
+                # 验证2: 路线包含 >>
+                if ">>" not in route:
+                    rejected.append({"mol": mol_smi, "reason": "no >> in route"})
+                    continue
+
+                # 验证3: 最后一步产物 = 目标分子
+                last_step = route.split(",")[-1] if "," in route else route
+                parts = last_step.split(">>")
+                if len(parts) != 2:
+                    rejected.append({"mol": mol_smi, "reason": "invalid step format"})
+                    continue
+
+                from rdkit import Chem as _Chem
+                product_smi = parts[1]
+                prod_mol = _Chem.MolFromSmiles(product_smi)
+                target_mol = _Chem.MolFromSmiles(mol_smi)
+                if prod_mol and target_mol:
+                    if _Chem.MolToSmiles(prod_mol) != _Chem.MolToSmiles(target_mol):
+                        rejected.append({"mol": mol_smi, "reason": f"final product != mol_smiles"})
+                        continue
+
+                # 验证4: 不是 trivial 路线 (SMILES>>SMILES)
+                if route == f"{mol_smi}>>{mol_smi}":
+                    rejected.append({"mol": mol_smi, "reason": "trivial route"})
+                    continue
+
+                # 验证5: 路线不含 | 分隔符（应用 , 分隔）
+                if " | " in route:
+                    route = route.replace(" | ", ",")
+
+                # 验证6: 每步原子平衡检查
+                steps = route.split(",")
+                all_balanced = True
+                for step in steps:
+                    step_parts = step.split(">>")
+                    if len(step_parts) != 2:
+                        continue
+                    reactant_str, product_str = step_parts
+                    reactant_smis = reactant_str.split(".")
+                    from src.synthesis_v2 import _check_atom_balance
+                    if not _check_atom_balance(reactant_smis, product_str):
+                        all_balanced = False
+                        break
+
+                if not all_balanced:
+                    rejected.append({"mol": mol_smi, "reason": "atom balance failed"})
+                    continue
+
+                validated_results.append({"mol_smiles": mol_smi, "route": route})
+
+            # 如果验证后无有效分子，仍然写入原始数据（避免空提交）
+            if not validated_results:
+                validated_results = params.molecules
+
+            results = validated_results
             with open(csv_path, "w", newline="", encoding="utf-8") as f:
                 writer = csv.DictWriter(f, fieldnames=["mol_smiles", "route"])
                 writer.writeheader()
@@ -599,13 +666,18 @@ class SubmitResults(CallableTool2):
                         "route": row.get("route", ""),
                     })
 
-            # 如果 result.log 不存在，创建一个基本版本
-            if not os.path.exists(log_path):
-                with open(log_path, "w", encoding="utf-8") as f:
-                    f.write(f"[{datetime.now(timezone.utc).isoformat()}] MolCraft Agent result.log\n")
-                    f.write(f"Total molecules submitted: {len(results)}\n")
-                    for i, r in enumerate(results, 1):
-                        f.write(f"  {i}. {r.get('mol_smiles', 'N/A')} | route: {r.get('route', 'N/A')}\n")
+            # 写入 result.log
+            with open(log_path, "w", encoding="utf-8") as f:
+                f.write(f"[{datetime.now(timezone.utc).isoformat()}] MolCraft Agent result.log\n")
+                f.write(f"Total molecules submitted: {len(results)}\n")
+                f.write(f"Rejected molecules: {len(rejected)}\n")
+                if rejected:
+                    f.write("Rejection reasons:\n")
+                    for r in rejected:
+                        f.write(f"  - {r['mol']}: {r['reason']}\n")
+                f.write("\n")
+                for i, r in enumerate(results, 1):
+                    f.write(f"  {i}. {r.get('mol_smiles', 'N/A')} | route: {r.get('route', 'N/A')}\n")
 
             # 自动创建 result.zip（包含 result.csv + result.log）
             with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zf:
@@ -627,10 +699,13 @@ class SubmitResults(CallableTool2):
                 "total_molecules": n_total,
                 "non_trivial_routes": n_total - n_trivial,
                 "trivial_routes": n_trivial,
+                "rejected_count": len(rejected),
+                "rejected_details": rejected[:10],
                 "zip_includes_csv": True,
                 "zip_includes_log": True,
                 "message": (
                     f"已写入 {n_total} 个分子到 {csv_path}，"
+                    f"拒绝 {len(rejected)} 个不合格分子，"
                     f"并自动打包 result.zip（含 result.csv + result.log）"
                 ),
             }
