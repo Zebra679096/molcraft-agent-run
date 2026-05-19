@@ -14,23 +14,22 @@ agent:
     - "kimi_cli.tools.todo:SetTodoList"
     - "kimi_cli.tools.think:Think"
 
-    # MolCraft Agent 自定义化学工具
-    - "molcraft_agent.tools:GenerateMolecules"
+    # ⭐ LLM 设计分子工具（确保 llm_score > 0 的唯一分子生成途径）
+    - "molcraft_agent.tools:DesignMolecules"
+
+    # 评估与筛选工具（不生成分子，只验证LLM的设计）
     - "molcraft_agent.tools:DockMolecules"
     - "molcraft_agent.tools:PlanSynthesis"
     - "molcraft_agent.tools:EvaluateMolecule"
 
-    # 文献种子工具
+    # 文献种子工具（提供起点参考，不直接用于提交）
     - "molcraft_agent.tools:SeedFromLiterature"
 
-    # LLM 设计分子工具（确保 llm_score > 0 的关键工具）
-    - "molcraft_agent.tools:DesignMolecules"
-
-    # 进化搜索工具（LLM 决策参数，工具执行）
-    - "molcraft_agent.tools:RunEvolution"
-
-    # 结果提交工具
+    # 结果提交工具（自动打包 result.csv + result.log → result.zip）
     - "molcraft_agent.tools:SubmitResults"
 
-    # 迭代报告工具（Agent 主动报告迭代完成）
+    # 迭代报告工具
     - "molcraft_agent.tools:ReportIteration"
+
+    # ⚠️ 已移除 GenerateMolecules 和 RunEvolution —— 它们绕过LLM直接用RDKit生成分子，
+    #    导致 llm_score=0，总分归零。所有分子必须由LLM通过 design_molecules 工具设计。

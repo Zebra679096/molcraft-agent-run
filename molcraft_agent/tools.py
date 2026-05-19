@@ -577,6 +577,8 @@ class SubmitResults(CallableTool2):
     params: type[BaseModel] = SubmitResultsParams
 
     async def __call__(self, params: SubmitResultsParams) -> ToolReturnValue:
+        import zipfile
+
         try:
             output_dir = os.path.join(
                 os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
@@ -584,6 +586,8 @@ class SubmitResults(CallableTool2):
             )
             os.makedirs(output_dir, exist_ok=True)
             csv_path = os.path.join(output_dir, "result.csv")
+            log_path = os.path.join(output_dir, "result.log")
+            zip_path = os.path.join(output_dir, "result.zip")
 
             results = params.molecules
             with open(csv_path, "w", newline="", encoding="utf-8") as f:
@@ -595,6 +599,19 @@ class SubmitResults(CallableTool2):
                         "route": row.get("route", ""),
                     })
 
+            # 如果 result.log 不存在，创建一个基本版本
+            if not os.path.exists(log_path):
+                with open(log_path, "w", encoding="utf-8") as f:
+                    f.write(f"[{datetime.now(timezone.utc).isoformat()}] MolCraft Agent result.log\n")
+                    f.write(f"Total molecules submitted: {len(results)}\n")
+                    for i, r in enumerate(results, 1):
+                        f.write(f"  {i}. {r.get('mol_smiles', 'N/A')} | route: {r.get('route', 'N/A')}\n")
+
+            # 自动创建 result.zip（包含 result.csv + result.log）
+            with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zf:
+                zf.write(csv_path, "result.csv")
+                zf.write(log_path, "result.log")
+
             # 统计
             n_total = len(results)
             n_trivial = sum(
@@ -605,10 +622,17 @@ class SubmitResults(CallableTool2):
             output = {
                 "status": "success",
                 "csv_path": csv_path,
+                "log_path": log_path,
+                "zip_path": zip_path,
                 "total_molecules": n_total,
                 "non_trivial_routes": n_total - n_trivial,
                 "trivial_routes": n_trivial,
-                "message": f"已写入 {n_total} 个分子到 {csv_path}",
+                "zip_includes_csv": True,
+                "zip_includes_log": True,
+                "message": (
+                    f"已写入 {n_total} 个分子到 {csv_path}，"
+                    f"并自动打包 result.zip（含 result.csv + result.log）"
+                ),
             }
 
             append_experiment(
