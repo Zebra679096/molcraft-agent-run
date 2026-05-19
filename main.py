@@ -141,8 +141,8 @@ async def main() -> None:
     parser.add_argument(
         "--model",
         type=str,
-        default="deepseek-chat",
-        help="LLM 模型名称。默认 deepseek-chat。",
+        default="deepseek-v4-flash",
+        help="LLM 模型名称。默认 deepseek-v4-flash（1M上下文）。",
     )
     args = parser.parse_args()
 

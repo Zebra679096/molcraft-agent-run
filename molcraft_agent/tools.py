@@ -3,12 +3,17 @@
 这些工具封装了分子生成、对接、评估和逆合成能力，
 供 Kimi CLI Agent 通过 tool_calls 自主调用。
 
+核心原则：所有分子生成都必须经过 LLM 决策（tool call），
+确保 llm_score > 0。绝不在 Python 端绕过 LLM 直接生成分子。
+
 每次工具调用后自动记录到 experiments.jsonl。
 """
 import asyncio
+import csv
 import json
 import os
 import sys
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -20,9 +25,10 @@ from kimi_agent_sdk import CallableTool2, ToolError, ToolOk, ToolReturnValue
 from generator import generate_molecules
 from docking import batch_dock
 from synthesis_v2 import plan_synthesis_v2
-from evaluator import evaluate_molecule
+from evaluator import evaluate_molecule, passes_filters
 from receptor import prepare_receptor
 from literature_seeds import generate_literature_seeds
+from evolution import run_evolution, refine_top_molecules
 from molcraft_agent.experiments import (
     append_experiment,
     get_latest_round,
@@ -330,4 +336,291 @@ class SeedFromLiterature(CallableTool2):
                 output="",
                 message=str(exc),
                 brief="文献种子生成失败",
+            )
+
+
+# ============================================================
+# LLM 设计分子工具（确保 llm_score > 0 的关键工具）
+# ============================================================
+
+
+class DesignMoleculesParams(BaseModel):
+    smiles_list: list[str] = Field(
+        description=(
+            "你设计的分子 SMILES 列表。每个 SMILES 应该是你基于化学知识"
+            "设计的全新分子，不是从其他工具复制来的。"
+            "建议每次设计 5-15 个分子。"
+        ),
+    )
+    design_rationale: str = Field(
+        default="",
+        description="你的设计思路说明（如：基于XX骨架添加YY药效团，期望改善ZZ性质）",
+    )
+
+
+class DesignMolecules(CallableTool2):
+    name: str = "design_molecules"
+    description: str = (
+        "验证并评估你设计的候选药物分子。你提供 SMILES 列表，工具验证其化学有效性、"
+        "计算 QED/SA/MW/LogP 等性质，并过滤掉不合格的分子。"
+        "这个工具确保分子是你（LLM）设计的，而非 RDKit 随机生成的，对 llm_score 至关重要。"
+        "运行时间约 2-10 秒。"
+    )
+    params: type[BaseModel] = DesignMoleculesParams
+
+    async def __call__(self, params: DesignMoleculesParams) -> ToolReturnValue:
+        try:
+            valid_mols = []
+            invalid_mols = []
+            filtered_mols = []
+
+            for smi in params.smiles_list:
+                props = await asyncio.to_thread(evaluate_molecule, smi)
+                if not props.get("valid"):
+                    invalid_mols.append({"smiles": smi, "error": props.get("error", "无效SMILES")})
+                    continue
+                if passes_filters(props, max_sa=6.0):
+                    valid_mols.append({
+                        "smiles": props["smiles"],
+                        "qed": props["qed"],
+                        "mw": props["mw"],
+                        "logp": props["logp"],
+                        "tpsa": props.get("tpsa", 0),
+                        "sa_score": props["sa_score"],
+                        "lipinski_pass": props.get("lipinski_pass", False),
+                        "source": "llm_designed",
+                    })
+                else:
+                    filtered_mols.append({
+                        "smiles": props["smiles"],
+                        "reason": f"QED={props['qed']:.3f}(<0.3)" if props['qed'] < 0.3
+                                  else f"SA={props['sa_score']:.1f}(>6.0)" if props['sa_score'] > 6.0
+                                  else f"MW={props['mw']:.0f}(out of range)",
+                    })
+
+            result = {
+                "submitted": len(params.smiles_list),
+                "valid_and_passed": len(valid_mols),
+                "valid_but_filtered": len(filtered_mols),
+                "invalid_smiles": len(invalid_mols),
+                "molecules": valid_mols,
+                "filtered": filtered_mols,
+                "invalid": invalid_mols,
+                "design_rationale": params.design_rationale,
+            }
+
+            append_experiment(
+                tool="design_molecules",
+                round_num=get_latest_round() + 1,
+                params={"n": len(params.smiles_list), "rationale": params.design_rationale},
+                result={
+                    "valid": len(valid_mols),
+                    "filtered": len(filtered_mols),
+                    "invalid": len(invalid_mols),
+                },
+            )
+            return ToolOk(output=json.dumps(result, ensure_ascii=False))
+        except Exception as exc:
+            return ToolError(
+                output="",
+                message=str(exc),
+                brief="分子设计验证失败",
+            )
+
+
+# ============================================================
+# 进化搜索工具（LLM 决策，工具执行）
+# ============================================================
+
+
+class RunEvolutionParams(BaseModel):
+    seed_smiles: list[str] = Field(
+        description=(
+            "种子分子 SMILES 列表。可以是文献骨架、你设计的分子、"
+            "或之前对接结果中的优秀分子。"
+        ),
+    )
+    n_generations: int = Field(
+        default=5,
+        description="进化代数，建议 3-8。代数越多搜索越充分，但耗时更长。",
+    )
+    pop_size: int = Field(
+        default=20,
+        description="每代种群大小，建议 15-30",
+    )
+    w_binding: float = Field(
+        default=0.5,
+        description="结合能权重，0-1之间。越高越侧重结合能优化。",
+    )
+    w_qed: float = Field(
+        default=0.3,
+        description="QED权重，0-1之间。越高越侧重药物相似性。",
+    )
+    w_sa: float = Field(
+        default=0.2,
+        description="SA权重，0-1之间。越高越侧重合成可及性。",
+    )
+
+
+class RunEvolution(CallableTool2):
+    name: str = "run_evolution"
+    description: str = (
+        "运行进化搜索引擎：基于你提供的种子分子，通过多代进化搜索化学空间。"
+        "每代包含精英保留、探索和变异，结合对接打分作为适应度。"
+        "运行时间较长（3-10分钟），适合在确定种子方向后使用。"
+        "返回进化后的分子列表（按综合适应度排序）。"
+    )
+    params: type[BaseModel] = RunEvolutionParams
+
+    async def __call__(self, params: RunEvolutionParams) -> ToolReturnValue:
+        try:
+            evolved = await asyncio.to_thread(
+                run_evolution,
+                seed_smiles=params.seed_smiles,
+                n_generations=params.n_generations,
+                pop_size=params.pop_size,
+                n_elite=max(2, params.pop_size // 5),
+                n_explore=max(3, params.pop_size // 4),
+                w_binding=params.w_binding,
+                w_qed=params.w_qed,
+                w_sa=params.w_sa,
+                verbose=True,
+            )
+
+            # 取 top 分子进行精修
+            top_n = min(10, len(evolved))
+            refined = []
+            if top_n > 0:
+                refined = await asyncio.to_thread(
+                    refine_top_molecules,
+                    top_molecules=evolved[:top_n],
+                    n_refine_rounds=2,
+                    n_offspring_per_seed=3,
+                    verbose=True,
+                )
+
+            # 合并结果
+            all_mols = evolved + refined
+            seen = set()
+            unique = []
+            for m in all_mols:
+                smi = m.get("smiles", "")
+                if smi and smi not in seen:
+                    seen.add(smi)
+                    unique.append(m)
+
+            # 格式化输出（只返回关键字段）
+            top_molecules = []
+            for m in unique[:30]:  # 最多返回30个
+                top_molecules.append({
+                    "smiles": m.get("smiles", ""),
+                    "binding_energy": m.get("binding_energy"),
+                    "qed": m.get("qed"),
+                    "sa_score": m.get("sa_score"),
+                    "fitness": m.get("fitness"),
+                    "generation": m.get("generation"),
+                    "source": m.get("source", ""),
+                })
+
+            result = {
+                "total_molecules": len(unique),
+                "evolved_count": len(evolved),
+                "refined_count": len(refined),
+                "top_molecules": top_molecules,
+            }
+
+            append_experiment(
+                tool="run_evolution",
+                round_num=get_latest_round() + 1,
+                params={
+                    "n_seeds": len(params.seed_smiles),
+                    "n_generations": params.n_generations,
+                    "pop_size": params.pop_size,
+                },
+                result={
+                    "total": len(unique),
+                    "best_be": unique[0].get("binding_energy") if unique else None,
+                    "best_qed": unique[0].get("qed") if unique else None,
+                },
+            )
+            return ToolOk(output=json.dumps(result, ensure_ascii=False))
+        except Exception as exc:
+            return ToolError(
+                output="",
+                message=str(exc),
+                brief="进化搜索失败",
+            )
+
+
+# ============================================================
+# 生成并提交最终结果工具
+# ============================================================
+
+
+class SubmitResultsParams(BaseModel):
+    molecules: list[dict] = Field(
+        description=(
+            "最终提交的分子列表，每个元素包含 mol_smiles 和 route 字段。"
+            "route 格式为 SMILES>>SMILES (逆合成路线)。"
+            "建议提交 10-25 个分子。"
+        ),
+    )
+
+
+class SubmitResults(CallableTool2):
+    name: str = "submit_results"
+    description: str = (
+        "生成最终的 result.csv 文件。你提供分子列表和逆合成路线，"
+        "工具写入 output/result.csv。"
+        "这是最后一步：确保所有分子都经过 LLM 设计/选择，且有非trivial路线。"
+    )
+    params: type[BaseModel] = SubmitResultsParams
+
+    async def __call__(self, params: SubmitResultsParams) -> ToolReturnValue:
+        try:
+            output_dir = os.path.join(
+                os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                "output",
+            )
+            os.makedirs(output_dir, exist_ok=True)
+            csv_path = os.path.join(output_dir, "result.csv")
+
+            results = params.molecules
+            with open(csv_path, "w", newline="", encoding="utf-8") as f:
+                writer = csv.DictWriter(f, fieldnames=["mol_smiles", "route"])
+                writer.writeheader()
+                for row in results:
+                    writer.writerow({
+                        "mol_smiles": row.get("mol_smiles", ""),
+                        "route": row.get("route", ""),
+                    })
+
+            # 统计
+            n_total = len(results)
+            n_trivial = sum(
+                1 for r in results
+                if r.get("route", "") == f"{r.get('mol_smiles', '')}>>{r.get('mol_smiles', '')}"
+            )
+
+            output = {
+                "status": "success",
+                "csv_path": csv_path,
+                "total_molecules": n_total,
+                "non_trivial_routes": n_total - n_trivial,
+                "trivial_routes": n_trivial,
+                "message": f"已写入 {n_total} 个分子到 {csv_path}",
+            }
+
+            append_experiment(
+                tool="submit_results",
+                round_num=get_latest_round(),
+                params={"n_molecules": n_total},
+                result={"non_trivial": n_total - n_trivial, "trivial": n_trivial},
+            )
+            return ToolOk(output=json.dumps(output, ensure_ascii=False))
+        except Exception as exc:
+            return ToolError(
+                output="",
+                message=str(exc),
+                brief="结果提交失败",
             )

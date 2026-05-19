@@ -20,8 +20,17 @@ agent:
     - "molcraft_agent.tools:PlanSynthesis"
     - "molcraft_agent.tools:EvaluateMolecule"
 
-    # 文献种子工具（辅助4阶段研究闭环）
+    # 文献种子工具
     - "molcraft_agent.tools:SeedFromLiterature"
+
+    # LLM 设计分子工具（确保 llm_score > 0 的关键工具）
+    - "molcraft_agent.tools:DesignMolecules"
+
+    # 进化搜索工具（LLM 决策参数，工具执行）
+    - "molcraft_agent.tools:RunEvolution"
+
+    # 结果提交工具
+    - "molcraft_agent.tools:SubmitResults"
 
     # 迭代报告工具（Agent 主动报告迭代完成）
     - "molcraft_agent.tools:ReportIteration"
