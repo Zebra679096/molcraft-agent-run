@@ -126,6 +126,8 @@ RETRO_RULES = [
     # ------------------- 磺酰胺类 -------------------
     ("[S](=[O])(=[O])[N;!H0]", "[c:1][S](=[O])(=[O])[N:2]>>[c:1][S](=[O])(=[O])Cl.[N:2]"),
     ("[S](=[O])(=[O])[N;H0]", "[c:1][S](=[O])(=[O])[N:2]>>[c:1][S](=[O])(=[O])Cl.[N:2]"),
+    # N-烷基磺酰胺
+    ("[S](=[O])(=[O])[N]([C])", "[c:1][S](=[O])(=[O])[N:2]>>[c:1][S](=[O])(=[O])Cl.[N:2]"),
     
     # ------------------- 酰胺类 -------------------
     ("[C](=[O])[N;!H0]", "[C:1](=[O])[N:2]>>[C:1](=O)O.[N:2]"),
@@ -198,6 +200,12 @@ RETRO_RULES = [
     ("c1ccncc1", "c1ccncc1>>O=C1CCCC(=O)C1.N"),
     # 嘧啶
     ("c1cncnc1", "c1cncnc1>>N.C=O.N.C=O"),
+    # 吡唑
+    ("c1cn[nH]c1", "c1cn[nH]c1>>N.N.C=O"),
+    # 三唑
+    ("c1n[nH]nn1", "c1n[nH]nn1>>N.N.N"),
+    # 苯并噻二唑
+    ("c1ccc2nsnc2c1", "c1ccc2nsnc2c1>>Nc1ccccc1N.S"),
     
     # ------------------- 缩合反应 -------------------
     # 烯烃 — Wittig / 羟醛缩合逆反应
@@ -222,6 +230,12 @@ RETRO_RULES = [
     # ------------------- 碳酸酯 -------------------
     ("O=C(OC)OC", "O=C(OC)OC>>CO.O=C=O"),
     
+    # ------------------- 缩醛/缩酮 -------------------
+    # 缩醛水解
+    ("C(OCC)OCC", "[C:1]([O:2][C:3])([O:4][C:5])>>[C:1]=O.[O:2][C:3].[O:4][C:5]"),
+    # 缩酮水解
+    ("C1OCCO1", "C1OCCO1>>C=O.OCCO"),
+    
     # ------------------- 特殊稠环骨架 -------------------
     # 5,10-二氢吩嗪类 — 逆合成到 2,2\'-二氨基联苯
     ("c1ccc2c(c1)CNc1ccccc1N2", "c1ccc2c(c1)CNc1ccccc1N2>>Nc1ccccc1-c1ccccc1N"),
@@ -237,6 +251,8 @@ RETRO_RULES = [
     ("[c][N;!H0]", "[c:1][N:2]>>[c:1]Br.[N:2]"),
     # Ullmann偶联 — 芳基卤 → 联芳基
     ("[c][c]", "[c:1][c:2]>>[c:1]Br.[c:2]Br"),
+    # Negishi偶联 — 芳基锌 + 芳基卤 → 联芳基
+    ("[c][c]", "[c:1][c:2]>>[c:1]ZnBr.[c:2]Br"),
     
     # ------------------- 还原胺化 -------------------
     # 还原胺化 — 醛/酮 + 胺 → 仲/叔胺
@@ -262,6 +278,12 @@ RETRO_RULES = [
     ("[N]([O])[O]", "[N:1]([O])[O]>>[N:1].H2"),
     # 还原 — 酮 → 醇
     ("[C](=O)[C]", "[C:1](=O)[C:2]>>[C:1].[C:2]"),
+    # N-氧化物还原
+    ("[n+]([O-])", "[n+:1]([O-:2])>>[n:1].O"),
+    # 亚砜还原
+    ("[S](=O)", "[S:1](=O)>>[S:1].O"),
+    # 砜还原（限芳基砜）
+    ("[c][S](=O)(=O)[c]", "[c:1][S:2](=O)(=O)[c:3]>>[c:1][S:2][c:3].O"),
     
     # ------------------- 脱保护反应 -------------------
     # Boc脱保护
@@ -334,7 +356,16 @@ def plan_synthesis_recursive(smiles: str, max_depth: int = 3, current_depth: int
             full_route = " | ".join(full_parts)
 
             total_steps = result["steps"] + sum(s.get("steps", 0) for s in sub_routes)
-            is_trivial = all_trivial and len(reactants) == 1 and reactants[0] == smiles
+            # 当前步真正断了键（有2个不同反应物）=> 非平凡
+            is_trivial = (
+                (all_trivial and len(reactants) == 1 and reactants[0] == smiles)
+                or (all_trivial and len(reactants) == 2 and reactants[0] == smiles and reactants[1] == smiles)
+            )
+            # 如果是BRICS断裂（2个不同产物），标记为非平凡
+            if len(reactants) >= 2 and len(set(reactants)) >= 2:
+                is_trivial = False
+            if len(reactants) == 1 and not _is_simple_molecule(reactants[0]):
+                is_trivial = False
 
             return {
                 "success": True,
