@@ -138,6 +138,12 @@ async def main() -> None:
         default=1000,
         help="每轮最大步数。默认 1000 步。",
     )
+    parser.add_argument(
+        "--model",
+        type=str,
+        default="deepseek-chat",
+        help="LLM 模型名称。默认 deepseek-chat。",
+    )
     args = parser.parse_args()
 
     program = load_program()
@@ -174,6 +180,7 @@ async def main() -> None:
             program,
             agent_file=AGENT_YAML,
             yolo=True,
+            model=args.model,
             max_steps_per_turn=args.max_steps,
         ):
             if stop_event.is_set():

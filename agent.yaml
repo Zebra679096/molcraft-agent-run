@@ -20,10 +20,8 @@ agent:
     - "molcraft_agent.tools:PlanSynthesis"
     - "molcraft_agent.tools:EvaluateMolecule"
 
-    # 进化搜索工具（混合方案核心）
+    # 文献种子工具（辅助4阶段研究闭环）
     - "molcraft_agent.tools:SeedFromLiterature"
-    - "molcraft_agent.tools:EvolveMolecules"
-    - "molcraft_agent.tools:RefineMolecules"
 
     # 迭代报告工具（Agent 主动报告迭代完成）
     - "molcraft_agent.tools:ReportIteration"

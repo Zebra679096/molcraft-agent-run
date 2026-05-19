@@ -1,71 +1,26 @@
-# MolCraft Agent 诊断报告 - 第1轮
+# Diagnosis - Round 1
 
-## 瓶颈分析
+## Hypothesis H001: Improve Retro-Synthesis Route Quality by Expanding RETRO_RULES
 
-### 瓶颈1: 逆合成规则不足
-**问题描述**: 
-- 原始规则库仅有8条规则，覆盖的化学反应类型有限
-- 导致合成路线多样性不足，优化空间受限
-- 部分常见化学反应类型无法识别和规划
+### Observation
+The synthesis_v2.py module has 50+ retro rules, but analysis of the trivial route behavior in `plan_synthesis_recursive` shows that:
+1. When a molecule cannot be matched by any retro rule, it falls back to a trivial route (`{smiles}>>{smiles}`)
+2. The BRICS fallback often produces fragments that are themselves treated as trivial
+3. Many complex molecules that could be broken down with additional rules end up with trivial routes
 
-**根本原因**:
-- 规则库构建初期主要关注基础反应类型
-- 缺乏对复杂反应和特殊反应类型的收集
-- 规则验证和测试不够充分
+### Proposed Improvement
+Expand the RETRO_RULES in `synthesis_v2.py` to add more specific reaction types that cover:
+- **Suzuki coupling** (biaryl formation): Already has one rule but can be improved
+- **C-N coupling** (Buchwald-Hartwig): Already present but patterns can be refined
+- **Ether cleavage** and **reductive amination**: Better SMARTS patterns
+- **Nitrile hydrolysis**: Already present
+- **More heterocycle synthesis rules**: Expanded thiazole, imidazole, oxazole patterns
 
-**改进方案**:
-- 扩充逆合成规则库从8条增加到58条
-- 新增涵盖酰胺、磺酰胺、酯、醚等多种反应类型
-- 增加反应条件优化和副产物控制规则
+### Expected Impact
+- **Trivial route ratio**: Reduce from estimated ~40% to ~20%
+- **Route score**: Increase by ~15-20% (routes are a major scoring component)
+- **Total score**: Moderate improvement through route_score (30% weight)
 
-**实施状态**: ✅ 已完成
-
-### 瓶颈2: 进化代数不够
-**问题描述**:
-- 原始pipeline仅进行2代进化迭代
-- 优化时间不足，难以充分探索化学空间
-- 容易陷入局部最优，错过更好的分子结构
-
-**根本原因**:
-- 计算资源限制考虑
-- 对进化算法收敛性估计不足
-- 缺乏多代优化的效果验证
-
-**改进方案**:
-- 将进化代数从2代增加到3代
-- 优化种群大小和变异策略
-- 增加收敛性监测机制
-
-**实施状态**: ✅ 已完成
-
-### 瓶颈3: 缺少对接引导
-**问题描述**:
-- 原始生成过程缺乏生物活性导向
-- 无法有效优化与靶点的结合能
-- 分子设计盲目性较大
-
-**根本原因**:
-- 缺少分子对接能力集成
-- 没有建立生物活性预测机制
-- 生成目标不够明确和具体
-
-**改进方案**:
-- 添加docking_guidance生成模式
-- 集成分子对接计算功能
-- 建立结合能优化目标函数
-
-**实施状态**: ✅ 已完成
-
-## 改进效果预期
-
-基于上述三个主要瓶颈的改进，预期将显著提升MolCraft Agent的分子设计能力：
-1. 合成路线规划能力大幅提升
-2. 优化效果更加全面和深入
-3. 生物活性导向设计更加精准
-
-## 后续监测指标
-
-- 结合能改善程度
-- 合成路线多样性
-- 计算效率变化
-- 成功率提升情况
+### Risk Assessment
+- Low risk: Adding more retro rules cannot cause errors, only additional matching opportunities
+- If rules are too aggressive, some may not produce chem valid intermediates → gracefully handled by validation

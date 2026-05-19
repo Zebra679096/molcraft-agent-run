@@ -1,44 +1,36 @@
-# MolCraft Agent 文献分析报告 - 第1轮
+# Literature Analysis - Round 1
 
-## 相关研究综述
+## Summary of Papers
 
-### ChemCrow (2024)
-- **核心特点**: 集成18个化学工具，形成完整的化学工作流
-- **技术亮点**: 工具丰富度决定Agent能力，通过多工具协同解决复杂化学问题
-- **启示**: 工具集成度和工作流设计是化学Agent能力的关键决定因素
+### Paper 1: Deep Lead Optimization (JACS)
+- **Core concept**: Lead optimization has 4 subtasks: scaffold hopping, linker design, fragment replacement, and side-chain decoration
+- **Key strategies for molcraft**:
+  - Scaffold hopping: Keep 3D shape similarity while changing 2D scaffold → avoid patent constraints while maintaining activity
+  - Side-chain decoration: Keep active scaffold, optimize side chains
+  - Molecular decomposition: BM scaffold decomposition, RECAP/BRICS fragmentation, MMP pairing
+  - Key constraints: QED (drug-likeness), SAScore (synthesizability), 3D similarity
+  - Reinforcement learning: Use RL to control QED, SA, LogP (DRLinker success rate >90%)
 
-### LARC (2025)
-- **核心特点**: Agent-as-a-Judge逆合成框架
-- **技术亮点**: 采用评判式方法指导逆合成路径规划，提高合成路线质量
-- **启示**: 智能评判机制对提升合成路线优化效果显著
+### Paper 2: Coscientist (Nature)
+- **Core concept**: Multi-LLM collaborative agent system with Planner, Web Searcher, Docs Searcher, Code Execution modules
+- **Key strategies for molcraft**:
+  - Agent architecture: Planner coordinates specialized modules with clear responsibilities
+  - Self-correction: Agent can auto-fix based on code execution errors
+  - Document vector retrieval: Use vector search for API documentation (max 7800 tokens)
+  - Safety mechanism: Reject synthesis of known hazardous substances
 
-### MOOSE-Chem (2025)
-- **核心特点**: 进化算法导航组合化学空间
-- **技术亮点**: 通过进化策略探索分子空间，平衡多样性和优化目标
-- **启示**: 进化式迭代是探索复杂化学空间的有效方法
+### Paper 3: Autonomous Agents for Scientific Discovery (Review)
+- **Core concept**: Three-stage framework: Hypothesis Discovery → Experiment Design & Execution → Result Analysis & Refinement
+- **Key strategies for molcraft**:
+  - Information entropy framework: Scientific discovery progresses from high entropy (uncertainty) to low entropy (verifiability)
+  - Tool use taxonomy: RAG planning, template predefinition, post-execution feedback, toolbox, reflective iterative
+  - Self-correction: Agent auto-adjusts hypotheses based on experimental results
+  - Multi-agent collaboration: Multiple agents simulate research team, collective intelligence > single agent
 
-### Coscientist (2023)
-- **核心特点**: 基于实验结果的迭代反思机制
-- **技术亮点**: 将实验反馈纳入优化循环，实现持续改进
-- **启示**: 实验验证和迭代反思对提升生成质量至关重要
+## Applicable Strategies for MolCraft
 
-## 关键改进方向
-
-### 1. 扩充逆合成规则库
-- **问题**: 现有规则库覆盖度不足，限制合成路线多样性
-- **方向**: 参考LARC的评判式方法，扩充逆合成规则库
-- **目标**: 从8条规则扩展到58条规则，提高路线规划能力
-
-### 2. 进化式迭代生成
-- **问题**: 单一代数优化效果有限，易陷入局部最优
-- **方向**: 借鉴MOOSE-Chem的进化算法，增加迭代代数
-- **目标**: 从2代增加到3代，提高优化效果
-
-### 3. 对接引导生成
-- **问题**: 缺少结构导向的分子设计
-- **方向**: 引入对接引导机制，结合生物活性预测
-- **目标**: 添加docking_guidance模式，提高结合能优化效果
-
-## 总结
-
-基于上述文献分析，本轮改进重点关注逆合成规则库扩充、进化迭代优化和对接引导机制三个关键方向，旨在全面提升MolCraft Agent的分子设计能力。
+1. **Scaffold Hopping & Side-chain Decoration**: Use CNS-relevant scaffolds (indole, quinazoline, piperidine) as starting points and optimize via mutation
+2. **Post-Execution Feedback**: After docking results, use binding energy as fitness function to guide next generation
+3. **Diverse Initial Population**: Essential for evolutionary search to avoid premature convergence (MOOSE-Chem)
+4. **Rule Coverage Expansion**: More retro-synthesis rules → fewer trivial routes → higher route_score
+5. **SA Score Improvement**: SA score is a rough heuristic; try to generate molecules with SA <= 5 to stay well below the SA>6 hard zero

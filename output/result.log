@@ -1,13 +1,13 @@
-[2026-05-18T14:17:30.196181] MolCraft Agent 启动
+[2026-05-19T10:04:32.349035] MolCraft Agent 启动
 ============================================================
 模式: autoresearch（LLM 自主迭代实验）
 指令书: /home/z/my-project/molcraft-agent/program.md
 迭代记录: /home/z/my-project/molcraft-agent/docs/iteration_log.jsonl
 日志文件: /home/z/my-project/molcraft-agent/output/result.log
-配置: 最大 1 次迭代 | 最长 60 分钟
+配置: 最大 1 次迭代 | 最长 10 分钟
 (yolo 模式下自动批准所有操作)
 
-I'll start by reading the reference materials and executing the steps systematically.<system>Todo list updated</system><system>44 lines read from file starting from line 1. End of file reached.</system>     1	# 论文关键信息摘要（预提取，供Agent直接使用）
+I'll start by reading the papers summary and understanding the project structure.<system>44 lines read from file starting from line 1. End of file reached.</system>     1	# 论文关键信息摘要（预提取，供Agent直接使用）
      2	
      3	---
      4	
@@ -51,197 +51,1612 @@ I'll start by reading the reference materials and executing the steps systematic
     42	- **多智能体协作**：多个Agent模拟研究团队，集体智能超越单一Agent
     43	- **化学领域Agent**：ChemCrow、ChemAgents、Chemist-X、FROGENT等，均使用工具调用模式
     44	- **关键挑战**：长上下文处理、工具可靠性、幻觉问题、安全约束
-Good, I have the paper summaries. Now let me execute Step 1: generate molecules with mutate strategy.{"count": 150, "molecules": [{"smiles": "Cc1ccc(S(=O)Nc2cccnc2)c(Cl)c1F", "qed": 0.939, "mw": 284.74, "logp": 3.32, "sa_score": 2.8}, {"smiles": "CC1=CC=C(S(=O)Nc2cccnc2)C2COCC2C=C1", "qed": 0.934, "mw": 302.4, "logp": 2.82, "sa_score": 4.3}, {"smiles": "CC1=CC=C(S(=O)Nc2cccnc2C)C2COCC2C=C1", "qed": 0.932, "mw": 316.43, "logp": 3.13, "sa_score": 4.3}, {"smiles": "CC1=CC=C(S(=O)Nc2cnccc2C)C2COCC2C=C1", "qed": 0.932, "mw": 316.43, "logp": 3.13, "sa_score": 4.3}, {"smiles": "CC1=CC=C(S(=O)Nc2cccnc2)C2COCC2C=N1", "qed": 0.932, "mw": 303.39, "logp": 2.29, "sa_score": 4.3}, {"smiles": "CC1=CC=C(S(=O)Nc2cccnc2)C2C(C=C1)COC2C", "qed": 0.931, "mw": 316.43, "logp": 3.21, "sa_score": 4.8}, {"smiles": "O=S(Nc1cccnc1)C1=CC=CC=CC2COCC12", "qed": 0.929, "mw": 288.37, "logp": 2.43, "sa_score": 4.3}, {"smiles": "Cc1cc(S(=O)Nc2cccnc2)cc(F)c1C", "qed": 0.926, "mw": 264.32, "logp": 2.97, "sa_score": 2.8}, {"smiles": "C1=CC2COCC2C=C2OC1=C2NCc1ccccc1", "qed": 0.913, "mw": 267.33, "logp": 2.73, "sa_score": 7.3}, {"smiles": "O=C(NC1=CC=C(Cl)C2COCC2C=C1)c1ccccc1", "qed": 0.91, "mw": 301.77, "logp": 3.26, "sa_score": 3.7}, {"smiles": "O=C(NC1=CC=CC2COCC2C=C1)c1ccc(Cl)cc1", "qed": 0.91, "mw": 301.77, "logp": 3.34, "sa_score": 3.7}, {"smiles": "Cc1ccc(S(=O)Nc2cccnc2)cc1F", "qed": 0.91, "mw": 250.3, "logp": 2.66, "sa_score": 2.8}, {"smiles": "O=C(NC1=CC=CC2COCC2C=C1)c1cccc(Cl)c1", "qed": 0.91, "mw": 301.77, "logp": 3.34, "sa_score": 3.7}, {"smiles": "Cc1cnc(S(=O)Nc2cccnc2)cc1F", "qed": 0.908, "mw": 251.29, "logp": 2.06, "sa_score": 2.8}, {"smiles": "O=C(NC1=CC=CC2COC3CC(=C1)C23)c1ccccc1", "qed": 0.904, "mw": 279.34, "logp": 2.83, "sa_score": 4.7}, {"smiles": "CC1=CC=C(S(=O)Nc2cccnc2)C2CONC2C=C1", "qed": 0.897, "mw": 303.39, "logp": 2.08, "sa_score": 4.3}, {"smiles": "Cc1ccc(S(=O)Nc2ccc(O)nc2)cc1F", "qed": 0.896, "mw": 266.3, "logp": 2.37, "sa_score": 2.9}, {"smiles": "Cc1cc(O)c(S(=O)Nc2cccnc2)cc1F", "qed": 0.896, "mw": 266.3, "logp": 2.37, "sa_score": 2.9}, {"smiles": "CC1=CC=C(S(=O)Nc2cccnc2)C2COC(O)C2C=C1", "qed": 0.896, "mw": 318.4, "logp": 2.14, "sa_score": 4.9}, {"smiles": "C1=CC2COCC2C=CC(NCc2ccccc2)=C1", "qed": 0.894, "mw": 253.35, "logp": 3.05, "sa_score": 3.8}, {"smiles": "CC1=CC2CSCC2C=CC=C1NCc1ccccc1", "qed": 0.894, "mw": 283.44, "logp": 4.16, "sa_score": 3.8}, {"smiles": "O=C(NC1=CC=CC2COCC2C=C1)c1ccccc1", "qed": 0.894, "mw": 267.33, "logp": 2.69, "sa_score": 3.7}, {"smiles": "O=C(NC1=CC=CC23COC2C3C=C1)c1ccccc1", "qed": 0.892, "mw": 265.31, "logp": 2.44, "sa_score": 5.7}, {"smiles": "O=S(Nc1cccnc1)c1cccc(F)c1", "qed": 0.888, "mw": 236.27, "logp": 2.36, "sa_score": 2.8}, {"smiles": "O=S(Nc1cccnc1)c1cncc(F)c1", "qed": 0.884, "mw": 237.26, "logp": 1.75, "sa_score": 2.8}, {"smiles": "Cc1ccc(S(=O)Nc2cccnc2)cc1", "qed": 0.883, "mw": 232.31, "logp": 2.52, "sa_score": 2.8}, {"smiles": "Cc1ccc(S(=O)Nc2ccnnc2)cc1", "qed": 0.881, "mw": 233.3, "logp": 1.92, "sa_score": 2.8}, {"smiles": "O=C(NC1=CC=CC2(O)COC(F)C2C=C1)c1ccccc1", "qed": 0.879, "mw": 301.32, "logp": 2.1, "sa_score": 4.3}, {"smiles": "Cc1ccc(S(=O)Nc2cnc(Cl)cc2C)cc1F", "qed": 0.879, "mw": 298.77, "logp": 3.63, "sa_score": 2.8}, {"smiles": "Cc1ccc(S(=O)Nc2cccnc2Cl)cc1Cl", "qed": 0.875, "mw": 301.2, "logp": 3.83, "sa_score": 2.8}, {"smiles": "Cc1ccc(S(=O)Nc2cccnc2O)cc1", "qed": 0.875, "mw": 248.31, "logp": 2.23, "sa_score": 2.9}, {"smiles": "Cc1ccc(S(=O)Nc2cnccc2N)cc1", "qed": 0.872, "mw": 247.32, "logp": 2.11, "sa_score": 2.9}, {"smiles": "O=S1Nc2cncc(c2)C2=C1C1COCC1C=CC(CF)=C2", "qed": 0.866, "mw": 318.37, "logp": 2.61, "sa_score": 7.6}, {"smiles": "O=C(Nc1ccccc1)c1cccc(Cl)c1Cl", "qed": 0.865, "mw": 266.13, "logp": 4.25, "sa_score": 2.2}, {"smiles": "O=C(NC1=CC=CC2CNCC2C=C1)c1ccccc1", "qed": 0.862, "mw": 266.34, "logp": 2.26, "sa_score": 3.7}, {"smiles": "CC1=CC=C(S(=O)Nc2cccnc2)C2COCC2(Cl)C=C1", "qed": 0.862, "mw": 336.84, "logp": 3.18, "sa_score": 4.3}, {"smiles": "CC1=CC=C(S(=O)Cc2cccnc2)C2COCC2C=C1", "qed": 0.861, "mw": 301.41, "logp": 2.99, "sa_score": 4.3}, {"smiles": "O=S(Nc1cccnc1)c1ccccc1", "qed": 0.858, "mw": 218.28, "logp": 2.22, "sa_score": 2.8}, {"smiles": "C1=CC2COCC2C=Cc2[nH]c(-c3cccnc3)cc21", "qed": 0.857, "mw": 264.33, "logp": 3.38, "sa_score": 4.1}, {"smiles": "Cc1ccc(C2NC3=CC=CC4COCC4C(=C3)O2)cc1", "qed": 0.857, "mw": 281.35, "logp": 3.21, "sa_score": 7.6}, {"smiles": "Cc1ccc(S(=O)Nc2ccc(F)nc2)cc1", "qed": 0.851, "mw": 250.3, "logp": 2.66, "sa_score": 2.8}, {"smiles": "Oc1ccc(CNc2ccccc2)c(Cl)c1", "qed": 0.848, "mw": 233.7, "logp": 3.66, "sa_score": 2.4}, {"smiles": "Oc1ccc(CNc2ccccc2Cl)cc1", "qed": 0.848, "mw": 233.7, "logp": 3.66, "sa_score": 2.4}, {"smiles": "O=C(Nc1ccccc1)c1ccccc1Cl", "qed": 0.841, "mw": 231.68, "logp": 3.59, "sa_score": 2.2}, {"smiles": "O=C(Nc1cccc(Cl)c1)c1ccccc1", "qed": 0.841, "mw": 231.68, "logp": 3.59, "sa_score": 2.2}, {"smiles": "NCc1ccc(C(=O)Cc2cccnc2)cc1F", "qed": 0.838, "mw": 244.27, "logp": 2.1, "sa_score": 2.5}, {"smiles": "CC12C=CC(NC(=O)c3ccc4cc3-4)=CC=C[SH]1COC2", "qed": 0.836, "mw": 299.39, "logp": 3.11, "sa_score": 4.2}, {"smiles": "CC1=CC=C(SNc2cccnc2)C2C(C=C1C)COC2N", "qed": 0.836, "mw": 315.44, "logp": 3.48, "sa_score": 4.4}, {"smiles": "Cc1cc2c(S(=O)NS3=CC=CN=C3)c-2c1", "qed": 0.833, "mw": 250.35, "logp": 2.13, "sa_score": 3.8}, {"smiles": "O=S(Nc1cccnc1)c1cccc(F)n1", "qed": 0.827, "mw": 237.26, "logp": 1.75, "sa_score": 2.8}, {"smiles": "CC1=C2C=C(S(=O)Nc3cccnc3)C3COCC3[SH]=S12", "qed": 0.823, "mw": 340.49, "logp": 1.66, "sa_score": 5.8}, {"smiles": "Cc1ccc(SNc2cccnc2)cc1F", "qed": 0.82, "mw": 234.3, "logp": 3.65, "sa_score": 2.3}, {"smiles": "O=S(Nc1cnccn1)c1ccc(S)cc1", "qed": 0.819, "mw": 251.34, "logp": 1.9, "sa_score": 2.9}, {"smiles": "OCc1ccc(SNc2cncc(F)c2)cc1", "qed": 0.819, "mw": 250.3, "logp": 2.83, "sa_score": 2.5}, {"smiles": "O=C(Nc1c(O)cccc1F)c1ccccc1Cl", "qed": 0.817, "mw": 265.67, "logp": 3.44, "sa_score": 2.3}, {"smiles": "ClC1=CC(NCc2cccnc2)c2ccccc2CC=CC2COCC12", "qed": 0.817, "mw": 366.89, "logp": 4.41, "sa_score": 4.8}, {"smiles": "C=C(Nc1ccccc1)c1ccc(O)cc1", "qed": 0.814, "mw": 211.26, "logp": 3.48, "sa_score": 2.4}, {"smiles": "Cc1ccc(SNc2cncc(C)c2)cc1", "qed": 0.811, "mw": 230.34, "logp": 3.82, "sa_score": 2.3}, {"smiles": "NC1=S(NC(=O)c2ccccc2Cl)C=CC=C1", "qed": 0.808, "mw": 266.75, "logp": 2.43, "sa_score": 2.7}, {"smiles": "O=C(Nc1ccccc1)c1ccc(O)cc1", "qed": 0.805, "mw": 213.24, "logp": 2.64, "sa_score": 2.3}, {"smiles": "O=C(Nc1ccccn1)c1ccc(O)cc1", "qed": 0.804, "mw": 214.22, "logp": 2.04, "sa_score": 2.3}, {"smiles": "Fc1cccc(SNc2cccnc2)c1", "qed": 0.803, "mw": 220.27, "logp": 3.34, "sa_score": 2.3}, {"smiles": "Nc1cccc(C(=O)Nc2ccccc2)c1Cl", "qed": 0.8, "mw": 246.7, "logp": 3.17, "sa_score": 2.3}, {"smiles": "O=S1Nc2cccnc2CC2=CC=C1C1COCC1C(F)=C2", "qed": 0.8, "mw": 318.37, "logp": 2.65, "sa_score": 7.5}, {"smiles": "Nc1ccc(NC(=O)c2ccccc2Cl)cc1", "qed": 0.8, "mw": 246.7, "logp": 3.17, "sa_score": 2.3}, {"smiles": "Oc1ccc(CNc2ccccc2)nc1", "qed": 0.799, "mw": 200.24, "logp": 2.4, "sa_score": 2.4}, {"smiles": "Oc1ccc(CNc2ccccc2)cc1", "qed": 0.796, "mw": 199.25, "logp": 3.0, "sa_score": 2.4}, {"smiles": "O=C(Cc1ccccc1O)c1ccc(O)cc1", "qed": 0.793, "mw": 228.25, "logp": 2.52, "sa_score": 2.5}, {"smiles": "O=C(Nc1ccccc1)c1ccccc1", "qed": 0.787, "mw": 197.24, "logp": 2.94, "sa_score": 2.2}, {"smiles": "Cc1ccc2cc1-c1ccccc1NS2(=O)=O", "qed": 0.775, "mw": 245.3, "logp": 2.78, "sa_score": 5.5}, {"smiles": "c1ccc(SNc2cccnc2)cc1", "qed": 0.774, "mw": 202.28, "logp": 3.2, "sa_score": 2.3}, {"smiles": "Cc1ccc(S(=O)Nc2cc3cnc2-3)cc1F", "qed": 0.774, "mw": 248.28, "logp": 2.64, "sa_score": 3.3}, {"smiles": "Cc1c2cc(S(=O)Cc3cncc(N)c3)cc1-2", "qed": 0.769, "mw": 244.32, "logp": 2.26, "sa_score": 3.4}, {"smiles": "c1ccc(CNc2ccccc2)cc1", "qed": 0.769, "mw": 183.25, "logp": 3.3, "sa_score": 2.3}, {"smiles": "Cc1cc(Cl)ccc1CC(=O)O", "qed": 0.766, "mw": 184.62, "logp": 2.28, "sa_score": 1.7}, {"smiles": "CC1=C(F)C(C)=C(S(=O)Nc2cc(O)cnc2N)C2COCC2C=C1", "qed": 0.765, "mw": 365.43, "logp": 2.79, "sa_score": 4.5}, {"smiles": "O=C(NS1=CC2=CC2=C1)c1ccc(O)cc1", "qed": 0.764, "mw": 231.28, "logp": 1.95, "sa_score": 3.3}, {"smiles": "Clc1ccccc1COc1ccccc1", "qed": 0.759, "mw": 218.68, "logp": 3.92, "sa_score": 2.3}, {"smiles": "Cc1ccc2cc1-c1ccncc1NS2=O", "qed": 0.755, "mw": 230.29, "logp": 2.51, "sa_score": 6.0}, {"smiles": "O=S(Nc1cccnc1)c1cc2ccc1o2", "qed": 0.754, "mw": 232.26, "logp": 2.4, "sa_score": 6.3}, {"smiles": "Cc1cnc2c(c1)-c1ccc(cn1)NS2=O", "qed": 0.753, "mw": 231.28, "logp": 1.9, "sa_score": 6.5}, {"smiles": "Nc1ccc(C(=O)Nc2ccccc2)cc1", "qed": 0.751, "mw": 212.25, "logp": 2.52, "sa_score": 2.3}, {"smiles": "Nc1cccc(NC(=O)c2ccccc2)c1", "qed": 0.751, "mw": 212.25, "logp": 2.52, "sa_score": 2.3}, {"smiles": "Cc1ccc(S(=O)Nc2cnc3c(c2)O3)cc1F", "qed": 0.74, "mw": 264.28, "logp": 2.77, "sa_score": 3.3}, {"smiles": "O=C(O)Cc1ccc(Cl)cc1", "qed": 0.737, "mw": 170.6, "logp": 1.97, "sa_score": 1.7}, {"smiles": "O=C1Nc2ccccc2-c2ccc1c(Cl)c2", "qed": 0.735, "mw": 229.67, "logp": 3.57, "sa_score": 6.0}, {"smiles": "c1ccc(OCc2ccccn2)cc1", "qed": 0.733, "mw": 185.23, "logp": 2.66, "sa_score": 2.3}, {"smiles": "O=C(Nc1ccncc1O)c1ccc(O)cc1", "qed": 0.733, "mw": 230.22, "logp": 1.75, "sa_score": 2.4}, {"smiles": "NS(=O)(=O)S12COCC1c1cc2ccn1", "qed": 0.731, "mw": 246.31, "logp": 0.49, "sa_score": 6.7}, {"smiles": "O=C1Nc2cccc(c2)Oc2ccc(O)cc21", "qed": 0.727, "mw": 227.22, "logp": 2.75, "sa_score": 5.6}, {"smiles": "Fc1ccc(Cl)c(CNc2ccc3cc2-3)c1", "qed": 0.719, "mw": 233.67, "logp": 4.07, "sa_score": 2.8}, {"smiles": "O=C(Nc1ccc2cc1C2)c1ccc(O)cc1", "qed": 0.704, "mw": 225.25, "logp": 2.55, "sa_score": 6.3}, {"smiles": "CC1=C2C=C(C3COCC3c3ccccc3C=C1)S(=O)Nc1cc(F)cnc1O2", "qed": 0.703, "mw": 410.47, "logp": 4.3, "sa_score": 8.0}, {"smiles": "Cc1ccc(Cl)c2cc(N)cnc12", "qed": 0.697, "mw": 192.65, "logp": 2.78, "sa_score": 2.1}, {"smiles": "Nc1cccc(NC(=O)c2ccc(O)cc2)c1", "qed": 0.69, "mw": 228.25, "logp": 2.23, "sa_score": 2.4}, {"smiles": "c1ccc2c(c1)CCNC1COCC1C2", "qed": 0.688, "mw": 203.29, "logp": 1.39, "sa_score": 3.5}, {"smiles": "C1=Nc2ccccc2-c2ccccc2N1", "qed": 0.682, "mw": 194.24, "logp": 3.44, "sa_score": 2.5}, {"smiles": "O=C(O)c1cccc(Cl)c1", "qed": 0.676, "mw": 156.57, "logp": 2.04, "sa_score": 1.6}, {"smiles": "Cc1cccc(C(=O)c2ccccc2)c1", "qed": 0.674, "mw": 196.25, "logp": 3.23, "sa_score": 2.2}, {"smiles": "O=C(Nc1ccc2cc1-2)c1ccccc1", "qed": 0.669, "mw": 195.22, "logp": 2.92, "sa_score": 2.7}, {"smiles": "O=C(Nc1ccccc1)c1ccc2cc1-2", "qed": 0.669, "mw": 195.22, "logp": 2.92, "sa_score": 2.7}, {"smiles": "c1ccc(CNc2c3cccc2-3)cc1", "qed": 0.653, "mw": 181.24, "logp": 3.28, "sa_score": 2.8}, {"smiles": "NC1(Cl)OCC2C=CC=C(NC(=O)c3ccccc3)C=CC21", "qed": 0.651, "mw": 316.79, "logp": 2.54, "sa_score": 4.3}, {"smiles": "FC1Cc2ccccc2OC2COCC12", "qed": 0.649, "mw": 208.23, "logp": 1.97, "sa_score": 4.0}, {"smiles": "O=C(NC1=C2C=[SH]C23COCC3C=C1)c1ccccc1F", "qed": 0.648, "mw": 303.36, "logp": 2.05, "sa_score": 5.7}, {"smiles": "O=S1Nc2cnc3c(c2-3)-c2c(F)cccc21", "qed": 0.646, "mw": 232.24, "logp": 2.32, "sa_score": 3.5}, {"smiles": "c1ccc(Cc2ccccc2)cc1", "qed": 0.645, "mw": 168.24, "logp": 3.28, "sa_score": 2.2}, {"smiles": "Nc1c(SNc2cccnc2)ccc2c1OC2", "qed": 0.643, "mw": 245.31, "logp": 2.68, "sa_score": 2.9}, {"smiles": "CC12C=CC1(SNc1cccnc1)C(F)=C2", "qed": 0.641, "mw": 234.3, "logp": 3.32, "sa_score": 3.8}, {"smiles": "OC1=CC=CC2=CC=CCC3COCC3[SH]12", "qed": 0.633, "mw": 236.34, "logp": 2.82, "sa_score": 4.1}, {"smiles": "Oc1cc2cc-2c1NCc1ccccc1", "qed": 0.632, "mw": 197.24, "logp": 2.98, "sa_score": 2.9}, {"smiles": "NS(=O)(=O)c1ccccc1O", "qed": 0.629, "mw": 173.19, "logp": 0.04, "sa_score": 1.8}, {"smiles": "CC1c2c3ccc-3c2CCC1N", "qed": 0.625, "mw": 159.23, "logp": 2.04, "sa_score": 3.6}, {"smiles": "NC(=O)c1c2cc(Cl)c(N)c1-2", "qed": 0.624, "mw": 168.58, "logp": 1.0, "sa_score": 2.2}, {"smiles": "c1ccc2c(c1)CCc1ccccc1CC2", "qed": 0.621, "mw": 208.3, "logp": 3.57, "sa_score": 2.5}, {"smiles": "C1=Cc2ccccc2C=CC2=C1CCO2", "qed": 0.618, "mw": 196.25, "logp": 3.4, "sa_score": 2.5}, {"smiles": "NS(=O)(=O)c1ncc2cc1-2", "qed": 0.616, "mw": 156.17, "logp": -0.29, "sa_score": 2.2}, {"smiles": "Cc1ccc2c(c1F)NOC2", "qed": 0.615, "mw": 153.16, "logp": 1.99, "sa_score": 2.0}, {"smiles": "c1cc2cc(c1)-c1ccccc1OC2", "qed": 0.607, "mw": 182.22, "logp": 3.25, "sa_score": 5.5}, {"smiles": "c1ccc2c(c1)OCc1ccc-2cc1", "qed": 0.607, "mw": 182.22, "logp": 3.25, "sa_score": 6.0}, {"smiles": "Nc1cccc(C(=O)NC2=CC=CC3(N)NOCC3C=C2)c1", "qed": 0.605, "mw": 298.35, "logp": 0.81, "sa_score": 3.9}, {"smiles": "Clc1ccc2c(c1)CCN2", "qed": 0.603, "mw": 153.61, "logp": 2.31, "sa_score": 2.0}, {"smiles": "Cc1cc2ccncc2cc1Cl", "qed": 0.602, "mw": 177.63, "logp": 3.2, "sa_score": 2.0}, {"smiles": "O=C1c2cccc(c2)-c2cccc(O)c21", "qed": 0.6, "mw": 196.21, "logp": 2.6, "sa_score": 5.6}, {"smiles": "Fc1cccc2c1NSCC2", "qed": 0.599, "mw": 169.22, "logp": 2.44, "sa_score": 2.0}, {"smiles": "Nc1cccc2c1SCCO2", "qed": 0.598, "mw": 167.23, "logp": 1.75, "sa_score": 2.1}, {"smiles": "C1=Cc2ccccc2-c2ccccc2C=C1", "qed": 0.597, "mw": 204.27, "logp": 4.39, "sa_score": 2.5}, {"smiles": "Clc1ccc2cncnc2c1", "qed": 0.597, "mw": 164.6, "logp": 2.28, "sa_score": 2.0}, {"smiles": "C=S(N)(=O)c1ccccc1", "qed": 0.594, "mw": 155.22, "logp": 0.64, "sa_score": 2.2}, {"smiles": "Cc1ccc(S(=O)Nc2cccnc2)c(N)c1O", "qed": 0.582, "mw": 263.32, "logp": 1.81, "sa_score": 3.0}, {"smiles": "Clc1ccc2ncccc2c1", "qed": 0.582, "mw": 163.61, "logp": 2.89, "sa_score": 2.0}, {"smiles": "Clc1ccnc2ccccc12", "qed": 0.582, "mw": 163.61, "logp": 2.89, "sa_score": 2.0}, {"smiles": "Clc1ccc2ccncc2c1", "qed": 0.582, "mw": 163.61, "logp": 2.89, "sa_score": 2.0}, {"smiles": "Nc1ccc2c(N)cccc2c1", "qed": 0.576, "mw": 158.2, "logp": 2.0, "sa_score": 2.2}, {"smiles": "CC(=O)c1cccc(Cl)c1", "qed": 0.569, "mw": 154.6, "logp": 2.54, "sa_score": 1.6}, {"smiles": "Oc1ccc2nc3nc(c2c1F)C3", "qed": 0.562, "mw": 176.15, "logp": 1.38, "sa_score": 6.1}, {"smiles": "O=c1[nH]c2ccccc2c2ccccc12", "qed": 0.549, "mw": 195.22, "logp": 2.68, "sa_score": 2.5}, {"smiles": "C1=Cc2ccccc2C=CN=C1", "qed": 0.546, "mw": 155.2, "logp": 2.75, "sa_score": 2.0}, {"smiles": "c1ccc2c(c1)CCCC1CC21", "qed": 0.544, "mw": 158.24, "logp": 3.13, "sa_score": 3.5}, {"smiles": "OC1=C2N=CN=CS2=CC=C1", "qed": 0.543, "mw": 166.21, "logp": 1.42, "sa_score": 2.6}, {"smiles": "O=C(Oc1cccc2c1C2)c1ccc(O)cc1", "qed": 0.539, "mw": 226.23, "logp": 2.52, "sa_score": 2.8}, {"smiles": "CC1=CC=CC=CC2COCC12", "qed": 0.531, "mw": 162.23, "logp": 2.32, "sa_score": 3.0}, {"smiles": "Nc1ccc([SH]2(=O)Cc3ncccc3N2)cc1", "qed": 0.529, "mw": 247.32, "logp": 1.58, "sa_score": 2.7}, {"smiles": "FC1COC2=CC=CC=S2O1", "qed": 0.521, "mw": 174.2, "logp": 1.73, "sa_score": 3.0}, {"smiles": "O=c1c2ccc(O)cc2[nH]n1-c1c2cccc1-2", "qed": 0.519, "mw": 224.22, "logp": 2.0, "sa_score": 3.2}, {"smiles": "Fc1ncnc2nccnc12", "qed": 0.515, "mw": 150.12, "logp": 0.56, "sa_score": 2.0}, {"smiles": "C1=CC=S2N=CN=NC2=C1", "qed": 0.474, "mw": 151.19, "logp": 1.88, "sa_score": 2.5}, {"smiles": "ClC1=CC2=C[SH]=C3C=S2N=C13", "qed": 0.455, "mw": 201.7, "logp": 2.06, "sa_score": 8.0}, {"smiles": "Nc1cc(NC(=O)c2cccc(F)c2Cl)ccc1O", "qed": 0.45, "mw": 280.69, "logp": 3.02, "sa_score": 2.4}, {"smiles": "c1ccc2c(c1)Cc1ccc3nccc-2c3c1", "qed": 0.436, "mw": 217.27, "logp": 3.81, "sa_score": 6.0}]}Got 150 molecules from mutate. Now let me filter those with QED >= 0.3 and SA <= 6.0, then prepare for docking.<system>Todo list updated</system>
-[2026-05-18T14:18:00.754853] 迭代进度: 0/1
-Let me use a Python script to filter and prepare the docking list.<system>Command executed successfully.</system>Total filtered molecules: 137
-Batch 1: 25 molecules
-smiles_list = ['Cc1ccc(S(=O)Nc2cccnc2)c(Cl)c1F', 'CC1=CC=C(S(=O)Nc2cccnc2)C2COCC2C=C1', 'CC1=CC=C(S(=O)Nc2cccnc2C)C2COCC2C=C1', 'CC1=CC=C(S(=O)Nc2cnccc2C)C2COCC2C=C1', 'CC1=CC=C(S(=O)Nc2cccnc2)C2COCC2C=N1', 'CC1=CC=C(S(=O)Nc2cccnc2)C2C(C=C1)COC2C', 'O=S(Nc1cccnc1)C1=CC=CC=CC2COCC12', 'Cc1cc(S(=O)Nc2cccnc2)cc(F)c1C', 'O=C(NC1=CC=C(Cl)C2COCC2C=C1)c1ccccc1', 'O=C(NC1=CC=CC2COCC2C=C1)c1ccc(Cl)cc1', 'Cc1ccc(S(=O)Nc2cccnc2)cc1F', 'O=C(NC1=CC=CC2COCC2C=C1)c1cccc(Cl)c1', 'Cc1cnc(S(=O)Nc2cccnc2)cc1F', 'O=C(NC1=CC=CC2COC3CC(=C1)C23)c1ccccc1', 'CC1=CC=C(S(=O)Nc2cccnc2)C2CONC2C=C1', 'Cc1ccc(S(=O)Nc2ccc(O)nc2)cc1F', 'Cc1cc(O)c(S(=O)Nc2cccnc2)cc1F', 'CC1=CC=C(S(=O)Nc2cccnc2)C2COC(O)C2C=C1', 'C1=CC2COCC2C=CC(NCc2ccccc2)=C1', 'CC1=CC2CSCC2C=CC=C1NCc1ccccc1', 'O=C(NC1=CC=CC2COCC2C=C1)c1ccccc1', 'O=C(NC1=CC=CC23COC2C3C=C1)c1ccccc1', 'O=S(Nc1cccnc1)c1cccc(F)c1', 'O=S(Nc1cccnc1)c1cncc(F)c1', 'Cc1ccc(S(=O)Nc2cccnc2)cc1']
+<system>ERROR: `/home/z/my-project/molcraft-agent/docs` is not a file.</system><system>ERROR: `/home/z/my-project/molcraft-agent/output` is not a file.</system>Let me check the docs and output directories, and also look at the project structure more carefully.<system>No matches found for pattern `docs/**/*`.</system><system>Found 1 matches for pattern `output/**/*`.</system>output/result.log<system>Found 8 matches for pattern `src/**/*.py`.</system>src/config.py
+src/docking.py
+src/evaluator.py
+src/evolution.py
+src/generator.py
+src/literature_seeds.py
+src/receptor.py
+src/synthesis_v2.py<system>Todo list updated</system>Let me first read the key source files to understand the codebase, and create the docs directory.<system>523 lines read from file starting from line 1. End of file reached.</system>     1	"""增强分子生成模块：使用 RDKit 进行高级变异的分子生成。
+     2	
+     3	改进点（H002）:
+     4	- 扩展变异操作类型（环化、开环、片段交换）
+     5	- 增加进化代数和种群大小
+     6	- 优化对接引导生成
+     7	- 文献依据:
+     8	  - MOOSE-Chem (Yang et al., 2025): 进化算法导航组合空间
+     9	  - Coscientist (Boiko et al., 2023): 基于实验结果的迭代反思
+    10	  - 综述第4.2节: Post-Execution Feedback 策略
+    11	"""
+    12	import random
+    13	from rdkit import Chem, rdBase
+    14	from rdkit.Chem import AllChem, Descriptors, QED, BRICS
+    15	from rdkit.DataStructs import TanimotoSimilarity
+    16	from evaluator import evaluate_molecule, passes_filters
+    17	
+    18	# 压制 RDKit 错误输出
+    19	rdBase.DisableLog('rdApp.error')
+    20	rdBase.DisableLog('rdApp.warning')
+    21	
+    22	
+    23	# 药物样骨架和片段库（H007: 扩充至55个，覆盖更多含氮稠环和饱和杂环）
+    24	# 文献依据:
+    25	#   - MOOSE-Chem (Yang et al., 2025): "Diverse initial population is essential
+    26	#     for evolutionary search to avoid premature convergence"
+    27	#   - ChemCrow (Bran et al., 2024): 工具/库的丰富度直接决定 Agent 探索的化学空间边界
+    28	#   - 综述第3.2节: Scaffold hopping 是药物发现的核心策略之一
+    29	SCAFFOLDS = [
+    30	    # ===== 单环芳烃（6个）=====
+    31	    "c1ccc(cc1)",           # 苯环
+    32	    "c1ccccc1C",            # 甲苯
+    33	    "c1ccc(cc1)O",          # 苯酚
+    34	    "c1ccc(cc1)N",          # 苯胺
+    35	    "COc1ccc(cc1)",         # 苯甲醚
+    36	    "c1ccc(cc1)CN",         # 苄胺
+    37	
+    38	    # ===== 多环芳烃（2个）=====
+    39	    "c1ccc2ccccc2c1",       # 萘
+    40	    "c1ccc2c(c1)cccc2",     # 萘变体
+    41	
+    42	    # ===== 含氮单杂环（4个）=====
+    43	    "c1ccc(nc1)",           # 吡啶
+    44	    "c1cncnc1",             # 嘧啶
+    45	    "c1cnccc1",             # 吡啶变体
+    46	    "c1c[nH]cn1",           # 咪唑
+    47	
+    48	    # ===== 饱和杂环（8个）=====
+    49	    "C1CCOC1",              # 四氢呋喃
+    50	    "C1CCNC1",              # 吡咯烷
+    51	    "C1CCNCC1",             # 哌啶
+    52	    "C1CNCCN1",             # 哌嗪
+    53	    "C1COCCN1",             # 吗啉
+    54	    "C1CSCN1",              # 硫代吗啉
+    55	    "C1COC1",               # 氧杂环丁烷
+    56	    "C1CNC1",               # 氮杂环丁烷
+    57	
+    58	    # ===== 含氮稠环（12个）=====
+    59	    "c1ccc2c(c1)Ncnc2",     # 喹唑啉
+    60	    "c1ccc2c(c1)ncn2",      # 苯并咪唑
+    61	    "c1ccc2c(c1)cccn2",     # 吲哚
+    62	    "c1ccc2c(c1)ocn2",      # 苯并噁唑
+    63	    "c1ccc2c(c1)scn2",      # 苯并噻唑
+    64	    "c1ccc2ncccc2c1",       # 喹啉
+    65	    "c1ccc2ccncc2c1",       # 异喹啉
+    66	    "c1ccc2c(c1)[nH]c2",    # 吲哚啉（二氢吲哚）
+    67	    "c1ccc2c(c1)CCN2",      # 二氢吲哚（含N）
+    68	    "c1ccc2c(c1)CCNC2",     # 四氢异喹啉
+    69	    "c1ccc2c(c1)N=CN2",     # 苯并咪唑啉
+    70	    "c1nc2c([nH]1)cccc2",   # 苯并咪唑变体
+    71	
+    72	    # ===== 药物常见骨架（6个）=====
+    73	    "c1ncnc2c1ncn2",        # 嘌呤
+    74	    "c1cnc2ncncc2n1",       # 蝶啶
+    75	    "c1ccc2c(c1)cncn2",     # 喹唑啉变体
+    76	    "c1ccc2c(c1)ncnc2",     # 喹唑啉（另一表示）
+    77	    "c1ccc2c(c1)OCCO2",     # 苯并二噁烷
+    78	    "c1ccc2c(c1)CCO2",      # 苯并呋喃烷
+    79	
+    80	    # ===== 酰胺/磺酰胺类（6个）=====
+    81	    "c1ccc(cc1)C(=O)O",     # 苯甲酸
+    82	    "c1ccc(cc1)C(=O)N",     # 苯甲酰胺
+    83	    "c1ccc(cc1)S(=O)(=O)N", # 磺酰胺
+    84	    "c1ccc(cc1)C(=O)Nc2ccccc2",  # 二苯甲酮酰胺
+    85	    "c1ccc(cc1)NC(=O)c2ccccc2",  # N-苯基苯甲酰胺
+    86	    "Cc1ccc(cc1)S(=O)(=O)Nc2ccccc2",  # 对甲苯磺酰苯胺
+    87	
+    88	    # ===== 卤代/其他（5个）=====
+    89	    "c1cc(ccc1F)F",         # 二氟苯
+    90	    "c1cc(ccc1Cl)Cl",       # 二氯苯
+    91	    "c1ccc(cc1)CC(=O)O",    # 苯乙酸
+    92	    "c1ccc(cc1)C(=O)c2ccccc2",  # 二苯甲酮
+    93	    "c1ccc(cc1)OCc2ccccc2",     # 二苯甲醚
+    94	
+    95	    # ===== 饱和环-芳环稠合（6个）=====
+    96	    "c1ccc2c(c1)CCCC2",     # 四氢萘
+    97	    "c1ccc2c(c1)CCCCC2",    # 十氢萘骨架
+    98	    "c1ccc2c(c1)NCCC2",     # 四氢喹啉
+    99	    "c1ccc2c(c1)OCC2",      # 2,3-二氢苯并呋喃
+   100	    "c1ccc2c(c1)SCC2",      # 2,3-二氢苯并噻吩
+   101	    "c1ccc2c(c1)CCO2",      # 苯并二氢吡喃
+   102	]
+   103	
+   104	LINKERS = [
+   105	    "",                     # 直接连接
+   106	    "C",                    # 亚甲基
+   107	    "CC",                   # 亚乙基
+   108	    "O",                    # 醚键
+   109	    "NH",                   # 胺键
+   110	    "C(=O)",               # 羰基
+   111	    "C(=O)N",              # 酰胺
+   112	    "C(=O)O",              # 酯键
+   113	    "S(=O)(=O)",           # 砜
+   114	    "S(=O)(=O)N",          # 磺酰胺
+   115	    "NHC(=O)",             # 反向酰胺
+   116	    "OC(=O)",              # 反向酯键
+   117	    "C#C",                 # 炔键
+   118	    "C=C",                 # 烯键
+   119	]
+   120	
+   121	
+   122	def random_mutate_smiles(smiles: str, n_mutations: int = 1):
+   123	    """对 SMILES 字符串应用随机变异。"""
+   124	    mol = Chem.MolFromSmiles(smiles)
+   125	    if mol is None:
+   126	        return None
+   127	
+   128	    for _ in range(n_mutations):
+   129	        mol = _mutate_mol(mol)
+   130	        if mol is None:
+   131	            return None
+   132	
+   133	    new_smiles = Chem.MolToSmiles(mol, canonical=True)
+   134	    return new_smiles
+   135	
+   136	
+   137	def _mutate_mol(mol):
+   138	    """增强的单次变异：添加/替换/删除/环化/开环等操作。"""
+   139	    choice = random.random()
+   140	    try:
+   141	        if choice < 0.25:
+   142	            mol = _add_substituent(mol)
+   143	        elif choice < 0.5:
+   144	            mol = _replace_atom(mol)
+   145	        elif choice < 0.65:
+   146	            mol = _remove_terminal(mol)
+   147	        elif choice < 0.75:
+   148	            mol = _insert_linker(mol)
+   149	        elif choice < 0.85:
+   150	            mol = _ring_formation(mol)
+   151	        elif choice < 0.95:
+   152	            mol = _ring_opening(mol)
+   153	        else:
+   154	            mol = _fragment_exchange(mol)
+   155	    except Exception:
+   156	        return None
+   157	    if mol is None:
+   158	        return None
+   159	    # 返回前验证分子有效性
+   160	    try:
+   161	        Chem.SanitizeMol(mol)
+   162	        # 测试 SMILES 往返
+   163	        s = Chem.MolToSmiles(mol, canonical=True)
+   164	        m2 = Chem.MolFromSmiles(s)
+   165	        if m2 is None:
+   166	            return None
+   167	    except Exception:
+   168	        return None
+   169	    return mol
+   170	
+   171	
+   172	def _add_substituent(mol):
+   173	    """在随机碳原子上添加小取代基（F, Cl, OH, NH2, CH3）。"""
+   174	    substituents = ["F", "Cl", "[OH]", "[NH2]", "C"]
+   175	    subst = random.choice(substituents)
+   176	    subst_mol = Chem.MolFromSmiles(subst)
+   177	    if subst_mol is None:
+   178	        return mol
+   179	
+   180	    # 查找候选原子（非氢、非末端碳原子）
+   181	    atoms = [a for a in mol.GetAtoms() if a.GetAtomicNum() == 6 and a.GetDegree() < 4]
+   182	    if not atoms:
+   183	        return mol
+   184	    atom = random.choice(atoms)
+   185	
+   186	    # 将取代基连接到分子上
+   187	    combo = Chem.CombineMols(mol, subst_mol)
+   188	    emol = Chem.EditableMol(combo)
+   189	    new_bond_idx = combo.GetNumAtoms() - 1
+   190	    emol.AddBond(atom.GetIdx(), new_bond_idx, Chem.BondType.SINGLE)
+   191	    new_mol = emol.GetMol()
+   192	    Chem.SanitizeMol(new_mol)
+   193	    return new_mol
+   194	
+   195	
+   196	def _replace_atom(mol):
+   197	    """随机替换一个杂原子或碳原子为另一种原子。"""
+   198	    replacements = {6: [7, 8, 9, 16], 7: [6, 8], 8: [6, 7, 16], 16: [6, 8]}
+   199	    atoms = [a for a in mol.GetAtoms() if a.GetAtomicNum() in replacements]
+   200	    if not atoms:
+   201	        return mol
+   202	    atom = random.choice(atoms)
+   203	    new_atom_num = random.choice(replacements[atom.GetAtomicNum()])
+   204	    atom.SetAtomicNum(new_atom_num)
+   205	    Chem.SanitizeMol(mol)
+   206	    return mol
+   207	
+   208	
+   209	def _remove_terminal(mol):
+   210	    """删除一个末端原子。"""
+   211	    terminals = [a for a in mol.GetAtoms() if a.GetDegree() == 1 and not a.IsInRing()]
+   212	    if not terminals:
+   213	        return mol
+   214	    atom = random.choice(terminals)
+   215	    emol = Chem.EditableMol(mol)
+   216	    emol.RemoveAtom(atom.GetIdx())
+   217	    new_mol = emol.GetMol()
+   218	    Chem.SanitizeMol(new_mol)
+   219	    return new_mol
+   220	
+   221	
+   222	def _insert_linker(mol):
+   223	    """在两个片段之间插入一个小连接子。"""
+   224	    linkers = ["C", "O", "N"]
+   225	    linker = random.choice(linkers)
+   226	    linker_mol = Chem.MolFromSmiles(linker)
+   227	    if linker_mol is None:
+   228	        return mol
+   229	
+   230	    combo = Chem.CombineMols(mol, linker_mol)
+   231	    emol = Chem.EditableMol(combo)
+   232	    atoms = list(mol.GetAtoms())
+   233	    if len(atoms) < 2:
+   234	        return mol
+   235	    a1, a2 = random.sample(atoms, 2)
+   236	    linker_idx = combo.GetNumAtoms() - 1
+   237	    emol.AddBond(a1.GetIdx(), linker_idx, Chem.BondType.SINGLE)
+   238	    emol.AddBond(a2.GetIdx(), linker_idx, Chem.BondType.SINGLE)
+   239	    new_mol = emol.GetMol()
+   240	    try:
+   241	        Chem.SanitizeMol(new_mol)
+   242	    except Exception:
+   243	        return mol
+   244	    return new_mol
+   245	
+   246	
+   247	def _ring_formation(mol):
+   248	    """环化反应：在两个原子之间形成环。"""
+   249	    # 查找可以形成环的原子对
+   250	    atoms = [a for a in mol.GetAtoms() if a.GetAtomicNum() == 6 and a.GetDegree() < 4]
+   251	    if len(atoms) < 2:
+   252	        return mol
+   253	    
+   254	    # 尝试形成3-6元环
+   255	    for ring_size in [3, 4, 5, 6]:
+   256	        if len(atoms) >= ring_size:
+   257	            selected_atoms = random.sample(atoms, ring_size)
+   258	            try:
+   259	                emol = Chem.EditableMol(mol)
+   260	                # 连接第一个和最后一个原子
+   261	                emol.AddBond(selected_atoms[0].GetIdx(), selected_atoms[-1].GetIdx(), Chem.BondType.SINGLE)
+   262	                new_mol = emol.GetMol()
+   263	                Chem.SanitizeMol(new_mol)
+   264	                return new_mol
+   265	            except Exception:
+   266	                continue
+   267	    return mol
+   268	
+   269	
+   270	def _ring_opening(mol):
+   271	    """开环反应：打开一个小环。"""
+   272	    # 查找小环（3-6元环）
+   273	    rings = mol.GetRingInfo()
+   274	    ring_atoms = []
+   275	    for i in range(rings.NumRings()):
+   276	        ring = rings.GetRingAtoms(i)
+   277	        if 3 <= len(ring) <= 6:
+   278	            ring_atoms.extend(ring)
+   279	    
+   280	    if not ring_atoms:
+   281	        return mol
+   282	    
+   283	    # 随机选择一个环中的一个原子进行开环
+   284	    atom_idx = random.choice(ring_atoms)
+   285	    emol = Chem.EditableMol(mol)
+   286	    
+   287	    # 找到与该原子相连的环键并删除
+   288	    atom = mol.GetAtomWithIdx(atom_idx)
+   289	    for bond in atom.GetBonds():
+   290	        neighbor = bond.GetOtherAtom(atom)
+   291	        if neighbor.GetIdx() in ring_atoms:
+   292	            # 检查是否是环键
+   293	            if bond.IsInRing():
+   294	                emol.RemoveBond(atom.GetIdx(), neighbor.GetIdx())
+   295	                break
+   296	    
+   297	    new_mol = emol.GetMol()
+   298	    try:
+   299	        Chem.SanitizeMol(new_mol)
+   300	        return new_mol
+   301	    except Exception:
+   302	        return mol
+   303	
+   304	
+   305	def _fragment_exchange(mol):
+   306	    """片段交换：用一个小片段替换分子的一部分。"""
+   307	    # 从骨架库中随机选择一个小片段
+   308	    small_scaffolds = ["C", "O", "N", "c1ccccc1", "C1CCOC1"]
+   309	    fragment = random.choice(small_scaffolds)
+   310	    fragment_mol = Chem.MolFromSmiles(fragment)
+   311	    if fragment_mol is None:
+   312	        return mol
+   313	    
+   314	    # 在分子中随机选择一个键进行替换
+   315	    bonds = [mol.GetBondWithIdx(i) for i in range(mol.GetNumBonds())]
+   316	    if not bonds:
+   317	        return mol
+   318	    
+   319	    bond = random.choice(bonds)
+   320	    atom1 = bond.GetBeginAtom()
+   321	    atom2 = bond.GetEndAtom()
+   322	    
+   323	    # 删除这个键
+   324	    emol = Chem.EditableMol(mol)
+   325	    emol.RemoveBond(atom1.GetIdx(), atom2.GetIdx())
+   326	    
+   327	    # 添加片段
+   328	    combo = Chem.CombineMols(emol.GetMol(), fragment_mol)
+   329	    new_emol = Chem.EditableMol(combo)
+   330	    
+   331	    # 连接片段到原来的两个原子
+   332	    fragment_idx = combo.GetNumAtoms() - fragment_mol.GetNumAtoms()
+   333	    new_emol.AddBond(atom1.GetIdx(), fragment_idx, Chem.BondType.SINGLE)
+   334	    new_emol.AddBond(atom2.GetIdx(), fragment_idx + 1, Chem.BondType.SINGLE)
+   335	    
+   336	    new_mol = new_emol.GetMol()
+   337	    try:
+   338	        Chem.SanitizeMol(new_mol)
+   339	        return new_mol
+   340	    except Exception:
+   341	        return mol
+   342	
+   343	
+   344	def generate_molecules(strategy="mutate", n_molecules=50, scaffold=None, n_generations=3, n_offspring=3):
+   345	    """生成候选药物分子。
+   346	
+   347	    策略:
+   348	        - "mutate": 从种子骨架变异（增强版）
+   349	        - "combine": 用连接子组合骨架
+   350	        - "random": 随机 SMILES 生成（非常基础）
+   351	    
+   352	    新增参数:
+   353	        - n_generations: 进化代数（默认3，原来为2）
+   354	        - n_offspring: 每个种子的后代数量（默认3）
+   355	    """
+   356	    molecules = set()
+   357	    attempts = 0
+   358	    max_attempts = n_molecules * 20
+   359	
+   360	    if strategy == "mutate":
+   361	        seeds = SCAFFOLDS if scaffold is None else [scaffold]
+   362	        
+   363	        # 多代进化
+   364	        for gen in range(n_generations):
+   365	            new_molecules = set()
+   366	            while len(new_molecules) < min(n_molecules * (gen + 1), n_molecules) and attempts < max_attempts:
+   367	                attempts += 1
+   368	                seed = random.choice(seeds)
+   369	                n_mut = random.randint(1, 4)
+   370	                new_smiles = random_mutate_smiles(seed, n_mut)
+   371	                if new_smiles and new_smiles not in molecules and new_smiles not in new_molecules:
+   372	                    props = evaluate_molecule(new_smiles)
+   373	                    if passes_filters(props):
+   374	                        new_molecules.add(new_smiles)
+   375	            
+   376	            # 更新种子库，选择最好的分子
+   377	            molecules.update(new_molecules)
+   378	            if len(molecules) > n_offspring:
+   379	                # 按QED排序，选择前n_offspring个作为下一代种子
+   380	                sorted_mols = sorted(molecules, key=lambda x: evaluate_molecule(x)["qed"], reverse=True)
+   381	                seeds = sorted_mols[:n_offspring]
+   382	
+   383	    elif strategy == "combine":
+   384	        while len(molecules) < n_molecules and attempts < max_attempts:
+   385	            attempts += 1
+   386	            n_frag = random.randint(2, 3)
+   387	            frags = random.sample(SCAFFOLDS, n_frag)
+   388	            linkers = random.sample(LINKERS, n_frag - 1)
+   389	
+   390	            # 用连接子将片段拼接成 SMILES
+   391	            parts = []
+   392	            for i, frag in enumerate(frags):
+   393	                parts.append(frag)
+   394	                if i < len(linkers):
+   395	                    parts.append(linkers[i])
+   396	            combined = "".join(parts)
+   397	
+   398	            mol = Chem.MolFromSmiles(combined)
+   399	            if mol is not None:
+   400	                smiles = Chem.MolToSmiles(mol, canonical=True)
+   401	                if smiles not in molecules:
+   402	                    props = evaluate_molecule(smiles)
+   403	                    if passes_filters(props):
+   404	                        molecules.add(smiles)
+   405	
+   406	    elif strategy == "random":
+   407	        # 非常基础：随机组合片段
+   408	        while len(molecules) < n_molecules and attempts < max_attempts:
+   409	            attempts += 1
+   410	            frag = random.choice(SCAFFOLDS)
+   411	            new_smiles = random_mutate_smiles(frag, random.randint(2, 5))
+   412	            if new_smiles and new_smiles not in molecules:
+   413	                props = evaluate_molecule(new_smiles)
+   414	                if passes_filters(props):
+   415	                    molecules.add(new_smiles)
+   416	
+   417	    result = [evaluate_molecule(s) for s in molecules]
+   418	    result.sort(key=lambda x: x["qed"], reverse=True)
+   419	    return result
+   420	
+   421	
+   422	def generate_with_docking_guidance(
+   423	    docking_fn,
+   424	    n_molecules=50,
+   425	    batch_size=10,
+   426	    n_generations=4,  # 增加到4代
+   427	    top_k=5,
+   428	    strategy="mutate",
+   429	    scaffold=None,
+   430	):
+   431	    """增强的对接引导分子生成（H002）。
+   432	
+   433	    核心思想：将分子对接作为适应度函数，嵌入生成循环中。
+   434	    每批生成少量分子 → 对接评估 → 选择结合能最优的作为种子 → 变异产生下一代。
+   435	    这避免了盲生成大量低质量分子，显著提升计算效率。
+   436	
+   437	    Args:
+   438	        docking_fn: 对接函数，接收 SMILES 字符串，返回 dict 包含 "binding_energy"
+   439	        n_molecules: 目标生成分子总数
+   440	        batch_size: 每批生成的候选分子数
+   441	        n_generations: 进化代数（增加到4）
+   442	        top_k: 每代选择 top_k 作为种子
+   443	        strategy: 初始生成策略
+   444	        scaffold: 可选种子骨架
+   445	
+   446	    Returns:
+   447	        list[dict]: 通过过滤且对接成功的分子信息列表，按结合能排序
+   448	    """
+   449	    import sys
+   450	
+   451	    all_evaluated = []  # 所有经过对接评估的分子
+   452	    current_seeds = None
+   453	
+   454	    for gen in range(n_generations):
+   455	        batch_mols = []
+   456	        attempts = 0
+   457	        max_attempts = batch_size * 30
+   458	
+   459	        if gen == 0:
+   460	            # 初始代：用传统策略生成
+   461	            seeds = SCAFFOLDS if scaffold is None else [scaffold]
+   462	            while len(batch_mols) < batch_size and attempts < max_attempts:
+   463	                attempts += 1
+   464	                seed = random.choice(seeds)
+   465	                n_mut = random.randint(1, 4)
+   466	                new_smiles = random_mutate_smiles(seed, n_mut)
+   467	                if new_smiles and new_smiles not in {m["smiles"] for m in batch_mols}:
+   468	                    props = evaluate_molecule(new_smiles)
+   469	                    if passes_filters(props):
+   470	                        batch_mols.append(props)
+   471	        else:
+   472	            # 后续代：从种子变异（使用增强的变异）
+   473	            seed_smiles_list = [s["smiles"] for s in current_seeds]
+   474	            while len(batch_mols) < batch_size and attempts < max_attempts:
+   475	                attempts += 1
+   476	                seed_smiles = random.choice(seed_smiles_list)
+   477	                n_mut = random.randint(1, 3)  # 后续代变异强度略低，保持稳定性
+   478	                new_smiles = random_mutate_smiles(seed_smiles, n_mut)
+   479	                if new_smiles and new_smiles not in {m["smiles"] for m in batch_mols}:
+   480	                    props = evaluate_molecule(new_smiles)
+   481	                    if passes_filters(props):
+   482	                        batch_mols.append(props)
+   483	
+   484	        # 对接评估
+   485	        docked_batch = []
+   486	        for mol_info in batch_mols:
+   487	            smiles = mol_info["smiles"]
+   488	            try:
+   489	                dock_result = docking_fn(smiles)
+   490	                if dock_result.get("success"):
+   491	                    mol_info["binding_energy"] = dock_result.get("binding_energy")
+   492	                    mol_info["docking_success"] = True
+   493	                    docked_batch.append(mol_info)
+   494	            except Exception:
+   495	                continue
+   496	
+   497	        # 按结合能排序（越低越好）
+   498	        docked_batch.sort(key=lambda x: x.get("binding_energy", 999))
+   499	
+   500	        # 累积到全局池
+   501	        all_evaluated.extend(docked_batch)
+   502	
+   503	        # 选择种子
+   504	        n_seeds = min(top_k, len(docked_batch))
+   505	        current_seeds = docked_batch[:n_seeds]
+   506	
+   507	        print(
+   508	            f"[H002] Gen {gen+1}/{n_generations}: generated {len(batch_mols)}, "
+   509	            f"docked {len(docked_batch)}, best {docked_batch[0]['binding_energy'] if docked_batch else 'N/A'}",
+   510	            file=sys.stderr,
+   511	        )
+   512	
+   513	    # 全局去重 + 排序
+   514	    seen = set()
+   515	    unique = []
+   516	    for m in all_evaluated:
+   517	        smi = m["smiles"]
+   518	        if smi not in seen:
+   519	            seen.add(smi)
+   520	            unique.append(m)
+   521	
+   522	    unique.sort(key=lambda x: x.get("binding_energy", 999))
+   523	    return unique[:n_molecules]<system>402 lines read from file starting from line 1. End of file reached.</system>     1	"""逆合成规划模块（第二版）：使用 SMARTS 反应模板生成 realistic 起始原料。
+     2	
+     3	文献依据与改进说明:
+     4	- LARC (Baker et al., 2025) 提出 Agent-as-a-Judge 逆合成框架，强调规则覆盖率
+     5	  是逆合成质量的关键决定因素。
+     6	- ChemCrow (Bran et al., 2024) 集成 18 个专家化学工具，证明工具丰富度直接
+     7	  决定 Agent 能力边界。
+     8	- 本模块将规则从 8 条扩充至 50+ 条，覆盖常见药物化学反应类型，
+     9	  显著降低 trivial route 比例。
+    10	
+    11	改进点（H003）:
+    12	- 引入递归多步逆合成规划（max_depth=3）
+    13	- 对单步断键后的中间体继续递归断键，直到得到简单起始原料
+    14	- 文献依据: LARC (2025) 强调多步路线评审的重要性
+    15	"""
+    16	import re
+    17	from rdkit import Chem, rdBase
+    18	from rdkit.Chem import AllChem, BRICS
+    19	
+    20	rdBase.DisableLog('rdApp.error')
+    21	rdBase.DisableLog('rdApp.warning')
+    22	
+    23	
+    24	def _validate_smiles(smiles: str) -> bool:
+    25	    """验证 SMILES 字符串是否有效且可解析。"""
+    26	    if not smiles or len(smiles) < 1:
+    27	        return False
+    28	    # 排除仅包含氢或自由基的无效产物
+    29	    if smiles in ('[H]', '[H][H]', 'H', '[Br]', '[Cl]', '[I]', '[F]'):
+    30	        return False
+    31	    mol = Chem.MolFromSmiles(smiles)
+    32	    return mol is not None
+    33	
+    34	
+    35	def _try_route(smiles: str, r1: str, r2: str = None) -> str:
+    36	    """尝试构建合成路线，验证所有反应物 SMILES。"""
+    37	    if not _validate_smiles(r1):
+    38	        return None
+    39	    if r2 is not None and not _validate_smiles(r2):
+    40	        return None
+    41	    if r2:
+    42	        return f"{r1}.{r2}>>{smiles}"
+    43	    return f"{r1}>>{smiles}"
+    44	
+    45	
+    46	def _run_retro_rule(mol, smarts_pattern, retro_smarts, smiles):
+    47	    """通用逆合成规则执行函数。
+    48	
+    49	    Args:
+    50	        mol: 目标分子 RDKit Mol 对象
+    51	        smarts_pattern: 匹配目标分子的 SMARTS
+    52	        retro_smarts: 逆合成反应的 SMARTS
+    53	        smiles: 目标分子的 SMILES（用于构建路线）
+    54	
+    55	    Returns:
+    56	        dict 或 None: 成功时返回 {"route": ..., "reactants": [...], "steps": 1}
+    57	    """
+    58	    patt = Chem.MolFromSmarts(smarts_pattern)
+    59	    if patt is None or not mol.HasSubstructMatch(patt):
+    60	        return None
+    61	    rxn = AllChem.ReactionFromSmarts(retro_smarts)
+    62	    if rxn is None:
+    63	        return None
+    64	    ps = rxn.RunReactants((mol,))
+    65	    if not ps:
+    66	        return None
+    67	
+    68	    # 遍历所有可能的产物集，找到第一个产生有效SMILES的
+    69	    for product_set in ps:
+    70	        if not product_set:
+    71	            continue
+    72	        if len(product_set) >= 2:
+    73	            r1 = Chem.MolToSmiles(product_set[0])
+    74	            r2 = Chem.MolToSmiles(product_set[1])
+    75	            route = _try_route(smiles, r1, r2)
+    76	            reactants = [r1, r2]
+    77	        else:
+    78	            r1 = Chem.MolToSmiles(product_set[0])
+    79	            route = _try_route(smiles, r1)
+    80	            reactants = [r1]
+    81	
+    82	        if route:
+    83	            return {"success": True, "route": route, "reactants": reactants, "steps": 1}
+    84	
+    85	    return None
+    86	
+    87	
+    88	# 简单分子阈值：原子数 <= 10 或属于常见起始原料，停止递归
+    89	_SIMPLE_SCAFFOLDS_SMARTS = [
+    90	    "c1ccccc1",      # 苯
+    91	    "c1ccncc1",      # 吡啶
+    92	    "c1cccnc1",      # 吡啶变体
+    93	    "C1CCOC1",       # THF
+    94	    "C1CCCCC1",      # 环己烷
+    95	    "C1CCNC1",       # 吡咯烷
+    96	]
+    97	
+    98	
+    99	def _is_simple_molecule(smiles: str) -> bool:
+   100	    """判断分子是否为足够简单的起始原料，无需继续逆合成。"""
+   101	    mol = Chem.MolFromSmiles(smiles)
+   102	    if mol is None:
+   103	        return False
+   104	    # 原子数 <= 10 视为简单
+   105	    if mol.GetNumAtoms() <= 10:
+   106	        return True
+   107	    # 匹配常见简单骨架
+   108	    for s in _SIMPLE_SCAFFOLDS_SMARTS:
+   109	        patt = Chem.MolFromSmarts(s)
+   110	        if patt and mol.HasSubstructMatch(patt):
+   111	            # 但取代基不能太多
+   112	            if mol.GetNumAtoms() <= 15:
+   113	                return True
+   114	    return False
+   115	
+   116	
+   117	# ======================================================================
+   118	# 逆合成规则库 — 按反应类型分组，共 50+ 条规则
+   119	# 设计原则：
+   120	#   1. 优先匹配更具体的结构（放在前面）
+   121	#   2. 覆盖常见药物化学键连方式
+   122	#   3. 反应物应为商业可得的简单分子
+   123	# ======================================================================
+   124	
+   125	RETRO_RULES = [
+   126	    # ------------------- 磺酰胺类 -------------------
+   127	    ("[S](=[O])(=[O])[N;!H0]", "[c:1][S](=[O])(=[O])[N:2]>>[c:1][S](=[O])(=[O])Cl.[N:2]"),
+   128	    ("[S](=[O])(=[O])[N;H0]", "[c:1][S](=[O])(=[O])[N:2]>>[c:1][S](=[O])(=[O])Cl.[N:2]"),
+   129	    
+   130	    # ------------------- 酰胺类 -------------------
+   131	    ("[C](=[O])[N;!H0]", "[C:1](=[O])[N:2]>>[C:1](=O)O.[N:2]"),
+   132	    ("[C](=[O])[N;H0]", "[C:1](=[O])[N:2]>>[C:1](=O)O.[N:2]"),
+   133	    
+   134	    # ------------------- 酯类 -------------------
+   135	    ("[C](=[O])O[!H0]", "[C:1](=[O])O[!H0:2]>>[C:1](=O)O.[O:2]"),
+   136	    
+   137	    # ------------------- 硫酯类 -------------------
+   138	    ("[C](=[O])S[!H0]", "[C:1](=[O])S:2>>[C:1](=O)O.[S:2]"),
+   139	    
+   140	    # ------------------- 芳基醚 / 烷基醚 -------------------
+   141	    ("[c]O[#6;!c]", "[c:1]O[#6;!c:2]>>[c:1]O.[C:2]Cl"),
+   142	    ("[#6;!c]O[#6;!c]", "[#6;!c:1]O[#6;!c:2]>>[#6;!c:1]O.[#6;!c:2]Cl"),
+   143	    
+   144	    # ------------------- 胺类 -------------------
+   145	    # 仲胺 — 还原胺化逆反应
+   146	    ("[NX3;H1;!$(NC=O);!$(NS(=O)=O)]", "[C:1][N;H1:2][C:3]>>[C:1][N;H2:2].[C:3]=O"),
+   147	    # 叔胺 — 烷基化逆反应
+   148	    ("[NX3;H0;!$(NC=O);!$(NS(=O)=O)]", "[C:1][N:2][C:3]>>[C:1][N:2].[C:3]Cl"),
+   149	    # 芳基仲胺 — Buchwald-Hartwig 简化
+   150	    ("[c][NX3;H1]", "[c:1][N:2]>>[c:1]Br.[N:2]"),
+   151	    # 芳基叔胺
+   152	    ("[c][NX3;H0]", "[c:1][N:2]>>[c:1]Br.[N:2]"),
+   153	    
+   154	    # ------------------- 脲类 -------------------
+   155	    ("[N;!H0]C(=O)[N;!H0]", "[N:1]C(=O)[N:2]>>[N:1].O=C=N[N:2]"),
+   156	    
+   157	    # ------------------- 氨基甲酸酯 -------------------
+   158	    ("[N;!H0]C(=O)O", "[N:1]C(=O)O>>[N:1].O=C=O"),
+   159	    
+   160	    # ------------------- 硝基还原 -------------------
+   161	    ("[N+](=O)[O-]", "[N+](=O)[O-]>>N"),
+   162	    
+   163	    # ------------------- 卤代芳烃 -------------------
+   164	    # 芳基氟 — 亲核芳香取代逆反应
+   165	    ("[c]F", "[c:1]F>>[c:1]Cl.F"),
+   166	    # 芳基氯
+   167	    ("[c]Cl", "[c:1]Cl>>[c:1]O.Cl"),
+   168	    # 芳基溴
+   169	    ("[c]Br", "[c:1]Br>>[c:1]O.Br"),
+   170	    # 芳基碘
+   171	    ("[c]I", "[c:1]I>>[c:1]O.I"),
+   172	    
+   173	    # ------------------- 酮 / 醛 -------------------
+   174	    # 芳基酮 — Friedel-Crafts 酰化逆反应
+   175	    ("[c]C(=O)[C;!c]", "[c:1]C(=O)[C:2]>>[c:1].[C:2]C(=O)Cl"),
+   176	    # 二芳基酮
+   177	    ("[c]C(=O)[c]", "[c:1]C(=O)[c:2]>>[c:1].[c:2]C(=O)Cl"),
+   178	    # 醛
+   179	    ("[CX3H1](=O)", "[C:1](=O)>>[C:1]O"),
+   180	    
+   181	    # ------------------- 醇类 -------------------
+   182	    # 苄醇 — 还原逆反应
+   183	    ("[c]C[OH]", "[c:1]C[OH]>>[c:1]C(=O)O"),
+   184	    # 普通醇 — 水解逆反应（酯/环氧）
+   185	    ("[C;!c][OH]", "[C:1][OH]>>[C:1]Cl.O"),
+   186	    
+   187	    # ------------------- 腈类 -------------------
+   188	    ("[C]#N", "[C:1]#N>>[C:1](=O)O.N"),
+   189	    
+   190	    # ------------------- 杂环合成 -------------------
+   191	    # 噻唑 — Hantzsch 噻唑合成逆反应
+   192	    ("c1ncsc1", "c1ncsc1>>N.CS.C=O"),
+   193	    # 咪唑
+   194	    ("c1[nH]cnc1", "c1[nH]cnc1>>N.C=O.N"),
+   195	    # 噁唑
+   196	    ("c1ncoc1", "c1ncoc1>>N.C=O.O"),
+   197	    # 吡啶（简化：从1,5-二羰基化合物）
+   198	    ("c1ccncc1", "c1ccncc1>>O=C1CCCC(=O)C1.N"),
+   199	    # 嘧啶
+   200	    ("c1cncnc1", "c1cncnc1>>N.C=O.N.C=O"),
+   201	    
+   202	    # ------------------- 缩合反应 -------------------
+   203	    # 烯烃 — Wittig / 羟醛缩合逆反应
+   204	    ("[C]=[C]", "[C:1]=[C:2]>>[C:1]C=O.[C:2]P"),
+   205	    # 亚胺 / 席夫碱
+   206	    ("[C]=[N]", "[C:1]=[N:2]>>[C:1]=O.[N:2]"),
+   207	    
+   208	    # ------------------- 硫醚 / 硫醇 -------------------
+   209	    ("[c]S[!H0]", "[c:1][S:2]>>[c:1]Br.[S:2]"),
+   210	    ("[C;!c]S[C;!c]", "[C:1][S:2]>>[C:1]Cl.[S:2]"),
+   211	    
+   212	    # ------------------- 重氮 / 叠氮 -------------------
+   213	    ("[N]=[N]", "[N:1]=[N:2]>>[N:1].[N:2]"),
+   214	    
+   215	    # ------------------- 酰亚胺 -------------------
+   216	    ("[C](=O)[N][C](=O)", "[C:1](=O)[N:2][C:3](=O)>>[C:1](=O)O.[N:2].[C:3](=O)O"),
+   217	    
+   218	    # ------------------- 肟 / 腙 -------------------
+   219	    ("[C]=[N][OH]", "[C:1]=[N:2][OH]>>[C:1]=O.[N:2]O"),
+   220	    ("[C]=[N][N]", "[C:1]=[N:2][N:3]>>[C:1]=O.[N:2][N:3]"),
+   221	    
+   222	    # ------------------- 碳酸酯 -------------------
+   223	    ("O=C(OC)OC", "O=C(OC)OC>>CO.O=C=O"),
+   224	    
+   225	    # ------------------- 特殊稠环骨架 -------------------
+   226	    # 5,10-二氢吩嗪类 — 逆合成到 2,2\'-二氨基联苯
+   227	    ("c1ccc2c(c1)CNc1ccccc1N2", "c1ccc2c(c1)CNc1ccccc1N2>>Nc1ccccc1-c1ccccc1N"),
+   228	    
+   229	    # ------------------- 偶联反应 -------------------
+   230	    # Suzuki偶联 — 芳基硼酸 + 芳基卤 → 联芳基
+   231	    ("[c][B]([O])[c]", "[c:1][B:2]([O])[c:3]>>[c:1].[c:3]B(O)O.[c:3]Br"),
+   232	    # Heck反应 — 芳基卤 + 烯烃 → 芳基烯烃
+   233	    ("[c][C]=[C]", "[c:1][C:2]=[C:3]>>[c:1].[C:2]=[C:3].Br"),
+   234	    # Sonogashira偶联 — 芳基卤 + 端炔 → 芳基炔
+   235	    ("[c][C]#C", "[c:1][C:2]#C>>[c:1].[C:2]#C.Br"),
+   236	    # Buchwald-Hartwig偶联 — 芳基卤 + 胺 → 芳胺
+   237	    ("[c][N;!H0]", "[c:1][N:2]>>[c:1]Br.[N:2]"),
+   238	    # Ullmann偶联 — 芳基卤 → 联芳基
+   239	    ("[c][c]", "[c:1][c:2]>>[c:1]Br.[c:2]Br"),
+   240	    
+   241	    # ------------------- 还原胺化 -------------------
+   242	    # 还原胺化 — 醛/酮 + 胺 → 仲/叔胺
+   243	    ("[C](=O)[N;!H0]", "[C:1](=O)[N:2]>>[C:1].[N:2]"),
+   244	    
+   245	    # ------------------- 亲核取代 -------------------
+   246	    # SNAr — 芳基卤 + 亲核试剂 → 取代芳基
+   247	    ("[c][F]", "[c:1][F:2]>>[c:1].[F:2]"),
+   248	    ("[c][Cl]", "[c:1][Cl:2]>>[c:1].[Cl:2]"),
+   249	    ("[c][Br]", "[c:1][Br:2]>>[c:1].[Br:2]"),
+   250	    
+   251	    # ------------------- 硝化与卤代 -------------------
+   252	    # 硝化 — 芳烃 → 硝基芳烃
+   253	    ("[c]N(=O)=O", "[c:1]N(=O)=O>>[c:1].HNO3"),
+   254	    # 卤代 — 芳烃 → 卤代芳烃
+   255	    ("[c]Cl", "[c:1]Cl>>[c:1].Cl2"),
+   256	    ("[c]Br", "[c:1]Br>>[c:1].Br2"),
+   257	    
+   258	    # ------------------- 氧化与还原 -------------------
+   259	    # 氧化 — 醇 → 醛/酮/酸
+   260	    ("[C][OH]", "[C:1][OH]>>[C:1].O"),
+   261	    # 还原 — 硝基 → 氨基
+   262	    ("[N]([O])[O]", "[N:1]([O])[O]>>[N:1].H2"),
+   263	    # 还原 — 酮 → 醇
+   264	    ("[C](=O)[C]", "[C:1](=O)[C:2]>>[C:1].[C:2]"),
+   265	    
+   266	    # ------------------- 脱保护反应 -------------------
+   267	    # Boc脱保护
+   268	    ("[N]([C](=O)[O])[C]", "[N:1]([C:2](=O)[O])[C:3]>>[N:1].[C:2](=O)O.[C:3]"),
+   269	    # CBz脱保护
+   270	    ("[N]([C](=O)[O])[C]", "[N:1]([C:2](=O)[O])[C:3]>>[N:1].[C:2](=O)O.[C:3]"),
+   271	    
+   272	    # ------------------- 缩合反应 -------------------
+   273	    # Knoevenagel缩合 — 醛 + 活泼亚甲基 → 烯烃
+   274	    ("[C]=[C][C]", "[C:1]=[C:2][C:3]>>[C:1]=O.[C:2]=[C:3]"),
+   275	]
+   276	
+   277	
+   278	def plan_synthesis_recursive(smiles: str, max_depth: int = 3, current_depth: int = 0, visited: set = None):
+   279	    """递归多步逆合成规划（H003）。
+   280	
+   281	    对目标分子应用单步逆合成规则，然后对得到的反应物（中间体）
+   282	    递归调用逆合成规划，直到得到足够简单的起始原料或达到最大深度。
+   283	
+   284	    Args:
+   285	        smiles: 目标分子 SMILES
+   286	        max_depth: 最大递归深度
+   287	        current_depth: 当前递归深度
+   288	        visited: 已访问的 SMILES 集合（防止循环）
+   289	
+   290	    Returns:
+   291	        dict: {"success": bool, "route": str, "steps": int, "trivial": bool}
+   292	    """
+   293	    if visited is None:
+   294	        visited = set()
+   295	
+   296	    # 防止循环
+   297	    if smiles in visited:
+   298	        return {"success": True, "route": f"{smiles}>>{smiles}", "steps": 0, "trivial": True}
+   299	    visited.add(smiles)
+   300	
+   301	    # 基础情况 1: 达到最大深度
+   302	    if current_depth >= max_depth:
+   303	        return {"success": True, "route": f"{smiles}>>{smiles}", "steps": 0, "trivial": True}
+   304	
+   305	    # 基础情况 2: 分子已经足够简单
+   306	    if _is_simple_molecule(smiles):
+   307	        return {"success": True, "route": f"{smiles}>>{smiles}", "steps": 0, "trivial": True}
+   308	
+   309	    mol = Chem.MolFromSmiles(smiles)
+   310	    if mol is None:
+   311	        return {"success": False, "error": "无效的 SMILES"}
+   312	
+   313	    # 尝试所有逆合成规则
+   314	    for smarts_pattern, retro_smarts in RETRO_RULES:
+   315	        result = _run_retro_rule(mol, smarts_pattern, retro_smarts, smiles)
+   316	        if result:
+   317	            reactants = result.get("reactants", [])
+   318	            # 对每个反应物递归规划
+   319	            sub_routes = []
+   320	            all_trivial = True
+   321	            for r in reactants:
+   322	                sub = plan_synthesis_recursive(r, max_depth, current_depth + 1, visited.copy())
+   323	                if sub.get("success"):
+   324	                    sub_routes.append(sub)
+   325	                    if not sub.get("trivial", False):
+   326	                        all_trivial = False
+   327	
+   328	            # 构建完整路线：先放子路线（非平凡的），再放当前步
+   329	            full_parts = []
+   330	            for sub in sub_routes:
+   331	                if not sub.get("trivial", False):
+   332	                    full_parts.append(sub["route"])
+   333	            full_parts.append(result["route"])
+   334	            full_route = " | ".join(full_parts)
+   335	
+   336	            total_steps = result["steps"] + sum(s.get("steps", 0) for s in sub_routes)
+   337	            is_trivial = all_trivial and len(reactants) == 1 and reactants[0] == smiles
+   338	
+   339	            return {
+   340	                "success": True,
+   341	                "route": full_route,
+   342	                "steps": total_steps,
+   343	                "trivial": is_trivial,
+   344	            }
+   345	
+   346	    # 回退: 用 BRICS 碎片化尝试找断键
+   347	    try:
+   348	        frags = BRICS.BreakMol(mol)
+   349	        if frags and len(frags) >= 2:
+   350	            frag_smiles = []
+   351	            for f in frags:
+   352	                if f is None:
+   353	                    continue
+   354	                s = Chem.MolToSmiles(f)
+   355	                if _validate_smiles(s):
+   356	                    frag_smiles.append(s)
+   357	            if len(frag_smiles) >= 2:
+   358	                reactants = ".".join(sorted(frag_smiles)[:2])
+   359	                route = _try_route(smiles, reactants)
+   360	                if route:
+   361	                    # 对 BRICS 碎片也尝试递归
+   362	                    sub_routes = []
+   363	                    all_trivial = True
+   364	                    for r in frag_smiles[:2]:
+   365	                        sub = plan_synthesis_recursive(r, max_depth, current_depth + 1, visited.copy())
+   366	                        if sub.get("success"):
+   367	                            sub_routes.append(sub)
+   368	                            if not sub.get("trivial", False):
+   369	                                all_trivial = False
+   370	                    full_parts = []
+   371	                    for sub in sub_routes:
+   372	                        if not sub.get("trivial", False):
+   373	                            full_parts.append(sub["route"])
+   374	                    full_parts.append(route)
+   375	                    full_route = " | ".join(full_parts)
+   376	                    total_steps = 1 + sum(s.get("steps", 0) for s in sub_routes)
+   377	                    return {
+   378	                        "success": True,
+   379	                        "route": full_route,
+   380	                        "steps": total_steps,
+   381	                        "trivial": False,
+   382	                    }
+   383	    except Exception:
+   384	        pass
+   385	
+   386	    # 最终回退: 平凡路线
+   387	    return {"success": True, "route": f"{smiles}>>{smiles}", "steps": 0, "trivial": True}
+   388	
+   389	
+   390	def plan_synthesis_v2(smiles: str):
+   391	    """使用 SMARTS 断键规则规划合成路线。
+   392	
+   393	    改进点（H003）：
+   394	    - 引入递归多步逆合成规划（plan_synthesis_recursive）
+   395	    - 对中间体继续断键，直到得到简单起始原料
+   396	    - 路线格式: 步骤之间用 " | " 分隔
+   397	
+   398	    文献依据：
+   399	    - LARC (2025): 规则覆盖率是逆合成质量的关键
+   400	    - ChemCrow (2024): 工具丰富度决定 Agent 能力边界
+   401	    """
+   402	    return plan_synthesis_recursive(smiles, max_depth=3, current_depth=0)<system>92 lines read from file starting from line 1. End of file reached.</system>     1	"""分子性质评估模块：使用 RDKit 计算药物相似性和理化性质。"""
+     2	import math
+     3	from rdkit import Chem
+     4	from rdkit.Chem import Descriptors, QED, Lipinski
+     5	from rdkit.Chem import RDConfig
+     6	import os
+     7	
+     8	
+     9	def evaluate_molecule(smiles: str):
+    10	    """评估分子的药物相似性和基本理化性质。"""
+    11	    mol = Chem.MolFromSmiles(smiles)
+    12	    if mol is None:
+    13	        return {"valid": False, "error": "无效的 SMILES"}
+    14	
+    15	    mol = Chem.AddHs(mol)
+    16	    mw = Descriptors.MolWt(mol)
+    17	    logp = Descriptors.MolLogP(mol)
+    18	    tpsa = Descriptors.TPSA(mol)
+    19	    hbd = Lipinski.NumHDonors(mol)
+    20	    hba = Lipinski.NumHAcceptors(mol)
+    21	    rotb = Descriptors.NumRotatableBonds(mol)
+    22	    rings = Descriptors.RingCount(mol)
+    23	    qed = QED.qed(mol)
+    24	
+    25	    # 合成可及性估算（非常粗略）
+    26	    sa = estimate_sa_score(mol)
+    27	
+    28	    # 类药五规则检查
+    29	    lipinski_violations = 0
+    30	    if mw > 500: lipinski_violations += 1
+    31	    if logp > 5: lipinski_violations += 1
+    32	    if hbd > 5: lipinski_violations += 1
+    33	    if hba > 10: lipinski_violations += 1
+    34	    lipinski_ok = lipinski_violations <= 1  # 允许违反 1 条
+    35	
+    36	    return {
+    37	        "valid": True,
+    38	        "smiles": smiles,
+    39	        "mw": round(mw, 2),
+    40	        "logp": round(logp, 2),
+    41	        "tpsa": round(tpsa, 2),
+    42	        "hbd": hbd,
+    43	        "hba": hba,
+    44	        "rotatable_bonds": rotb,
+    45	        "rings": rings,
+    46	        "qed": round(qed, 3),
+    47	        "sa_score": round(sa, 2),
+    48	        "lipinski_pass": lipinski_ok,
+    49	    }
+    50	
+    51	
+    52	def estimate_sa_score(mol):
+    53	    """非常粗略的合成可及性估算（0-10，越低越好）。
+    54	    基于片段复杂度和环系分析。
+    55	    """
+    56	    # 统计稠环数量
+    57	    ri = mol.GetRingInfo()
+    58	    atom_rings = ri.AtomRings()
+    59	    n_rings = len(atom_rings)
+    60	
+    61	    # 螺环中心
+    62	    spiro = Chem.rdMolDescriptors.CalcNumSpiroAtoms(mol)
+    63	
+    64	    # 桥头原子
+    65	    bridge = Chem.rdMolDescriptors.CalcNumBridgeheadAtoms(mol)
+    66	
+    67	    # 手性中心
+    68	    stereo = Chem.rdMolDescriptors.CalcNumAtomStereoCenters(mol)
+    69	
+    70	    # 基础启发式公式
+    71	    score = 1.0 + n_rings * 0.5 + spiro * 1.0 + bridge * 1.5 + stereo * 0.5
+    72	    score += Descriptors.NumRotatableBonds(mol) * 0.1
+    73	    return min(score, 10.0)
+    74	
+    75	
+    76	def passes_filters(props: dict, min_qed=0.3, max_mw=500, min_mw=150, max_logp=5.0, max_sa=6.0):
+    77	    """检查分子是否通过基础类药性质过滤。
+    78	
+    79	    注意: max_sa 默认 6.0，与竞赛硬零分条件一致（SAScore>6 零分）。
+    80	    之前版本误用 8.0，现已修正。
+    81	    """
+    82	    if not props.get("valid"):
+    83	        return False
+    84	    if props["qed"] < min_qed:
+    85	        return False
+    86	    if not (min_mw <= props["mw"] <= max_mw):
+    87	        return False
+    88	    if props["logp"] > max_logp:
+    89	        return False
+    90	    if props["sa_score"] > max_sa:
+    91	        return False
+    92	    return True
+<system>108 lines read from file starting from line 1. End of file reached.</system>     1	"""分子对接模块：使用 AutoDock Vina 计算结合自由能。"""
+     2	import os
+     3	import tempfile
+     4	from rdkit import Chem, rdBase
+     5	from rdkit.Chem import AllChem
+     6	from meeko import MoleculePreparation, PDBQTWriterLegacy
+     7	from vina import Vina
+     8	from config import RECEPTOR_PDBQT, DOCKING_CENTER, DOCKING_SIZE, DOCKING_EXHAUSTIVENESS
+     9	from receptor import prepare_receptor
+    10	
+    11	# 压制 RDKit 错误输出
+    12	rdBase.DisableLog('rdApp.error')
+    13	rdBase.DisableLog('rdApp.warning')
+    14	
+    15	
+    16	def smiles_to_pdbqt(smiles: str, output_path: str = None):
+    17	    """使用 RDKit + Meeko 将 SMILES 转换为 PDBQT 文件。"""
+    18	    mol = Chem.MolFromSmiles(smiles)
+    19	    if mol is None:
+    20	        return None
+    21	
+    22	    mol = Chem.AddHs(mol)
+    23	    ret = AllChem.EmbedMolecule(mol, randomSeed=42)
+    24	    if ret != 0:
+    25	        ret = AllChem.EmbedMolecule(mol, AllChem.ETKDGv3())
+    26	    if ret != 0:
+    27	        return None
+    28	    try:
+    29	        AllChem.MMFFOptimizeMolecule(mol, maxIters=200)
+    30	    except Exception:
+    31	        pass
+    32	
+    33	    preparator = MoleculePreparation()
+    34	    setup_list = preparator.prepare(mol)
+    35	    if not setup_list:
+    36	        return None
+    37	
+    38	    pdbqt_string = PDBQTWriterLegacy.write_string(setup_list[0])[0]
+    39	
+    40	    if output_path is None:
+    41	        fd, output_path = tempfile.mkstemp(suffix=".pdbqt")
+    42	        os.close(fd)
+    43	
+    44	    with open(output_path, "w") as f:
+    45	        f.write(pdbqt_string)
+    46	
+    47	    return output_path
+    48	
+    49	
+    50	def dock_molecule(smiles: str, center=None, size=None, exhaustiveness=None):
+    51	    """对单个分子进行对接，返回结合能（kcal/mol）。
+    52	
+    53	    返回字典包含:
+    54	        - binding_energy: 最佳构象能量（负值=越好）
+    55	        - poses: 构象能量列表
+    56	        - success: 是否成功
+    57	        - error: 失败原因
+    58	    """
+    59	    receptor = prepare_receptor()
+    60	    ligand_pdbqt = smiles_to_pdbqt(smiles)
+    61	    if ligand_pdbqt is None:
+    62	        return {"success": False, "error": "配体准备失败"}
+    63	
+    64	    if center is None:
+    65	        center = DOCKING_CENTER
+    66	    if size is None:
+    67	        size = DOCKING_SIZE
+    68	    if exhaustiveness is None:
+    69	        exhaustiveness = DOCKING_EXHAUSTIVENESS
+    70	
+    71	    try:
+    72	        v = Vina(sf_name="vina", seed=42, verbosity=0)
+    73	        v.set_receptor(receptor)
+    74	        v.set_ligand_from_file(ligand_pdbqt)
+    75	        v.compute_vina_maps(center=center, box_size=size)
+    76	        v.dock(exhaustiveness=exhaustiveness, n_poses=5)
+    77	        energies = v.energies(n_poses=1)
+    78	        best_energy = float(energies[0][0])
+    79	
+    80	        # 清理临时文件
+    81	        if ligand_pdbqt.startswith(tempfile.gettempdir()):
+    82	            os.remove(ligand_pdbqt)
+    83	
+    84	        return {
+    85	            "success": True,
+    86	            "binding_energy": round(best_energy, 3),
+    87	            "poses": energies.tolist(),
+    88	        }
+    89	    except Exception as e:
+    90	        if ligand_pdbqt and ligand_pdbqt.startswith(tempfile.gettempdir()):
+    91	            try:
+    92	                os.remove(ligand_pdbqt)
+    93	            except Exception:
+    94	                pass
+    95	        return {"success": False, "error": str(e)}
+    96	
+    97	
+    98	def batch_dock(molecules, center=None, size=None):
+    99	    """批量对接分子并返回结果。"""
+   100	    results = []
+   101	    for i, mol_info in enumerate(molecules):
+   102	        smiles = mol_info["smiles"]
+   103	        print(f"[对接] {i+1}/{len(molecules)}: {smiles[:40]}...")
+   104	        result = dock_molecule(smiles, center, size)
+   105	        result["smiles"] = smiles
+   106	        result.update(mol_info)
+   107	        results.append(result)
+   108	    return results
+<system>255 lines read from file starting from line 1. End of file reached.</system>     1	"""文献驱动的种子分子提取模块（RAG冷启动）。
+     2	
+     3	核心思想：
+     4	  不从零设计分子，而是从已知药物/文献中提取活性骨架作为起点，
+     5	  LLM 在此基础上进行适配性修改，效率比从10^60化学空间盲目搜索高一个数量级。
+     6	
+     7	本模块实现两种种子来源：
+     8	  1. 预定义的药物化学知识库（常见药效团和活性骨架模式）
+     9	  2. 从 papers/summary.md 中解析的关键骨架信息
+    10	
+    11	文献依据:
+    12	  - Deep Lead Optimization (JACS): 骨架跃迁+侧链装饰策略
+    13	  - Coscientist (Nature): 基于实验结果的迭代反思
+    14	  - Autonomous Agents 综述: RAG规划+模板预定义策略
+    15	"""
+    16	import os
+    17	import re
+    18	from typing import Optional
+    19	
+    20	from rdkit import Chem, rdBase
+    21	from rdkit.Chem import AllChem, Descriptors, QED
+    22	from rdkit.DataStructs import TanimotoSimilarity
+    23	from rdkit import DataStructs
+    24	from rdkit.Chem import rdMolDescriptors
+    25	
+    26	from evaluator import evaluate_molecule, passes_filters
+    27	from generator import SCAFFOLDS, random_mutate_smiles
+    28	
+    29	rdBase.DisableLog('rdApp.error')
+    30	rdBase.DisableLog('rdApp.warning')
+    31	
+    32	
+    33	# ============================================================
+    34	# 药效团知识库：基于药物化学常识的活性骨架模式
+    35	# ============================================================
+    36	
+    37	# 常见药物药效团模式（SMARTS）
+    38	PHARMACOPHORE_PATTERNS = {
+    39	    "h_bond_donor": "[N;!H0]",          # 氢键供体（胺类）
+    40	    "h_bond_acceptor": "[O;!H0]",       # 氢键受体（羟基/羰基）
+    41	    "aromatic_ring": "c1ccccc1",         # 芳香环（π-π堆积）
+    42	    "hetero_aromatic": "c1ccncc1",       # 杂芳环（吡啶类）
+    43	    "sulfonamide": "S(=O)(=O)N",         # 磺酰胺（常见药效团）
+    44	    "amide": "C(=O)N",                   # 酰胺键
+    45	    "amine": "[NX3;H1,H2]",             # 胺基
+    46	    "fluorine": "F",                      # 氟取代（代谢稳定性）
+    47	    "chlorine": "Cl",                     # 氯取代
+    48	    "hydroxyl": "[OH]",                   # 羟基
+    49	    "methoxy": "COc",                     # 甲氧基
+    50	    "piperidine": "C1CCNCC1",             # 哌啶（碱性胺）
+    51	    "morpholine": "C1COCCN1",             # 吗啉（水溶性）
+    52	    "piperazine": "C1CNCCN1",             # 哌嗪（碱性双胺）
+    53	    "indole": "c1ccc2c(c1)[nH]cc2",       # 吲哚
+    54	    "quinazoline": "c1ccc2ncncc2c1",      # 喹唑啉（激酶抑制剂常见）
+    55	    "benzimidazole": "c1ccc2[nH]cnc2c1", # 苯并咪唑
+    56	}
+    57	
+    58	# 基于竞赛靶点（CNS相关）的高概率活性骨架
+    59	# CNS药物特征：MW<450, LogP<5, HBD≤3, TPSA<90
+    60	CNS_FAVORABLE_SCAFFOLDS = [
+    61	    # 吲哚类（5-HT受体常见）
+    62	    "c1ccc2c(c1)CCN2",         # 四氢吲哚
+    63	    "c1ccc2c(c1)[nH]c2",       # 吲哚
+    64	    "c1ccc2c(c1)c[nH]2",       # 吲唑
+    65	    # 含氮稠环（激酶/GPCR）
+    66	    "c1ccc2ncncc2c1",           # 喹唑啉
+    67	    "c1ccc2c(c1)ncn2",          # 苯并咪唑
+    68	    "c1ccc2c(c1)nccn2",         # 喹唑啉变体
+    69	    "c1ncc2ccccc2n1",           # 喹唑啉
+    70	    # 哌啶/吗啉类（CNS渗透性好）
+    71	    "c1ccc(cc1)N2CCOCC2",       # 苯基吗啉
+    72	    "c1ccc(cc1)N2CCCCC2",       # 苯基哌啶
+    73	    "c1ccc(cc1)N2CCNCC2",       # 苯基哌嗪
+    74	    # 磺酰胺类（经典药效团）
+    75	    "c1ccc(cc1)S(=O)(=O)N",     # 苯磺酰胺
+    76	    "c1ccc(cc1)S(=O)(=O)NC",    # N-甲基苯磺酰胺
+    77	    # 酰胺类
+    78	    "c1ccc(cc1)C(=O)N2CCCC2",   # 苯甲酰吡咯烷
+    79	    "c1ccc(cc1)NC(=O)C",        # 乙酰苯胺
+    80	    # 氟代芳烃（代谢稳定性）
+    81	    "c1ccc(cc1F)N",             # 氟苯胺
+    82	    "c1ccc(cc1F)O",             # 氟苯酚
+    83	    # 杂环组合
+    84	    "c1ccncc1C(=O)N",           # 烟酰胺
+    85	    "c1ccc2c(c1)NCC2",          # 二氢吲哚
+    86	    "c1ccc(cc1)C(=O)Nc2ccncc2", # 苯甲酰氨基吡啶
+    87	]
+    88	
+    89	
+    90	def extract_seeds_from_summary(summary_path: str = None) -> list[str]:
+    91	    """从 papers/summary.md 中提取可能的活性骨架信息。
+    92	
+    93	    解析摘要中的 SMILES 字符串和化学结构描述，
+    94	    转化为可用于分子生成的种子 SMILES。
+    95	
+    96	    Args:
+    97	        summary_path: papers/summary.md 的路径
+    98	
+    99	    Returns:
+   100	        list[str]: 提取到的种子 SMILES 列表
+   101	    """
+   102	    if summary_path is None:
+   103	        summary_path = os.path.join(
+   104	            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+   105	            "papers", "summary.md"
+   106	        )
+   107	
+   108	    seeds = []
+   109	
+   110	    if not os.path.exists(summary_path):
+   111	        return CNS_FAVORABLE_SCAFFOLDS  # 回退到预定义骨架
+   112	
+   113	    try:
+   114	        with open(summary_path, "r", encoding="utf-8") as f:
+   115	            content = f.read()
+   116	    except Exception:
+   117	        return CNS_FAVORABLE_SCAFFOLDS
+   118	
+   119	    # 尝试从文本中提取 SMILES（简单启发式）
+   120	    # 匹配看起来像 SMILES 的模式
+   121	    smiles_pattern = re.compile(
+   122	        r'(?:SMILES|smiles|骨架|scaffold|结构|structure|活性分子|active molecule)[：:=]\s*([^\s,，。.；;]+)',
+   123	        re.IGNORECASE
+   124	    )
+   125	    for match in smiles_pattern.finditer(content):
+   126	        candidate = match.group(1).strip()
+   127	        mol = Chem.MolFromSmiles(candidate)
+   128	        if mol is not None:
+   129	            canonical = Chem.MolToSmiles(mol, canonical=True)
+   130	            props = evaluate_molecule(canonical)
+   131	            if passes_filters(props, max_sa=6.0):
+   132	                seeds.append(canonical)
+   133	
+   134	    # 提取文本中直接出现的可能是 SMILES 的字符串
+   135	    # SMILES 通常包含 C, c, N, O, S, [, ], (, ), =, # 等字符
+   136	    potential_smiles = re.findall(r'\b[cCnNoOsS]\S{5,80}\b', content)
+   137	    for candidate in potential_smiles:
+   138	        # 过滤明显不是 SMILES 的（包含空格、中文等）
+   139	        if any(ord(c) > 127 for c in candidate):
+   140	            continue
+   141	        if candidate in ('class', 'code', 'config', 'common'):
+   142	            continue
+   143	        try:
+   144	            mol = Chem.MolFromSmiles(candidate)
+   145	            if mol is not None:
+   146	                canonical = Chem.MolToSmiles(mol, canonical=True)
+   147	                if canonical not in seeds:
+   148	                    props = evaluate_molecule(canonical)
+   149	                    if passes_filters(props, max_sa=6.0):
+   150	                        seeds.append(canonical)
+   151	        except Exception:
+   152	            continue
+   153	
+   154	    return seeds
+   155	
+   156	
+   157	def generate_literature_seeds(
+   158	    n_seeds: int = 20,
+   159	    summary_path: str = None,
+   160	    strategy: str = "diverse",
+   161	) -> list[dict]:
+   162	    """基于文献知识生成种子分子（RAG冷启动）。
+   163	
+   164	    策略：
+   165	      - "diverse": 从CNS骨架+文献骨架中多样性采样
+   166	      - "focused": 围绕特定药效团密集采样
+   167	      - "cns": 专注CNS渗透性好的骨架
+   168	
+   169	    Args:
+   170	        n_seeds: 目标种子数量
+   171	        summary_path: papers/summary.md 路径
+   172	        strategy: 生成策略
+   173	
+   174	    Returns:
+   175	        list[dict]: 种子分子列表，包含 SMILES 和性质评估
+   176	    """
+   177	    # 合并文献提取骨架 + CNS骨架 + 默认骨架
+   178	    all_seeds = []
+   179	
+   180	    # 1. 文献提取
+   181	    literature_seeds = extract_seeds_from_summary(summary_path)
+   182	    all_seeds.extend(literature_seeds)
+   183	
+   184	    # 2. CNS 骨架
+   185	    for scaffold in CNS_FAVORABLE_SCAFFOLDS:
+   186	        if scaffold not in all_seeds:
+   187	            all_seeds.append(scaffold)
+   188	
+   189	    # 3. 默认骨架（补充多样性）
+   190	    for scaffold in SCAFFOLDS:
+   191	        if scaffold not in all_seeds:
+   192	            all_seeds.append(scaffold)
+   193	
+   194	    # 去重
+   195	    unique_seeds = list(dict.fromkeys(all_seeds))
+   196	
+   197	    # 验证 + 评估
+   198	    validated = []
+   199	    for smiles in unique_seeds:
+   200	        mol = Chem.MolFromSmiles(smiles)
+   201	        if mol is None:
+   202	            continue
+   203	        canonical = Chem.MolToSmiles(mol, canonical=True)
+   204	        props = evaluate_molecule(canonical)
+   205	        if props.get("valid"):
+   206	            # 放宽过滤：种子只需要基本的合理性
+   207	            validated.append({**props, "source": "literature_seed"})
+   208	
+   209	    # 根据策略排序和采样
+   210	    if strategy == "cns":
+   211	        # CNS策略：按 TPSA（越低CNS渗透越好）和 QED 排序
+   212	        validated.sort(key=lambda x: (x.get("tpsa", 999), -x.get("qed", 0)))
+   213	    elif strategy == "focused":
+   214	        # 聚焦策略：按药效团匹配度排序（磺酰胺/酰胺优先）
+   215	        def pharmacophore_score(m):
+   216	            smiles = m.get("smiles", "")
+   217	            mol = Chem.MolFromSmiles(smiles)
+   218	            if mol is None:
+   219	                return 0
+   220	            score = 0
+   221	            for name, pattern in PHARMACOPHORE_PATTERNS.items():
+   222	                patt = Chem.MolFromSmarts(pattern)
+   223	                if patt and mol.HasSubstructMatch(patt):
+   224	                    score += 1
+   225	            return score
+   226	        validated.sort(key=lambda x: -pharmacophore_score(x))
+   227	    else:
+   228	        # 多样性策略：按 QED 降序
+   229	        validated.sort(key=lambda x: -x.get("qed", 0))
+   230	
+   231	    # 取前 n_seeds 个
+   232	    result = validated[:n_seeds]
+   233	
+   234	    # 如果种子不够，用变异扩展
+   235	    if len(result) < n_seeds:
+   236	        extra_needed = n_seeds - len(result)
+   237	        existing_smiles = {m["smiles"] for m in result}
+   238	        for seed_info in list(result):
+   239	            if extra_needed <= 0:
+   240	                break
+   241	            seed_smiles = seed_info.get("smiles", "")
+   242	            if not seed_smiles:
+   243	                continue
+   244	            for _ in range(5):  # 每个种子尝试5次变异
+   245	                if extra_needed <= 0:
+   246	                    break
+   247	                new_smiles = random_mutate_smiles(seed_smiles, random.randint(1, 2))
+   248	                if new_smiles and new_smiles not in existing_smiles:
+   249	                    props = evaluate_molecule(new_smiles)
+   250	                    if passes_filters(props, max_sa=6.0):
+   251	                        result.append({**props, "source": "mutated_seed"})
+   252	                        existing_smiles.add(new_smiles)
+   253	                        extra_needed -= 1
+   254	
+   255	    return result
+<system>215 lines read from file starting from line 1. End of file reached.</system>     1	#!/usr/bin/env python3
+     2	"""MolCraft Agent 入口 —— 使用 Kimi Agent SDK 启动自主药物研发智能体。
+     3	
+     4	本脚本遵循 autoresearch 架构模式：
+     5	- program.md：人类编辑的 Agent 指令书（唯一人机接口）
+     6	- docs/iteration_log.jsonl：Agent 主动报告的迭代记录
+     7	- main.py：只负责读取 program.md 并启动 Agent，自身不携带业务逻辑
+     8	
+     9	运行方式:
+    10	    cd molcraft-agent
+    11	    source .venv/bin/activate
+    12	    python main.py                    # 默认 1 次迭代，最长 90 分钟
+    13	    python main.py --iterations 3     # 迭代 3 次
+    14	    python main.py --max-minutes 60   # 最长 60 分钟
+    15	    python main.py --max-steps 1000   # 每轮最多 1000 步
+    16	"""
+    17	import argparse
+    18	import asyncio
+    19	import json
+    20	import sys
+    21	import time
+    22	from datetime import datetime
+    23	from pathlib import Path
+    24	
+    25	from kimi_agent_sdk import prompt
+    26	
+    27	
+    28	AGENT_YAML = Path(__file__).parent / "agent.yaml"
+    29	PROGRAM_MD = Path(__file__).parent / "program.md"
+    30	OUTPUT_DIR = Path(__file__).parent / "output"
+    31	ITERATION_LOG = Path(__file__).parent / "docs" / "iteration_log.jsonl"
+    32	
+    33	
+    34	def load_program() -> str:
+    35	    """读取 program.md，这是人类与 Agent 交互的唯一接口。"""
+    36	    if not PROGRAM_MD.exists():
+    37	        raise FileNotFoundError(
+    38	            f"{PROGRAM_MD} 不存在。这是 Agent 的指令书，必须创建后才能运行。"
+    39	        )
+    40	    return PROGRAM_MD.read_text(encoding="utf-8")
+    41	
+    42	
+    43	class TeeLogger:
+    44	    """同时输出到终端和文件的日志记录器。"""
+    45	
+    46	    def __init__(self, log_path: Path):
+    47	        self.terminal = sys.stdout
+    48	        self.log_file = open(log_path, "w", encoding="utf-8")
+    49	
+    50	    def write(self, message: str) -> None:
+    51	        self.terminal.write(message)
+    52	        self.log_file.write(message)
+    53	        self.log_file.flush()
+    54	
+    55	    def flush(self) -> None:
+    56	        self.terminal.flush()
+    57	        self.log_file.flush()
+    58	
+    59	    def close(self) -> None:
+    60	        self.log_file.close()
+    61	
+    62	
+    63	def count_iterations() -> int:
+    64	    """统计 Agent 已报告的迭代次数。
+    65	
+    66	    Agent 每完成一轮「文献→诊断→改代码→实验验证」闭环后，
+    67	    会主动调用 report_iteration 工具，写入一条记录到 docs/iteration_log.jsonl。
+    68	    """
+    69	    if not ITERATION_LOG.exists():
+    70	        return 0
+    71	    count = 0
+    72	    try:
+    73	        with open(ITERATION_LOG, "r", encoding="utf-8") as f:
+    74	            for line in f:
+    75	                if line.strip():
+    76	                    count += 1
+    77	    except Exception:
+    78	        pass
+    79	    return count
+    80	
+    81	
+    82	async def monitor(stop_event: asyncio.Event, max_iterations: int, max_seconds: float):
+    83	    """独立协程：每 30 秒检查迭代次数和时间限制。"""
+    84	    start_time = time.time()
+    85	    limit_printed = False
+    86	
+    87	    while not stop_event.is_set():
+    88	        await asyncio.sleep(30)
+    89	
+    90	        elapsed = time.time() - start_time
+    91	
+    92	        # 时间上限
+    93	        if elapsed > max_seconds:
+    94	            print(
+    95	                f"\n\n[{datetime.now().isoformat()}] 达到最大运行时间 "
+    96	                f"({int(max_seconds // 60)} 分钟)，正在退出...",
+    97	                flush=True,
+    98	            )
+    99	            stop_event.set()
+   100	            return
+   101	
+   102	        # 迭代次数上限
+   103	        if max_iterations > 0 and not limit_printed:
+   104	            current = count_iterations()
+   105	            print(
+   106	                f"\n[{datetime.now().isoformat()}] 迭代进度: {current}/{max_iterations}",
+   107	                flush=True,
+   108	            )
+   109	            if current >= max_iterations:
+   110	                print(
+   111	                    f"\n[{datetime.now().isoformat()}] 已达到最大迭代次数 "
+   112	                    f"({max_iterations} 次)，60 秒后退出...",
+   113	                    flush=True,
+   114	                )
+   115	                limit_printed = True
+   116	                await asyncio.sleep(60)
+   117	                stop_event.set()
+   118	                return
+   119	
+   120	
+   121	async def main() -> None:
+   122	    parser = argparse.ArgumentParser(description="MolCraft Agent 启动器")
+   123	    parser.add_argument(
+   124	        "--iterations",
+   125	        type=int,
+   126	        default=1,
+   127	        help="最大迭代次数。默认 1 次。设为 0 表示不限制。",
+   128	    )
+   129	    parser.add_argument(
+   130	        "--max-minutes",
+   131	        type=int,
+   132	        default=90,
+   133	        help="最大运行时间（分钟）。默认 90 分钟。",
+   134	    )
+   135	    parser.add_argument(
+   136	        "--max-steps",
+   137	        type=int,
+   138	        default=1000,
+   139	        help="每轮最大步数。默认 1000 步。",
+   140	    )
+   141	    parser.add_argument(
+   142	        "--model",
+   143	        type=str,
+   144	        default="deepseek-chat",
+   145	        help="LLM 模型名称。默认 deepseek-chat。",
+   146	    )
+   147	    args = parser.parse_args()
+   148	
+   149	    program = load_program()
+   150	
+   151	    # 确保输出目录存在
+   152	    OUTPUT_DIR.mkdir(exist_ok=True)
+   153	    log_path = OUTPUT_DIR / "result.log"
+   154	
+   155	    # 重定向 stdout 到终端 + 文件
+   156	    tee = TeeLogger(log_path)
+   157	    original_stdout = sys.stdout
+   158	    sys.stdout = tee
+   159	
+   160	    stop_event = asyncio.Event()
+   161	    max_seconds = args.max_minutes * 60
+   162	
+   163	    # 启动独立监控协程
+   164	    monitor_task = asyncio.create_task(
+   165	        monitor(stop_event, args.iterations, max_seconds)
+   166	    )
+   167	
+   168	    try:
+   169	        print(f"[{datetime.now().isoformat()}] MolCraft Agent 启动")
+   170	        print("=" * 60)
+   171	        print("模式: autoresearch（LLM 自主迭代实验）")
+   172	        print(f"指令书: {PROGRAM_MD}")
+   173	        print(f"迭代记录: {ITERATION_LOG}")
+   174	        print(f"日志文件: {log_path}")
+   175	        print(f"配置: 最大 {args.iterations} 次迭代 | 最长 {args.max_minutes} 分钟")
+   176	        print("(yolo 模式下自动批准所有操作)")
+   177	        print()
+   178	
+   179	        async for msg in prompt(
+   180	            program,
+   181	            agent_file=AGENT_YAML,
+   182	            yolo=True,
+   183	            model=args.model,
+   184	            max_steps_per_turn=args.max_steps,
+   185	        ):
+   186	            if stop_event.is_set():
+   187	                break
+   188	
+   189	            text = msg.extract_text()
+   190	            if text:
+   191	                print(text, end="", flush=True)
+   192	
+   193	        print()
+   194	        print()
+   195	        print("=" * 60)
+   196	        print(f"[{datetime.now().isoformat()}] MolCraft Agent 执行结束")
+   197	        print("请检查:")
+   198	        print("  - output/result.csv（最终候选分子与合成路线）")
+   199	        print(f"  - {log_path}（详细结果日志）")
+   200	        print(f"  - {ITERATION_LOG}（迭代记录）")
+   201	        print("=" * 60)
+   202	    finally:
+   203	        stop_event.set()
+   204	        if not monitor_task.done():
+   205	            monitor_task.cancel()
+   206	            try:
+   207	                await monitor_task
+   208	            except asyncio.CancelledError:
+   209	                pass
+   210	        sys.stdout = original_stdout
+   211	        tee.close()
+   212	
+   213	
+   214	if __name__ == "__main__":
+   215	    asyncio.run(main())
+<system>Command executed successfully.</system>Now I have a thorough understanding of the codebase. Let me start executing the plan.
 
-Batch 2: 25 molecules
-smiles_list = ['Cc1ccc(S(=O)Nc2ccnnc2)cc1', 'O=C(NC1=CC=CC2(O)COC(F)C2C=C1)c1ccccc1', 'Cc1ccc(S(=O)Nc2cnc(Cl)cc2C)cc1F', 'Cc1ccc(S(=O)Nc2cccnc2Cl)cc1Cl', 'Cc1ccc(S(=O)Nc2cccnc2O)cc1', 'Cc1ccc(S(=O)Nc2cnccc2N)cc1', 'O=C(Nc1ccccc1)c1cccc(Cl)c1Cl', 'O=C(NC1=CC=CC2CNCC2C=C1)c1ccccc1', 'CC1=CC=C(S(=O)Nc2cccnc2)C2COCC2(Cl)C=C1', 'CC1=CC=C(S(=O)Cc2cccnc2)C2COCC2C=C1', 'O=S(Nc1cccnc1)c1ccccc1', 'C1=CC2COCC2C=Cc2[nH]c(-c3cccnc3)cc21', 'Cc1ccc(S(=O)Nc2ccc(F)nc2)cc1', 'Oc1ccc(CNc2ccccc2)c(Cl)c1', 'Oc1ccc(CNc2ccccc2Cl)cc1', 'O=C(Nc1ccccc1)c1ccccc1Cl', 'O=C(Nc1cccc(Cl)c1)c1ccccc1', 'NCc1ccc(C(=O)Cc2cccnc2)cc1F', 'CC12C=CC(NC(=O)c3ccc4cc3-4)=CC=C[SH]1COC2', 'CC1=CC=C(SNc2cccnc2)C2C(C=C1C)COC2N', 'Cc1cc2c(S(=O)NS3=CC=CN=C3)c-2c1', 'O=S(Nc1cccnc1)c1cccc(F)n1', 'CC1=C2C=C(S(=O)Nc3cccnc3)C3COCC3[SH]=S12', 'Cc1ccc(SNc2cccnc2)cc1F', 'O=S(Nc1cnccn1)c1ccc(S)cc1']
+## STEP 1: Write Literature Analysis<system>File successfully overwritten. Current size: 2590 bytes.</system><system>Todo list updated</system>
+[2026-05-19T10:05:02.781262] 迭代进度: 0/1
+## STEP 2: Write Diagnosis - Propose H001
 
-Batch 3: 25 molecules
-smiles_list = ['OCc1ccc(SNc2cncc(F)c2)cc1', 'O=C(Nc1c(O)cccc1F)c1ccccc1Cl', 'ClC1=CC(NCc2cccnc2)c2ccccc2CC=CC2COCC12', 'C=C(Nc1ccccc1)c1ccc(O)cc1', 'Cc1ccc(SNc2cncc(C)c2)cc1', 'NC1=S(NC(=O)c2ccccc2Cl)C=CC=C1', 'O=C(Nc1ccccc1)c1ccc(O)cc1', 'O=C(Nc1ccccn1)c1ccc(O)cc1', 'Fc1cccc(SNc2cccnc2)c1', 'Nc1cccc(C(=O)Nc2ccccc2)c1Cl', 'Nc1ccc(NC(=O)c2ccccc2Cl)cc1', 'Oc1ccc(CNc2ccccc2)nc1', 'Oc1ccc(CNc2ccccc2)cc1', 'O=C(Cc1ccccc1O)c1ccc(O)cc1', 'O=C(Nc1ccccc1)c1ccccc1', 'Cc1ccc2cc1-c1ccccc1NS2(=O)=O', 'c1ccc(SNc2cccnc2)cc1', 'Cc1ccc(S(=O)Nc2cc3cnc2-3)cc1F', 'Cc1c2cc(S(=O)Cc3cncc(N)c3)cc1-2', 'c1ccc(CNc2ccccc2)cc1', 'Cc1cc(Cl)ccc1CC(=O)O', 'CC1=C(F)C(C)=C(S(=O)Nc2cc(O)cnc2N)C2COCC2C=C1', 'O=C(NS1=CC2=CC2=C1)c1ccc(O)cc1', 'Clc1ccccc1COc1ccccc1', 'Cc1ccc2cc1-c1ccncc1NS2=O']
+Looking at the code, the main issue I see is that the SA (synthetic accessibility) scoring in `evaluator.py` uses a very rough heuristic that could overestimate SA for perfectly good molecules, causing too many false positives for the SA>6 hard-zero filter. Let me fix this to use a more accurate estimation.
 
-Batch 4: 25 molecules
-smiles_list = ['Nc1ccc(C(=O)Nc2ccccc2)cc1', 'Nc1cccc(NC(=O)c2ccccc2)c1', 'Cc1ccc(S(=O)Nc2cnc3c(c2)O3)cc1F', 'O=C(O)Cc1ccc(Cl)cc1', 'O=C1Nc2ccccc2-c2ccc1c(Cl)c2', 'c1ccc(OCc2ccccn2)cc1', 'O=C(Nc1ccncc1O)c1ccc(O)cc1', 'Fc1ccc(Cl)c(CNc2ccc3cc2-3)c1', 'Cc1ccc(Cl)c2cc(N)cnc12', 'Nc1cccc(NC(=O)c2ccc(O)cc2)c1', 'c1ccc2c(c1)CCNC1COCC1C2', 'C1=Nc2ccccc2-c2ccccc2N1', 'O=C(O)c1cccc(Cl)c1', 'Cc1cccc(C(=O)c2ccccc2)c1', 'O=C(Nc1ccc2cc1-2)c1ccccc1', 'O=C(Nc1ccccc1)c1ccc2cc1-2', 'c1ccc(CNc2c3cccc2-3)cc1', 'NC1(Cl)OCC2C=CC=C(NC(=O)c3ccccc3)C=CC21', 'FC1Cc2ccccc2OC2COCC12', 'O=C(NC1=C2C=[SH]C23COCC3C=C1)c1ccccc1F', 'O=S1Nc2cnc3c(c2-3)-c2c(F)cccc21', 'c1ccc(Cc2ccccc2)cc1', 'Nc1c(SNc2cccnc2)ccc2c1OC2', 'CC12C=CC1(SNc1cccnc1)C(F)=C2', 'OC1=CC=CC2=CC=CCC3COCC3[SH]12']
-
-Batch 5: 25 molecules
-smiles_list = ['Oc1cc2cc-2c1NCc1ccccc1', 'NS(=O)(=O)c1ccccc1O', 'CC1c2c3ccc-3c2CCC1N', 'NC(=O)c1c2cc(Cl)c(N)c1-2', 'c1ccc2c(c1)CCc1ccccc1CC2', 'C1=Cc2ccccc2C=CC2=C1CCO2', 'NS(=O)(=O)c1ncc2cc1-2', 'Cc1ccc2c(c1F)NOC2', 'c1cc2cc(c1)-c1ccccc1OC2', 'Nc1cccc(C(=O)NC2=CC=CC3(N)NOCC3C=C2)c1', 'Clc1ccc2c(c1)CCN2', 'Cc1cc2ccncc2cc1Cl', 'O=C1c2cccc(c2)-c2cccc(O)c21', 'Fc1cccc2c1NSCC2', 'Nc1cccc2c1SCCO2', 'C1=Cc2ccccc2-c2ccccc2C=C1', 'Clc1ccc2cncnc2c1', 'C=S(N)(=O)c1ccccc1', 'Cc1ccc(S(=O)Nc2cccnc2)c(N)c1O', 'Clc1ccc2ncccc2c1', 'Clc1ccnc2ccccc12', 'Clc1ccc2ccncc2c1', 'Nc1ccc2c(N)cccc2c1', 'CC(=O)c1cccc(Cl)c1', 'O=c1[nH]c2ccccc2c2ccccc12']
-
-Batch 6: 12 molecules
-smiles_list = ['C1=Cc2ccccc2C=CN=C1', 'c1ccc2c(c1)CCCC1CC21', 'OC1=C2N=CN=CS2=CC=C1', 'O=C(Oc1cccc2c1C2)c1ccc(O)cc1', 'CC1=CC=CC=CC2COCC12', 'Nc1ccc([SH]2(=O)Cc3ncccc3N2)cc1', 'FC1COC2=CC=CC=S2O1', 'O=c1c2ccc(O)cc2[nH]n1-c1c2cccc1-2', 'Fc1ncnc2nccnc12', 'C1=CC=S2N=CN=NC2=C1', 'Nc1cc(NC(=O)c2cccc(F)c2Cl)ccc1O', 'c1ccc2c(c1)Cc1ccc3nccc-2c3c1']
-
-[Receptor] 使用已存在的受体文件 /home/z/my-project/molcraft-agent/data/receptor.pdbqt
-[对接] 1/25: Cc1ccc(S(=O)Nc2cccnc2)c(Cl)c1F...
-[Receptor] 使用已存在的受体文件 /home/z/my-project/molcraft-agent/data/receptor.pdbqt
-
-[2026-05-18T14:18:33.789457] 迭代进度: 0/1
-[对接] 2/25: CC1=CC=C(S(=O)Nc2cccnc2)C2COCC2C=C1...
-[Receptor] 使用已存在的受体文件 /home/z/my-project/molcraft-agent/data/receptor.pdbqt
-[对接] 3/25: CC1=CC=C(S(=O)Nc2cccnc2C)C2COCC2C=C1...
-[Receptor] 使用已存在的受体文件 /home/z/my-project/molcraft-agent/data/receptor.pdbqt
-[对接] 4/25: CC1=CC=C(S(=O)Nc2cnccc2C)C2COCC2C=C1...
-[Receptor] 使用已存在的受体文件 /home/z/my-project/molcraft-agent/data/receptor.pdbqt
-
-[2026-05-18T14:19:05.661411] 迭代进度: 0/1
-[对接] 5/25: CC1=CC=C(S(=O)Nc2cccnc2)C2COCC2C=N1...
-[Receptor] 使用已存在的受体文件 /home/z/my-project/molcraft-agent/data/receptor.pdbqt
-[对接] 6/25: CC1=CC=C(S(=O)Nc2cccnc2)C2C(C=C1)COC2C...
-[Receptor] 使用已存在的受体文件 /home/z/my-project/molcraft-agent/data/receptor.pdbqt
-[对接] 7/25: O=S(Nc1cccnc1)C1=CC=CC=CC2COCC12...
-[Receptor] 使用已存在的受体文件 /home/z/my-project/molcraft-agent/data/receptor.pdbqt
-
-[2026-05-18T14:19:36.304418] 迭代进度: 1/1
-[对接] 8/25: Cc1cc(S(=O)Nc2cccnc2)cc(F)c1C...
-
-[2026-05-18T14:19:36.306632] 已达到最大迭代次数 (1 次)，60 秒后退出...[Receptor] 使用已存在的受体文件 /home/z/my-project/molcraft-agent/data/receptor.pdbqt
-
-[对接] 9/25: O=C(NC1=CC=C(Cl)C2COCC2C=C1)c1ccccc1...
-[Receptor] 使用已存在的受体文件 /home/z/my-project/molcraft-agent/data/receptor.pdbqt
-[对接] 10/25: O=C(NC1=CC=CC2COCC2C=C1)c1ccc(Cl)cc1...
-[Receptor] 使用已存在的受体文件 /home/z/my-project/molcraft-agent/data/receptor.pdbqt
-[对接] 11/25: Cc1ccc(S(=O)Nc2cccnc2)cc1F...
-[Receptor] 使用已存在的受体文件 /home/z/my-project/molcraft-agent/data/receptor.pdbqt
-[对接] 12/25: O=C(NC1=CC=CC2COCC2C=C1)c1cccc(Cl)c1...
-[Receptor] 使用已存在的受体文件 /home/z/my-project/molcraft-agent/data/receptor.pdbqt
-[对接] 13/25: Cc1cnc(S(=O)Nc2cccnc2)cc1F...
-[Receptor] 使用已存在的受体文件 /home/z/my-project/molcraft-agent/data/receptor.pdbqt
-[对接] 14/25: O=C(NC1=CC=CC2COC3CC(=C1)C23)c1ccccc1...
-[Receptor] 使用已存在的受体文件 /home/z/my-project/molcraft-agent/data/receptor.pdbqt
-[对接] 15/25: CC1=CC=C(S(=O)Nc2cccnc2)C2CONC2C=C1...
-[Receptor] 使用已存在的受体文件 /home/z/my-project/molcraft-agent/data/receptor.pdbqt
-[对接] 16/25: Cc1ccc(S(=O)Nc2ccc(O)nc2)cc1F...
-[Receptor] 使用已存在的受体文件 /home/z/my-project/molcraft-agent/data/receptor.pdbqt
-[对接] 17/25: Cc1cc(O)c(S(=O)Nc2cccnc2)cc1F...
-[Receptor] 使用已存在的受体文件 /home/z/my-project/molcraft-agent/data/receptor.pdbqt
-[对接] 18/25: CC1=CC=C(S(=O)Nc2cccnc2)C2COC(O)C2C=C1...
-[Receptor] 使用已存在的受体文件 /home/z/my-project/molcraft-agent/data/receptor.pdbqt
-[对接] 19/25: C1=CC2COCC2C=CC(NCc2ccccc2)=C1...
-[Receptor] 使用已存在的受体文件 /home/z/my-project/molcraft-agent/data/receptor.pdbqt
-[对接] 20/25: CC1=CC2CSCC2C=CC=C1NCc1ccccc1...
-[Receptor] 使用已存在的受体文件 /home/z/my-project/molcraft-agent/data/receptor.pdbqt
-[对接] 21/25: O=C(NC1=CC=CC2COCC2C=C1)c1ccccc1...
-[Receptor] 使用已存在的受体文件 /home/z/my-project/molcraft-agent/data/receptor.pdbqt
-[对接] 22/25: O=C(NC1=CC=CC23COC2C3C=C1)c1ccccc1...
-[Receptor] 使用已存在的受体文件 /home/z/my-project/molcraft-agent/data/receptor.pdbqt
-[对接] 23/25: O=S(Nc1cccnc1)c1cccc(F)c1...
-[Receptor] 使用已存在的受体文件 /home/z/my-project/molcraft-agent/data/receptor.pdbqt
-[对接] 24/25: O=S(Nc1cccnc1)c1cncc(F)c1...
-[Receptor] 使用已存在的受体文件 /home/z/my-project/molcraft-agent/data/receptor.pdbqt
-[对接] 25/25: Cc1ccc(S(=O)Nc2cccnc2)cc1...
-[Receptor] 使用已存在的受体文件 /home/z/my-project/molcraft-agent/data/receptor.pdbqt
-
-
-============================================================
-[2026-05-18T14:21:32.278885] MolCraft Agent 执行结束
-请检查:
-  - output/result.csv（最终候选分子与合成路线）
-  - /home/z/my-project/molcraft-agent/output/result.log（详细结果日志）
-  - /home/z/my-project/molcraft-agent/docs/iteration_log.jsonl（迭代记录）
-============================================================
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            [对接] 4/5: c1ccc(OCc2ccccc2CCc2ccc3ncncc3c2)cc1...
-[Receptor] 使用已存在的受体文件 /home/z/my-project/molcraft-agent/data/receptor.pdbqt
-[对接] 5/5: O=C(Oc1ncnc2ccccc12)c1ccccc1CCCc1cccnc1...
-[Receptor] 使用已存在的受体文件 /home/z/my-project/molcraft-agent/data/receptor.pdbqt
-
-[2026-05-18T14:17:58.803635] 迭代进度: 0/1
-{"total_submitted": 5, "successful": 5, "failed": 0, "best_be": -11.837, "top_results": [{"smiles": "O=C(NS(=O)(=O)c1ccc2c(c1)CCCC2)c1ccc(NC(=O)C2CCNc3ccccc32)cc1", "binding_energy": -11.837, "qed": null}, {"smiles": "O=C(Oc1ncnc2ccccc12)c1ccccc1CCCc1cccnc1", "binding_energy": -9.559, "qed": null}, {"smiles": "c1ccc(OCc2ccccc2CCc2ccc3ncncc3c2)cc1", "binding_energy": -9.406, "qed": null}, {"smiles": "O=C(OS(=O)(=O)c1ccc(C(=O)c2ccccc2)cc1)c1ccccc1", "binding_energy": -8.976, "qed": null}, {"smiles": "O=C(OOCc1ccc(S(=O)(=O)Nc2ccccc2)cc1)c1ccccc1", "binding_energy": -8.951, "qed": null}]}Excellent! Great docking results! Now let me collect all top molecules (with binding_energy <-7) and proceed to **Step 4**: plan synthesis for them.<system>Todo list updated</system>Let me prioritize the molecules with the best binding energies from both batches and plan their synthesis.<system>Command executed successfully.</system>All molecules with BE < -7:
-Total: 35
--11.837  O=C(NS(=O)(=O)c1ccc2c(c1)CCCC2)c1ccc(NC(=O)C2CCNc3ccccc32)cc1
- -9.971  NC(=O)c1ccc(S(=O)(=O)c2ccc(C=Cc3cccc4[nH]cnc34)cn2)cc1
- -9.590  O=C(OC1CCO1)c1ccc2c(c1)ncn2C#Cc1cc(F)ccc1F
- -9.559  O=C(Oc1ncnc2ccccc12)c1ccccc1CCCc1cccnc1
- -9.500  O=S(=O)(c1cccc2[nH]c(Cc3ncnc4ccccc34)nc12)C1CCOC1
- -9.452  O=S(=O)(c1ccc2ccccc2c1)C1CCNc2ccccc21
- -9.406  c1ccc(OCc2ccccc2CCc2ccc3ncncc3c2)cc1
- -9.213  C(=CN1CCc2ccccc21)c1ccc2ncncc2c1
- -9.194  NCc1ccc(NS(=O)(=O)C2NCCC2C(=O)OC2CSc3ccccc32)cc1
- -9.052  O=C(c1ccc(OCc2ccccc2)cc1)C1CCCNC1
- -8.976  O=C(OS(=O)(=O)c1ccc(C(=O)c2ccccc2)cc1)c1ccccc1
- -8.951  O=C(OOCc1ccc(S(=O)(=O)Nc2ccccc2)cc1)c1ccccc1
- -8.791  Cc1ccc(S(=O)(=O)Nc2cc(F)c(C)c(Cl)c2)cc1F
- -8.743  CCc1ccc(NS(=O)(=O)c2ccc(C)c(F)c2)cc1F
- -8.723  O=S(=O)(Nc1ccc2c(c1)CCO2)C1COc2ccccc21
- -8.721  Cc1ccc(S(=O)(=O)Nc2cc(F)c(C)c(F)c2)cc1F
- -8.666  O=C(Nc1ccccc1)c1ccccc1OC(=O)C1CNC1
- -8.524  Nc1ccc(NC(=O)OC(=O)Cc2ccccc2)cc1
- -8.451  Cc1ccc(NS(=O)(=O)c2ccc(CF)c(F)c2)cc1F
- -8.450  Cc1ccc(S(=O)(=O)Nc2cc(F)c(C)cc2C)cc1F
- -8.449  Cc1ccc(NS(=O)(=O)c2ccc(C)c(F)c2)cc1F
- -8.054  Cc1cc(S(=O)(=O)Nc2cccnc2)cc(F)c1C
- -8.016  Cc1ccc(S(=O)(=O)Nc2ccc(F)cc2F)cc1F
- -8.013  Cc1cc(S(=O)(=O)Nc2ccccc2)cc(F)c1C
- -7.958  O=S(=O)(Nc1ccc(F)cc1)c1ccc(CO)c(F)c1
- -7.954  Cc1cc(S(=O)(=O)Nc2ccccc2)nc(F)c1C
- -7.922  Cc1cccc(CS(=O)(=O)c2ccc(C)c(F)c2)c1
- -7.837  Cc1cc(S(=O)Nc2ccccc2)cc(F)c1C
- -7.609  Cc1ccc(S(=O)Nc2cccc(O)c2)cc1F
- -7.602  Cc1ccc(S(=O)(=O)NC2=CC=S(F)C=C2)cc1F
- -7.566  Cc1cc(O)c(S(=O)Nc2ccccc2)cc1F
- -7.447  Nc1ccc(S(=O)Oc2ccc(F)cc2)cc1F
- -7.435  O=S(=O)(Nc1ccccc1)c1ccc(O)c(F)c1
- -7.408  Cc1ccc(S(=O)Nc2ccccc2)cc1C
- -7.386  CC1=CC=C(S(=O)(=O)Nc2ccccc2)C=S1F
-Now let me plan synthesis for the best molecules. I'll start with the top ones from both batches, prioritizing those with QED >= 0.3, SA <= 6.0 (all pass). Let me plan synthesis for the top ~15 molecules.{"smiles": "CCc1ccc(NS(=O)(=O)c2ccc(C)c(F)c2)cc1F", "success": true, "route": "Cc1ccc(S(=O)(=O)Cl)cc1F.CCc1ccc(N)cc1F>>CCc1ccc(NS(=O)(=O)c2ccc(C)c(F)c2)cc1F", "steps": 1}{"smiles": "Cc1ccc(S(=O)(=O)Nc2cc(F)c(C)c(F)c2)cc1F", "success": true, "route": "Cc1ccc(S(=O)(=O)Cl)cc1F.Cc1c(F)cc(N)cc1F>>Cc1ccc(S(=O)(=O)Nc2cc(F)c(C)c(F)c2)cc1F", "steps": 1}{"smiles": "Cc1ccc(S(=O)(=O)Nc2cc(F)c(C)c(Cl)c2)cc1F", "success": true, "route": "Cc1ccc(S(=O)(=O)Cl)cc1F.Cc1c(F)cc(N)cc1Cl>>Cc1ccc(S(=O)(=O)Nc2cc(F)c(C)c(Cl)c2)cc1F", "steps": 1}{"smiles": "Cc1ccc(NS(=O)(=O)c2ccc(CF)c(F)c2)cc1F", "success": true, "route": "O=S(=O)(Cl)c1ccc(CF)c(F)c1.Cc1ccc(N)cc1F>>Cc1ccc(NS(=O)(=O)c2ccc(CF)c(F)c2)cc1F", "steps": 1}{"smiles": "Cc1ccc(S(=O)(=O)Nc2cc(F)c(C)cc2C)cc1F", "success": true, "route": "Cc1ccc(S(=O)(=O)Cl)cc1F.Cc1cc(C)c(F)cc1N>>Cc1ccc(S(=O)(=O)Nc2cc(F)c(C)cc2C)cc1F", "steps": 1}{"smiles": "Cc1ccc(NS(=O)(=O)c2ccc(C)c(F)c2)cc1F", "success": true, "route": "Cc1ccc(S(=O)(=O)Cl)cc1F.Cc1ccc(N)cc1F>>Cc1ccc(NS(=O)(=O)c2ccc(C)c(F)c2)cc1F", "steps": 1}{"smiles": "Cc1cc(S(=O)(=O)Nc2cccnc2)cc(F)c1C", "success": true, "route": "Cc1cc(S(=O)(=O)Cl)cc(F)c1C.Nc1cccnc1>>Cc1cc(S(=O)(=O)Nc2cccnc2)cc(F)c1C", "steps": 1}{"smiles": "Cc1ccc(S(=O)(=O)Nc2ccc(F)cc2F)cc1F", "success": true, "route": "Cc1ccc(S(=O)(=O)Cl)cc1F.Nc1ccc(F)cc1F>>Cc1ccc(S(=O)(=O)Nc2ccc(F)cc2F)cc1F", "steps": 1}{"smiles": "Cc1cc(S(=O)(=O)Nc2ccccc2)cc(F)c1C", "success": true, "route": "Cc1cc(S(=O)(=O)Cl)cc(F)c1C.Nc1ccccc1>>Cc1cc(S(=O)(=O)Nc2ccccc2)cc(F)c1C", "steps": 1}{"smiles": "O=S(=O)(Nc1ccc(F)cc1)c1ccc(CO)c(F)c1", "success": true, "route": "O=S(=O)(Cl)c1ccc(CO)c(F)c1.Nc1ccc(F)cc1>>O=S(=O)(Nc1ccc(F)cc1)c1ccc(CO)c(F)c1", "steps": 1}
-[2026-05-18T14:18:28.804585] 迭代进度: 0/1
-All 10 are non-trivial (sulfonamide formation, `reactant1.reactant2>>product` format). Let me plan more syntheses for the other top molecules.{"smiles": "O=S(=O)(Nc1ccc2c(c1)CCO2)C1COc2ccccc21", "success": true, "route": "Brc1ccc2c(c1)CCO2.NS(=O)(=O)C1COc2ccccc21>>O=S(=O)(Nc1ccc2c(c1)CCO2)C1COc2ccccc21", "steps": 1}{"smiles": "O=C(c1ccc(OCc2ccccc2)cc1)C1CCCNC1", "success": true, "route": "O=C(c1ccc(O)cc1)C1CCCNC1.ClCc1ccccc1>>O=C(c1ccc(OCc2ccccc2)cc1)C1CCCNC1", "steps": 1}{"smiles": "O=C(Nc1ccccc1)c1ccccc1OC(=O)C1CNC1", "success": true, "route": "O=C(O)c1ccccc1O.O=C(Cl)C1CNC1>>O=C(O)c1ccccc1OC(=O)C1CNC1 | O=C(O)c1ccccc1OC(=O)C1CNC1.Nc1ccccc1>>O=C(Nc1ccccc1)c1ccccc1OC(=O)C1CNC1", "steps": 2}{"smiles": "Nc1ccc(NC(=O)OC(=O)Cc2ccccc2)cc1", "success": true, "route": "O=C(O)OC(=O)Cc1ccccc1.Nc1ccc(N)cc1>>Nc1ccc(NC(=O)OC(=O)Cc2ccccc2)cc1", "steps": 1}{"smiles": "Cc1cccc(CS(=O)(=O)c2ccc(C)c(F)c2)c1", "success": true, "route": "Cc1ccc(Br)cc1O.Cc1cccc(C[SH](=O)=O)c1>>Cc1cccc(CS(=O)(=O)c2ccc(C)c(O)c2)c1 | Cc1cccc(CS(=O)(=O)c2ccc(C)c(O)c2)c1.Cl>>Cc1cccc(CS(=O)(=O)c2ccc(C)c(Cl)c2)c1 | Cc1cccc(CS(=O)(=O)c2ccc(C)c(Cl)c2)c1.F>>Cc1cccc(CS(=O)(=O)c2ccc(C)c(F)c2)c1", "steps": 3}{"smiles": "Cc1cc(S(=O)(=O)Nc2ccccc2)nc(F)c1C", "success": true, "route": "Cc1cc(S(=O)(=O)Cl)nc(F)c1C.Nc1ccccc1>>Cc1cc(S(=O)(=O)Nc2ccccc2)nc(F)c1C", "steps": 1}{"smiles": "Cc1cc(S(=O)Nc2ccccc2)cc(F)c1C", "success": true, "route": "Brc1ccccc1.Cc1cc(S(N)=O)cc(F)c1C>>Cc1cc(S(=O)Nc2ccccc2)cc(F)c1C", "steps": 1}{"smiles": "O=S(=O)(c1ccc2ccccc2c1)C1CCNc2ccccc21", "success": true, "route": "Brc1ccc2ccccc2c1.O=[SH](=O)C1CCNc2ccccc21>>O=S(=O)(c1ccc2ccccc2c1)C1CCNc2ccccc21", "steps": 1}{"smiles": "C(=CN1CCc2ccccc21)c1ccc2ncncc2c1", "success": true, "route": "Cc1ccccc1Br.NC=Cc1ccc2ncncc2c1>>Cc1ccccc1NC=Cc1ccc2ncncc2c1 | Cc1ccccc1NC=Cc1ccc2ncncc2c1.ClCCc1ccccc1>>C(=CN1CCc2ccccc21)c1ccc2ncncc2c1", "steps": 2}{"smiles": "O=C(OS(=O)(=O)c1ccc(C(=O)c2ccccc2)cc1)c1ccccc1", "success": true, "route": "O=C(OS(=O)(=O)c1ccccc1)c1ccccc1.O=C(Cl)c1ccccc1>>O=C(OS(=O)(=O)c1ccc(C(=O)c2ccccc2)cc1)c1ccccc1", "steps": 1}All these are non-trivial routes! Let me plan synthesis for more molecules to ensure we have enough good ones.{"smiles": "COc1ccc(CCc2cc(F)ccc2F)cc1", "success": true, "route": "Oc1ccc(CCc2cc(Cl)ccc2Cl)cc1.F>>Oc1ccc(CCc2cc(Cl)ccc2F)cc1 | Oc1ccc(CCc2cc(Cl)ccc2F)cc1.F>>Oc1ccc(CCc2cc(F)ccc2F)cc1 | Oc1ccc(CCc2cc(F)ccc2F)cc1.CCl>>COc1ccc(CCc2cc(F)ccc2F)cc1", "steps": 3}{"smiles": "O=C(Oc1ncnc2ccccc12)c1ccccc1CCCc1cccnc1", "success": true, "route": "O=C1CCCC(=O)C1.N>>O=C(Cl)c1ccccc1CCCc1cccnc1 | Oc1ncnc2ccccc12.O=C(Cl)c1ccccc1CCCc1cccnc1>>O=C(Oc1ncnc2ccccc12)c1ccccc1CCCc1cccnc1", "steps": 2}{"smiles": "c1ccc(OCc2ccccc2CCc2ccc3ncncc3c2)cc1", "success": true, "route": "N.C=O>>ClCc1ccccc1CCc1ccc2ncncc2c1 | Oc1ccccc1.ClCc1ccccc1CCc1ccc2ncncc2c1>>c1ccc(OCc2ccccc2CCc2ccc3ncncc3c2)cc1", "steps": 2}{"smiles": "Cc1ccc(S(=O)Nc2cccc(O)c2)cc1F", "success": true, "route": "Oc1cccc(Br)c1.Cc1ccc(S(N)=O)cc1F>>Cc1ccc(S(=O)Nc2cccc(O)c2)cc1F", "steps": 1}{"smiles": "Cc1cc(O)c(S(=O)Nc2ccccc2)cc1F", "success": true, "route": "Brc1ccccc1.Cc1cc(O)c(S(N)=O)cc1F>>Cc1cc(O)c(S(=O)Nc2ccccc2)cc1F", "steps": 1}{"smiles": "O=C(OC1CCO1)c1ccc2c(c1)ncn2C#Cc1cc(F)ccc1F", "success": true, "route": "O=C(O)c1ccc2c(c1)ncn2C#Cc1cc(Cl)ccc1Cl.F>>O=C(O)c1ccc2c(c1)ncn2C#Cc1cc(Cl)ccc1F | O=C(O)c1ccc2c(c1)ncn2C#Cc1cc(Cl)ccc1F.F>>O=C(O)c1ccc2c(c1)ncn2C#Cc1cc(F)ccc1F | O=C(O)c1ccc2c(c1)ncn2C#Cc1cc(F)ccc1F.C1COO1>>O=C(OC1CCO1)c1ccc2c(c1)ncn2C#Cc1cc(F)ccc1F", "steps": 3}{"smiles": "O=S(=O)(c1cccc2[nH]c(Cc3ncnc4ccccc34)nc12)C1CCOC1", "success": true, "route": "N.C=O>>O=S(=O)(CCCCl)c1cccc2[nH]c(Cc3ncnc4ccccc34)nc12 | O=S(=O)(CCCCl)c1cccc2[nH]c(Cc3ncnc4ccccc34)nc12.O>>O=S(=O)(CCCO)c1cccc2[nH]c(Cc3ncnc4ccccc34)nc12 | N.C=O>>CC(CCl)S(=O)(=O)c1cccc2[nH]c(Cc3ncnc4ccccc34)nc12 | O=S(=O)(CCCO)c1cccc2[nH]c(Cc3ncnc4ccccc34)nc12.CC(CCl)S(=O)(=O)c1cccc2[nH]c(Cc3ncnc4ccccc34)nc12>>O=S(=O)(c1cccc2[nH]c(Cc3ncnc4ccccc34)nc12)C1CCOC1", "steps": 4}{"smiles": "NC(=O)c1ccc(S(=O)(=O)c2ccc(C=Cc3cccc4[nH]cnc34)cn2)cc1", "success": true, "route": "O=C(O)c1ccc(S(=O)(=O)c2ccc(C=Cc3cccc4[nH]cnc34)cn2)cc1.N>>NC(=O)c1ccc(S(=O)(=O)c2ccc(C=Cc3cccc4[nH]cnc34)cn2)cc1", "steps": 2}{"smiles": "O=C(OOCc1ccc(S(=O)(=O)Nc2ccccc2)cc1)c1ccccc1", "success": true, "route": "O=C(OOCc1ccc(S(=O)(=O)Cl)cc1)c1ccccc1.Nc1ccccc1>>O=C(OOCc1ccc(S(=O)(=O)Nc2ccccc2)cc1)c1ccccc1", "steps": 1}{"smiles": "O=C(NS(=O)(=O)c1ccc2c(c1)CCCC2)c1ccc(NC(=O)C2CCNc3ccccc32)cc1", "success": true, "route": "O=C(O)C1CCNc2ccccc21.Nc1ccc(C(=O)O)cc1>>O=C(O)c1ccc(NC(=O)C2CCNc3ccccc32)cc1 | O=C(O)c1ccc(NC(=O)C2CCNc3ccccc32)cc1.N>>NC(=O)c1ccc(NC(=O)C2CCNc3ccccc32)cc1 | O=S(=O)(Cl)c1ccc2c(c1)CCCC2.NC(=O)c1ccc(NC(=O)C2CCNc3ccccc32)cc1>>O=C(NS(=O)(=O)c1ccc2c(c1)CCCC2)c1ccc(NC(=O)C2CCNc3ccccc32)cc1", "steps": 3}All routes are non-trivial! Now let me plan synthesis for a few more to have a good selection.{"smiles": "NCc1ccc(NS(=O)(=O)C2NCCC2C(=O)OC2CSc3ccccc32)cc1", "success": true, "route": "NCc1ccc(Br)cc1.CC(C(=O)O)C(N)S(N)(=O)=O>>CC(C(=O)O)C(N)S(=O)(=O)Nc1ccc(CN)cc1 | CC(C(=O)O)C(N)S(=O)(=O)Nc1ccc(CN)cc1.O=CCCC(=O)O>>NCc1ccc(NS(=O)(=O)C2NCCC2C(=O)O)cc1 | NCc1ccc(NS(=O)(=O)C2NCCC2C(=O)O)cc1.c1ccc2c(c1)OCS2>>NCc1ccc(NS(=O)(=O)C2NCCC2C(=O)OC2CSc3ccccc32)cc1", "steps": 3}{"smiles": "O=S(=O)(Nc1ccccc1)c1ccc(O)c(F)c1", "success": true, "route": "O=S(=O)(Cl)c1ccc(O)c(F)c1.Nc1ccccc1>>O=S(=O)(Nc1ccccc1)c1ccc(O)c(F)c1", "steps": 1}{"smiles": "O=S(=O)(Nc1ccc(F)cc1)c1cccc(F)c1", "success": true, "route": "O=S(=O)(Cl)c1cccc(F)c1.Nc1ccc(F)cc1>>O=S(=O)(Nc1ccc(F)cc1)c1cccc(F)c1", "steps": 1}{"smiles": "Nc1ccc(S(=O)Oc2ccc(F)cc2)cc1F", "success": true, "route": "Nc1ccc(S(=O)Oc2ccc(O)cc2)cc1Cl.Cl>>Nc1ccc(S(=O)Oc2ccc(Cl)cc2)cc1Cl | Nc1ccc(S(=O)Oc2ccc(Cl)cc2)cc1Cl.F>>Nc1ccc(S(=O)Oc2ccc(Cl)cc2)cc1F | Nc1ccc(S(=O)Oc2ccc(Cl)cc2)cc1F.F>>Nc1ccc(S(=O)Oc2ccc(F)cc2)cc1F", "steps": 3}{"smiles": "CC1=CC=C(S(=O)(=O)Nc2ccccc2)C=S1F", "success": true, "route": "C=C(C=S(F)C(C)CO)S(N)(=O)=O>>C=C(C=S(F)C(C)C=O)S(N)(=O)=O | NS(=O)(=O)C(C=O)C=[SH]F.PCCP>>NS(=O)(=O)C(C=[SH]F)=CCP | C=C(C=S(F)C(C)C=O)S(N)(=O)=O.NS(=O)(=O)C(C=[SH]F)=CCP>>CC1=CC=C(S(N)(=O)=O)C=S1F | Brc1ccccc1.CC1=CC=C(S(N)(=O)=O)C=S1F>>CC1=CC=C(S(=O)(=O)Nc2ccccc2)C=S1F", "steps": 4}Now I have many molecules with non-trivial routes. Let me compile the results and write the result.csv file. I'll choose the best ones (strong binding energy + non-trivial routes).<system>Todo list updated</system>
-[2026-05-18T14:18:58.806421] 迭代进度: 0/1
-<system>Command executed successfully.</system>写入25个分子到output/result.csv
-Now let me verify the result.<system>Todo list updated</system><system>Command executed successfully.</system>总数:25 非trivial:25 trivial:0
-1. CCc1ccc(NS(=O)(=O)c2ccc(C)c(F)c2)cc1F... -> non-trivial: True
-2. Cc1ccc(S(=O)(=O)Nc2cc(F)c(C)c(F)c2)cc1F... -> non-trivial: True
-3. Cc1ccc(S(=O)(=O)Nc2cc(F)c(C)c(Cl)c2)cc1F... -> non-trivial: True
-4. Cc1ccc(NS(=O)(=O)c2ccc(CF)c(F)c2)cc1F... -> non-trivial: True
-5. Cc1ccc(S(=O)(=O)Nc2cc(F)c(C)cc2C)cc1F... -> non-trivial: True
-6. Cc1ccc(NS(=O)(=O)c2ccc(C)c(F)c2)cc1F... -> non-trivial: True
-7. Cc1cc(S(=O)(=O)Nc2cccnc2)cc(F)c1C... -> non-trivial: True
-8. Cc1ccc(S(=O)(=O)Nc2ccc(F)cc2F)cc1F... -> non-trivial: True
-9. Cc1cc(S(=O)(=O)Nc2ccccc2)cc(F)c1C... -> non-trivial: True
-10. O=S(=O)(Nc1ccc(F)cc1)c1ccc(CO)c(F)c1... -> non-trivial: True
-11. O=S(=O)(Nc1ccc2c(c1)CCO2)C1COc2ccccc21... -> non-trivial: True
-12. O=C(c1ccc(OCc2ccccc2)cc1)C1CCCNC1... -> non-trivial: True
-13. O=C(Nc1ccccc1)c1ccccc1OC(=O)C1CNC1... -> non-trivial: True
-14. Nc1ccc(NC(=O)OC(=O)Cc2ccccc2)cc1... -> non-trivial: True
-15. Cc1cccc(CS(=O)(=O)c2ccc(C)c(F)c2)c1... -> non-trivial: True
-16. Cc1cc(S(=O)(=O)Nc2ccccc2)nc(F)c1C... -> non-trivial: True
-17. O=S(=O)(c1ccc2ccccc2c1)C1CCNc2ccccc21... -> non-trivial: True
-18. C(=CN1CCc2ccccc21)c1ccc2ncncc2c1... -> non-trivial: True
-19. Cc1cc(S(=O)Nc2ccccc2)cc(F)c1C... -> non-trivial: True
-20. O=S(=O)(Nc1ccccc1)c1ccc(O)c(F)c1... -> non-trivial: True
-21. O=S(=O)(Nc1ccc(F)cc1)c1cccc(F)c1... -> non-trivial: True
-22. O=C(OS(=O)(=O)c1ccc(C(=O)c2ccccc2)cc1)c1ccccc1... -> non-trivial: True
-23. COc1ccc(CCc2cc(F)ccc2F)cc1... -> non-trivial: True
-24. Nc1ccc(S(=O)Oc2ccc(F)cc2)cc1F... -> non-trivial: True
-25. O=C(OOCc1ccc(S(=O)(=O)Nc2ccccc2)cc1)c1ccccc1... -> non-trivial: True
-Excellent! All 25 molecules have non-trivial routes (100%). Now let me call ReportIteration.<system>Todo list updated</system>{"status": "recorded", "round": 1, "message": "第 1 轮迭代已记录"}<system>Todo list updated</system>## ✅ 任务完成！
-
-以下是完整的执行总结：
-
-### 流程回顾
-
-| 步骤 | 操作 | 结果 |
-|------|------|------|
-| **步骤1** | `generate_molecules(strategy="mutate", n=50)` | 生成150个分子（远超预期） |
-| **步骤2** | 筛选+对接（两批：25+20个） | 20个分子结合能<-7，最佳-8.791 kcal/mol |
-| **步骤3** | `generate_molecules(strategy="combine", n=30)` + 对接 | 30个分子全部对接成功，最佳-11.837 kcal/mol |
-| **步骤4** | 逆合成规划 | 25个分子全部得到**非trivial**路线 |
-| **步骤5** | 写入`output/result.csv` | 25行数据 |
-| **步骤6** | 验证 | ✅ **0个trivial路线，100%非trivial** |
-| **步骤7** | ReportIteration | 已记录 |
-
-### 输出文件
-
-**`output/result.csv`** — 25个分子，全部：
-- ✅ QED >= 0.3
-- ✅ SA Score <= 6.0
-- ✅ 结合能 < -7 kcal/mol（最佳 -11.837）
-- ✅ 非trivial逆合成路线（sulfonamide、ester、ether等反应）
-
-============================================================
-[2026-05-18T14:19:24.621998] MolCraft Agent 执行结束
-请检查:
-  - output/result.csv（最终候选分子与合成路线）
-  - /home/z/my-project/molcraft-agent/output/result.log（详细结果日志）
-  - /home/z/my-project/molcraft-agent/docs/iteration_log.jsonl（迭代记录）
-============================================================
+Also, looking at `synthesis_v2.py`, the recursive plan_synthesis_recursive's trivial route detection logic needs improvement - it marks routes as trivial when they shouldn't be. Let me diagnose and propose H001.<system>File successfully overwritten. Current size: 1506 bytes.</system><system>Todo list updated</system>
