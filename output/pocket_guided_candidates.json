@@ -1,0 +1,547 @@
+[
+  {
+    "smiles": "O=C(O)c1ccc2c(c1)CCN2S(=O)(=O)c1ccc(F)cc1",
+    "qed": 0.941,
+    "sa_score": 2.8,
+    "route": "O=S(=O)(Cl)c1ccc(F)cc1.O=C(O)c1ccc2c(c1)CCN2>>O=C(O)c1ccc2c(c1)CCN2S(=O)(=O)c1ccc(F)cc1",
+    "trivial": false,
+    "steps": 1,
+    "product_ok": true,
+    "source": "sulfonamide_acid",
+    "features": [
+      "carboxylic_acid",
+      "sulfonamide",
+      "aromatic_core"
+    ]
+  },
+  {
+    "smiles": "O=C(O)c1ccc(-c2ccc(N3CCOCC3)cc2)cc1",
+    "qed": 0.941,
+    "sa_score": 2.8,
+    "route": "O=C(O)c1ccc(-c2ccc(Br)cc2)cc1.C1COCCN1>>O=C(O)c1ccc(-c2ccc(N3CCOCC3)cc2)cc1",
+    "trivial": false,
+    "steps": 1,
+    "product_ok": true,
+    "source": "larger_molecule",
+    "features": [
+      "carboxylic_acid",
+      "aromatic_core",
+      "amine"
+    ]
+  },
+  {
+    "smiles": "O=C(O)c1ccc2c(c1)CCN2S(=O)(=O)c1ccc(F)c(F)c1",
+    "qed": 0.932,
+    "sa_score": 2.8,
+    "route": "O=S(=O)(Cl)c1ccc(F)c(F)c1.O=C(O)c1ccc2c(c1)CCN2>>O=C(O)c1ccc2c(c1)CCN2S(=O)(=O)c1ccc(F)c(F)c1",
+    "trivial": false,
+    "steps": 1,
+    "product_ok": true,
+    "source": "sulfonamide_acid",
+    "features": [
+      "carboxylic_acid",
+      "sulfonamide",
+      "aromatic_core"
+    ]
+  },
+  {
+    "smiles": "O=C(O)c1ccc(-c2ccc(N3CCCCC3)cc2)cc1",
+    "qed": 0.923,
+    "sa_score": 2.8,
+    "route": "O=C(O)c1ccc(-c2ccc(Br)cc2)cc1.C1CCNCC1>>O=C(O)c1ccc(-c2ccc(N3CCCCC3)cc2)cc1",
+    "trivial": false,
+    "steps": 1,
+    "product_ok": true,
+    "source": "larger_molecule",
+    "features": [
+      "carboxylic_acid",
+      "aromatic_core",
+      "amine"
+    ]
+  },
+  {
+    "smiles": "O=C(O)c1ccc(-c2ccc(N3CCNCC3)cc2)cc1",
+    "qed": 0.908,
+    "sa_score": 2.8,
+    "route": "O=C(O)c1ccc(-c2ccc(Br)cc2)cc1.C1CNCCN1>>O=C(O)c1ccc(-c2ccc(N3CCNCC3)cc2)cc1",
+    "trivial": false,
+    "steps": 1,
+    "product_ok": true,
+    "source": "larger_molecule",
+    "features": [
+      "carboxylic_acid",
+      "aromatic_core",
+      "amine"
+    ]
+  },
+  {
+    "smiles": "O=C(O)c1ccc(S(=O)(=O)N2CCCCC2)cc1",
+    "qed": 0.903,
+    "sa_score": 2.3,
+    "route": "O=C(O)c1ccc(S(=O)(=O)Cl)cc1.C1CCNCC1>>O=C(O)c1ccc(S(=O)(=O)N2CCCCC2)cc1",
+    "trivial": false,
+    "steps": 1,
+    "product_ok": true,
+    "source": "amide_acid",
+    "features": [
+      "carboxylic_acid",
+      "amide",
+      "aromatic_core",
+      "amine"
+    ]
+  },
+  {
+    "smiles": "O=C(O)c1ccc2ccccc2c1N1CCOCC1",
+    "qed": 0.897,
+    "sa_score": 2.7,
+    "route": "O=C(O)c1ccc2ccccc2c1Br.C1COCCN1>>O=C(O)c1ccc2ccccc2c1N1CCOCC1",
+    "trivial": false,
+    "steps": 1,
+    "product_ok": true,
+    "source": "larger_molecule",
+    "features": [
+      "carboxylic_acid",
+      "aromatic_core",
+      "amine"
+    ]
+  },
+  {
+    "smiles": "O=C(O)c1ccc2ccccc2c1N1CCCCC1",
+    "qed": 0.892,
+    "sa_score": 2.7,
+    "route": "O=C(O)c1ccc2ccccc2c1Br.C1CCNCC1>>O=C(O)c1ccc2ccccc2c1N1CCCCC1",
+    "trivial": false,
+    "steps": 1,
+    "product_ok": true,
+    "source": "larger_molecule",
+    "features": [
+      "carboxylic_acid",
+      "aromatic_core",
+      "amine"
+    ]
+  },
+  {
+    "smiles": "O=C(O)c1ccc(C(=O)Nc2ccncc2)cc1",
+    "qed": 0.863,
+    "sa_score": 2.3,
+    "route": "O=C(O)c1ccc(C(=O)O)cc1.Nc1ccncc1>>O=C(O)c1ccc(C(=O)Nc2ccncc2)cc1",
+    "trivial": false,
+    "steps": 1,
+    "product_ok": true,
+    "source": "amide_acid",
+    "features": [
+      "carboxylic_acid",
+      "amide",
+      "aromatic_core",
+      "amine"
+    ]
+  },
+  {
+    "smiles": "O=S(=O)(Nc1ccc(Cl)cc1)N1CCNCC1",
+    "qed": 0.862,
+    "sa_score": 2.3,
+    "route": "Clc1ccc(Br)cc1.[NH]S(=O)(=O)N1CCNCC1>>O=S(=O)(Nc1ccc(Cl)cc1)N1CCNCC1",
+    "trivial": false,
+    "steps": 1,
+    "product_ok": true,
+    "source": "legacy_best",
+    "features": [
+      "aromatic_core",
+      "h_bond"
+    ]
+  },
+  {
+    "smiles": "O=C(O)c1ccc(S(=O)(=O)N2CCOCC2)cc1",
+    "qed": 0.86,
+    "sa_score": 2.3,
+    "route": "O=C(O)c1ccc(S(=O)(=O)Cl)cc1.C1COCCN1>>O=C(O)c1ccc(S(=O)(=O)N2CCOCC2)cc1",
+    "trivial": false,
+    "steps": 1,
+    "product_ok": true,
+    "source": "amide_acid",
+    "features": [
+      "carboxylic_acid",
+      "amide",
+      "aromatic_core",
+      "amine"
+    ]
+  },
+  {
+    "smiles": "O=C(O)c1ccc(C(=O)N2CCCCC2)cc1",
+    "qed": 0.85,
+    "sa_score": 2.2,
+    "route": "O=C(O)c1ccc(C(=O)O)cc1.C1CCNCC1>>O=C(O)c1ccc(C(=O)N2CCCCC2)cc1",
+    "trivial": false,
+    "steps": 1,
+    "product_ok": true,
+    "source": "amide_acid",
+    "features": [
+      "carboxylic_acid",
+      "amide",
+      "aromatic_core",
+      "amine"
+    ]
+  },
+  {
+    "smiles": "O=C(O)c1ccc(-c2ccc(F)cc2)cc1",
+    "qed": 0.837,
+    "sa_score": 2.2,
+    "route": "O=C(O)c1ccc(-c2ccc(F)cc2)cc1>>O=C(O)c1ccc(-c2ccc(F)cc2)cc1",
+    "trivial": true,
+    "steps": 0,
+    "product_ok": true,
+    "source": "scaffold_acidic",
+    "features": [
+      "aromatic_core",
+      "carboxylic_acid"
+    ]
+  },
+  {
+    "smiles": "O=C(O)c1ccc2[nH]ccc2c1C1CCCC1",
+    "qed": 0.827,
+    "sa_score": 2.7,
+    "route": "O=C(O)c1ccc2[nH]ccc2c1C1CCCC1>>O=C(O)c1ccc2[nH]ccc2c1C1CCCC1",
+    "trivial": true,
+    "steps": 0,
+    "product_ok": true,
+    "source": "hydrophobic_acid",
+    "features": [
+      "carboxylic_acid",
+      "aromatic_core",
+      "hydrophobic"
+    ]
+  },
+  {
+    "smiles": "O=C(O)c1ccc(C(=O)N2CCOCC2)cc1",
+    "qed": 0.825,
+    "sa_score": 2.2,
+    "route": "O=C(O)c1ccc(C(=O)O)cc1.C1COCCN1>>O=C(O)c1ccc(C(=O)N2CCOCC2)cc1",
+    "trivial": false,
+    "steps": 1,
+    "product_ok": true,
+    "source": "amide_acid",
+    "features": [
+      "carboxylic_acid",
+      "amide",
+      "aromatic_core",
+      "amine"
+    ]
+  },
+  {
+    "smiles": "O=S(=O)(Nc1ccc(F)cc1)N1CCNCC1",
+    "qed": 0.825,
+    "sa_score": 2.3,
+    "route": "Fc1ccc(Br)cc1.[NH]S(=O)(=O)N1CCNCC1>>O=S(=O)(Nc1ccc(F)cc1)N1CCNCC1",
+    "trivial": false,
+    "steps": 1,
+    "product_ok": true,
+    "source": "legacy_best",
+    "features": [
+      "aromatic_core",
+      "h_bond"
+    ]
+  },
+  {
+    "smiles": "O=C(O)c1ccc(-c2ccccc2)cc1",
+    "qed": 0.805,
+    "sa_score": 2.2,
+    "route": "O=C(O)c1ccc(-c2ccccc2)cc1>>O=C(O)c1ccc(-c2ccccc2)cc1",
+    "trivial": true,
+    "steps": 0,
+    "product_ok": true,
+    "source": "scaffold_acidic",
+    "features": [
+      "aromatic_core",
+      "carboxylic_acid"
+    ]
+  },
+  {
+    "smiles": "O=C(O)c1cc(N2CCCCC2)ccn1",
+    "qed": 0.801,
+    "sa_score": 2.2,
+    "route": "O=C(O)c1cc(Br)ccn1.C1CCNCC1>>O=C(O)c1cc(N2CCCCC2)ccn1",
+    "trivial": false,
+    "steps": 1,
+    "product_ok": true,
+    "source": "amine_acid",
+    "features": [
+      "carboxylic_acid",
+      "aromatic_core",
+      "amine"
+    ]
+  },
+  {
+    "smiles": "Fc1ccc2c(N3CCNCC3)ncnc2c1",
+    "qed": 0.801,
+    "sa_score": 2.6,
+    "route": "Fc1ccc2c(Br)ncnc2c1.C1CNCCN1>>Fc1ccc2c(N3CCNCC3)ncnc2c1",
+    "trivial": false,
+    "steps": 1,
+    "product_ok": true,
+    "source": "legacy_best",
+    "features": [
+      "aromatic_core",
+      "h_bond"
+    ]
+  },
+  {
+    "smiles": "O=C(O)c1ccc2ncncc2c1Cl",
+    "qed": 0.779,
+    "sa_score": 2.1,
+    "route": "O=C(O)c1ccc2ncncc2c1Cl>>O=C(O)c1ccc2ncncc2c1Cl",
+    "trivial": true,
+    "steps": 0,
+    "product_ok": true,
+    "source": "halogen_acid",
+    "features": [
+      "carboxylic_acid",
+      "aromatic_core",
+      "halogen"
+    ]
+  },
+  {
+    "smiles": "O=C(O)c1ccc2ccccc2c1Cl",
+    "qed": 0.778,
+    "sa_score": 2.1,
+    "route": "O=C(O)c1ccc2ccccc2c1Cl>>O=C(O)c1ccc2ccccc2c1Cl",
+    "trivial": true,
+    "steps": 0,
+    "product_ok": true,
+    "source": "scaffold_acidic",
+    "features": [
+      "aromatic_core",
+      "carboxylic_acid"
+    ]
+  },
+  {
+    "smiles": "O=C(O)c1cc(N2CCOCC2)ccn1",
+    "qed": 0.771,
+    "sa_score": 2.2,
+    "route": "O=C(O)c1cc(Br)ccn1.C1COCCN1>>O=C(O)c1cc(N2CCOCC2)ccn1",
+    "trivial": false,
+    "steps": 1,
+    "product_ok": true,
+    "source": "amine_acid",
+    "features": [
+      "carboxylic_acid",
+      "aromatic_core",
+      "amine"
+    ]
+  },
+  {
+    "smiles": "CN1CCN(c2ncnc3cc(F)ccc23)CC1",
+    "qed": 0.763,
+    "sa_score": 2.6,
+    "route": "Fc1ccc2c(Br)ncnc2c1.CN1CCNCC1>>CN1CCN(c2ncnc3cc(F)ccc23)CC1",
+    "trivial": false,
+    "steps": 1,
+    "product_ok": true,
+    "source": "legacy_best",
+    "features": [
+      "aromatic_core",
+      "h_bond"
+    ]
+  },
+  {
+    "smiles": "O=C(O)c1ccc2ncncc2c1F",
+    "qed": 0.743,
+    "sa_score": 2.1,
+    "route": "O=C(O)c1ccc2ncncc2c1F>>O=C(O)c1ccc2ncncc2c1F",
+    "trivial": true,
+    "steps": 0,
+    "product_ok": true,
+    "source": "halogen_acid",
+    "features": [
+      "carboxylic_acid",
+      "aromatic_core",
+      "halogen"
+    ]
+  },
+  {
+    "smiles": "O=C(Nc1cc(F)ccc1F)c1c[nH]c2ccccc12",
+    "qed": 0.734,
+    "sa_score": 2.7,
+    "route": "O=C(O)c1c[nH]c2ccccc12.Nc1cc(F)ccc1F>>O=C(Nc1cc(F)ccc1F)c1c[nH]c2ccccc12",
+    "trivial": false,
+    "steps": 1,
+    "product_ok": true,
+    "source": "legacy_best",
+    "features": [
+      "aromatic_core",
+      "h_bond"
+    ]
+  },
+  {
+    "smiles": "O=C(Nc1ccncc1)c1c[nH]c2ccccc12",
+    "qed": 0.72,
+    "sa_score": 2.7,
+    "route": "O=C(O)c1c[nH]c2ccccc12.Nc1ccncc1>>O=C(Nc1ccncc1)c1c[nH]c2ccccc12",
+    "trivial": false,
+    "steps": 1,
+    "product_ok": true,
+    "source": "legacy_best",
+    "features": [
+      "aromatic_core",
+      "h_bond"
+    ]
+  },
+  {
+    "smiles": "O=C(O)c1ccc2ccccc2c1",
+    "qed": 0.717,
+    "sa_score": 2.1,
+    "route": "O=C(O)c1ccc2ccccc2c1>>O=C(O)c1ccc2ccccc2c1",
+    "trivial": true,
+    "steps": 0,
+    "product_ok": true,
+    "source": "scaffold_acidic",
+    "features": [
+      "aromatic_core",
+      "carboxylic_acid"
+    ]
+  },
+  {
+    "smiles": "O=C(c1ccccc1)N1CCC(c2noc3cc(F)ccc23)CC1",
+    "qed": 0.716,
+    "sa_score": 3.2,
+    "route": "O=C(O)c1ccccc1.Fc1ccc2c(C3CCNCC3)noc2c1>>O=C(c1ccccc1)N1CCC(c2noc3cc(F)ccc23)CC1",
+    "trivial": false,
+    "steps": 1,
+    "product_ok": true,
+    "source": "legacy_best",
+    "features": [
+      "aromatic_core",
+      "h_bond"
+    ]
+  },
+  {
+    "smiles": "O=C(O)c1ccc2ncncc2c1",
+    "qed": 0.708,
+    "sa_score": 2.1,
+    "route": "O=C(O)c1ccc2ncncc2c1>>O=C(O)c1ccc2ncncc2c1",
+    "trivial": true,
+    "steps": 0,
+    "product_ok": true,
+    "source": "scaffold_acidic",
+    "features": [
+      "aromatic_core",
+      "carboxylic_acid"
+    ]
+  },
+  {
+    "smiles": "O=C(O)c1ccc2[nH]ccc2c1F",
+    "qed": 0.703,
+    "sa_score": 2.1,
+    "route": "O=C(O)c1ccc2[nH]ccc2c1F>>O=C(O)c1ccc2[nH]ccc2c1F",
+    "trivial": true,
+    "steps": 0,
+    "product_ok": true,
+    "source": "halogen_acid",
+    "features": [
+      "carboxylic_acid",
+      "aromatic_core",
+      "halogen"
+    ]
+  },
+  {
+    "smiles": "O=C(O)c1ccc2[nH]cnc2c1F",
+    "qed": 0.697,
+    "sa_score": 2.1,
+    "route": "O=C(O)c1ccc2[nH]cnc2c1F>>O=C(O)c1ccc2[nH]cnc2c1F",
+    "trivial": true,
+    "steps": 0,
+    "product_ok": true,
+    "source": "halogen_acid",
+    "features": [
+      "carboxylic_acid",
+      "aromatic_core",
+      "halogen"
+    ]
+  },
+  {
+    "smiles": "O=C(O)c1ccc2[nH]ccc2c1",
+    "qed": 0.67,
+    "sa_score": 2.1,
+    "route": "O=C(O)c1ccc2[nH]ccc2c1>>O=C(O)c1ccc2[nH]ccc2c1",
+    "trivial": true,
+    "steps": 0,
+    "product_ok": true,
+    "source": "scaffold_acidic",
+    "features": [
+      "aromatic_core",
+      "carboxylic_acid"
+    ]
+  },
+  {
+    "smiles": "O=C(O)c1ccc2[nH]cnc2c1",
+    "qed": 0.663,
+    "sa_score": 2.1,
+    "route": "O=C(O)c1ccc2[nH]cnc2c1>>O=C(O)c1ccc2[nH]cnc2c1",
+    "trivial": true,
+    "steps": 0,
+    "product_ok": true,
+    "source": "scaffold_acidic",
+    "features": [
+      "aromatic_core",
+      "carboxylic_acid"
+    ]
+  },
+  {
+    "smiles": "O=C(O)c1ccc2nc[nH]c2c1",
+    "qed": 0.663,
+    "sa_score": 2.1,
+    "route": "O=C(O)c1ccc2nc[nH]c2c1>>O=C(O)c1ccc2nc[nH]c2c1",
+    "trivial": true,
+    "steps": 0,
+    "product_ok": true,
+    "source": "scaffold_acidic",
+    "features": [
+      "aromatic_core",
+      "carboxylic_acid"
+    ]
+  },
+  {
+    "smiles": "O=C(O)c1c(F)ccnc1F",
+    "qed": 0.623,
+    "sa_score": 1.6,
+    "route": "O=C(O)c1c(F)ccnc1F>>O=C(O)c1c(F)ccnc1F",
+    "trivial": true,
+    "steps": 0,
+    "product_ok": true,
+    "source": "halogen_acid",
+    "features": [
+      "carboxylic_acid",
+      "aromatic_core",
+      "halogen"
+    ]
+  },
+  {
+    "smiles": "Nc1ccc(C(=O)O)cc1F",
+    "qed": 0.597,
+    "sa_score": 1.7,
+    "route": "Nc1ccc(C(=O)O)cc1F>>Nc1ccc(C(=O)O)cc1F",
+    "trivial": true,
+    "steps": 0,
+    "product_ok": true,
+    "source": "dual_charge",
+    "features": [
+      "carboxylic_acid",
+      "amine",
+      "aromatic_core"
+    ]
+  },
+  {
+    "smiles": "Nc1ccc2[nH]ccc2c1C(=O)O",
+    "qed": 0.575,
+    "sa_score": 2.2,
+    "route": "Nc1ccc2[nH]ccc2c1C(=O)O>>Nc1ccc2[nH]ccc2c1C(=O)O",
+    "trivial": true,
+    "steps": 0,
+    "product_ok": true,
+    "source": "dual_charge",
+    "features": [
+      "carboxylic_acid",
+      "amine",
+      "aromatic_core"
+    ]
+  }
+]

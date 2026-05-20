@@ -1,83 +1,64 @@
-[2026-05-20T08:48:19.902201+00:00] MolCraft Agent result.log (H004 fix)
-Total molecules: 20
+[2026-05-20T14:50:08.968475+00:00] MolCraft v5 - Structure-Guided + Legacy Hybrid
+Pocket: net charge +6.0, key targets ASN734/739, HIS732, ARG738/775
+COOH molecules: 8, Legacy: 12
 
-  1. c1ccc(cc1)C(=O)N2CCC(c3noc4cc(F)ccc34)CC2
-     route: O=C(O)c1ccccc1.Fc1ccc2c(C3CCNCC3)noc2c1>>c1ccc(cc1)C(=O)N2CCC(c3noc4cc(F)ccc34)CC2
-     steps: 1, trivial: False
+1. BE=  -8.524 [cooh] O=C(O)c1ccc(-c2ccc(N3CCOCC3)cc2)cc1
+   Route: O=C(O)c1ccc(-c2ccc(Br)cc2)cc1.C1COCCN1>>O=C(O)c1ccc(-c2ccc(N3CCOCC3)cc2)cc1
 
-  2. c1ccc2c(c1)CCN(C(=O)c3cc(F)ccc3F)C2
-     route: O=C(O)c1cc(F)ccc1F.c1ccc2c(c1)CCNC2>>c1ccc2c(c1)CCN(C(=O)c3cc(F)ccc3F)C2
-     steps: 1, trivial: False
+2. BE=  -8.281 [cooh] O=C(O)c1ccc2c(c1)CCN2S(=O)(=O)c1ccc(F)cc1
+   Route: O=S(=O)(Cl)c1ccc(F)cc1.O=C(O)c1ccc2c(c1)CCN2>>O=C(O)c1ccc2c(c1)CCN2S(=O)(=O)c1ccc(F)cc1
 
-  3. c1ccc(cc1)N2CCOCC2C(=O)Nc3ccccc3F
-     route: Brc1ccccc1.O=C(O)C1COCCN1>>O=C(O)C1COCCN1c1ccccc1,O=C(O)C1COCCN1c1ccccc1.Nc1ccccc1F>>c1ccc(cc1)N2CCOCC2C(=O)Nc3ccccc3F
-     steps: 2, trivial: False
+3. BE=  -7.634 [cooh] O=C(O)c1ccc(C(=O)Nc2ccncc2)cc1
+   Route: O=C(O)c1ccc(C(=O)O)cc1.Nc1ccncc1>>O=C(O)c1ccc(C(=O)Nc2ccncc2)cc1
 
-  4. c1ccc2c(c1)[nH]cc2C(=O)Nc3ccncc3
-     route: O=C(O)c1c[nH]c2ccccc12.Nc1ccncc1>>c1ccc2c(c1)[nH]cc2C(=O)Nc3ccncc3
-     steps: 1, trivial: False
+4. BE=  -7.624 [cooh] O=C(O)c1ccc(C(=O)N2CCCCC2)cc1
+   Route: O=C(O)c1ccc(C(=O)O)cc1.C1CCNCC1>>O=C(O)c1ccc(C(=O)N2CCCCC2)cc1
 
-  5. Fc1ccc2c(c1)ncnc2N3CCN(C)CC3
-     route: Fc1ccc2c(Br)ncnc2c1.CN1CCNCC1>>Fc1ccc2c(c1)ncnc2N3CCN(C)CC3
-     steps: 1, trivial: False
+5. BE=  -7.160 [cooh] O=C(O)c1ccc(C(=O)N2CCOCC2)cc1
+   Route: O=C(O)c1ccc(C(=O)O)cc1.C1COCCN1>>O=C(O)c1ccc(C(=O)N2CCOCC2)cc1
 
-  6. Fc1ccc(F)c(C(=O)N2CCOCC2)c1
-     route: O=C(O)c1cc(F)ccc1F.C1COCCN1>>Fc1ccc(F)c(C(=O)N2CCOCC2)c1
-     steps: 1, trivial: False
+6. BE=  -6.835 [cooh] O=C(O)c1ccc(S(=O)(=O)N2CCCCC2)cc1
+   Route: O=C(O)c1ccc(S(=O)(=O)Cl)cc1.C1CCNCC1>>O=C(O)c1ccc(S(=O)(=O)N2CCCCC2)cc1
 
-  7. O=S(=O)(Nc1ccc(F)cc1)N2CCNCC2
-     route: Fc1ccc(Br)cc1.[NH]S(=O)(=O)N1CCNCC1>>O=S(=O)(Nc1ccc(F)cc1)N2CCNCC2
-     steps: 1, trivial: False
+7. BE=  -6.749 [cooh] O=C(O)c1cc(N2CCCCC2)ccn1
+   Route: O=C(O)c1cc(Br)ccn1.C1CCNCC1>>O=C(O)c1cc(N2CCCCC2)ccn1
 
-  8. O=S(=O)(Nc1ccccc1)c2cccn2C
-     route: Cn1cccc1S(=O)(=O)Cl.Nc1ccccc1>>O=S(=O)(Nc1ccccc1)c2cccn2C
-     steps: 1, trivial: False
+8. BE=  -6.742 [cooh] O=C(O)c1ccc(S(=O)(=O)N2CCOCC2)cc1
+   Route: O=C(O)c1ccc(S(=O)(=O)Cl)cc1.C1COCCN1>>O=C(O)c1ccc(S(=O)(=O)N2CCOCC2)cc1
 
-  9. Fc1ccc2c(c1)CCN(C(=O)c1ccc(F)cc1)C2
-     route: O=C(O)c1ccc(F)cc1.Fc1ccc2c(c1)CCNC2>>Fc1ccc2c(c1)CCN(C(=O)c1ccc(F)cc1)C2
-     steps: 1, trivial: False
+9. BE=   N/A   [legacy] c1ccc(cc1)C(=O)N2CCC(c3noc4cc(F)ccc34)CC2
+   Route: O=C(O)c1ccccc1.Fc1ccc2c(C3CCNCC3)noc2c1>>c1ccc(cc1)C(=O)N2CCC(c3noc4cc(F)ccc34)CC2
 
-  10. c1ccc2c(c1)[nH]cc2C(=O)Nc3cc(F)ccc3F
-     route: O=C(O)c1c[nH]c2ccccc12.Nc1cc(F)ccc1F>>c1ccc2c(c1)[nH]cc2C(=O)Nc3cc(F)ccc3F
-     steps: 1, trivial: False
+10. BE=   N/A   [legacy] c1ccc2c(c1)CCN(C(=O)c3cc(F)ccc3F)C2
+   Route: O=C(O)c1cc(F)ccc1F.c1ccc2c(c1)CCNC2>>c1ccc2c(c1)CCN(C(=O)c3cc(F)ccc3F)C2
 
-  11. c1ccc(cc1)N2CCOCC2C(=O)Nc3ccccc3Cl
-     route: Brc1ccccc1.O=C(O)C1COCCN1>>O=C(O)C1COCCN1c1ccccc1,O=C(O)C1COCCN1c1ccccc1.Nc1ccccc1Cl>>c1ccc(cc1)N2CCOCC2C(=O)Nc3ccccc3Cl
-     steps: 2, trivial: False
+11. BE=   N/A   [legacy] c1ccc(cc1)N2CCOCC2C(=O)Nc3ccccc3F
+   Route: Brc1ccccc1.O=C(O)C1COCCN1>>O=C(O)C1COCCN1c1ccccc1,O=C(O)C1COCCN1c1ccccc1.Nc1ccccc1F>>c1ccc(cc1)N2CCOCC2C(=O)Nc3ccccc3F
 
-  12. c1ccc(cc1)C(=O)N2CCC(c3noc4cc(Cl)ccc34)CC2
-     route: O=C(O)c1ccccc1.Clc1ccc2c(C3CCNCC3)noc2c1>>c1ccc(cc1)C(=O)N2CCC(c3noc4cc(Cl)ccc34)CC2
-     steps: 1, trivial: False
+12. BE=   N/A   [legacy] c1ccc2c(c1)[nH]cc2C(=O)Nc3ccncc3
+   Route: O=C(O)c1c[nH]c2ccccc12.Nc1ccncc1>>c1ccc2c(c1)[nH]cc2C(=O)Nc3ccncc3
 
-  13. c1ccc2c(c1)CCCN2S(=O)(=O)c3cc(F)c(F)cc3
-     route: O=S(=O)(Cl)c1ccc(F)c(F)c1.c1ccc2c(c1)CCCN2>>c1ccc2c(c1)CCCN2S(=O)(=O)c3cc(F)c(F)cc3
-     steps: 1, trivial: False
+13. BE=   N/A   [legacy] Fc1ccc2c(c1)ncnc2N3CCN(C)CC3
+   Route: Fc1ccc2c(Br)ncnc2c1.CN1CCNCC1>>Fc1ccc2c(c1)ncnc2N3CCN(C)CC3
 
-  14. c1ccc2c(c1)CCN(C(=O)c3cc(F)c(F)cc3F)C2
-     route: O=C(O)c1cc(F)c(F)cc1F.c1ccc2c(c1)CCNC2>>c1ccc2c(c1)CCN(C(=O)c3cc(F)c(F)cc3F)C2
-     steps: 1, trivial: False
+14. BE=   N/A   [legacy] Fc1ccc(F)c(C(=O)N2CCOCC2)c1
+   Route: O=C(O)c1cc(F)ccc1F.C1COCCN1>>Fc1ccc(F)c(C(=O)N2CCOCC2)c1
 
-  15. c1ccc2c(c1)CCN(C(=O)c3ccccc3F)C2
-     route: O=C(O)c1ccccc1F.c1ccc2c(c1)CCNC2>>c1ccc2c(c1)CCN(C(=O)c3ccccc3F)C2
-     steps: 1, trivial: False
+15. BE=   N/A   [legacy] O=S(=O)(Nc1ccccc1)c2cccn2C
+   Route: Cn1cccc1S(=O)(=O)Cl.Nc1ccccc1>>O=S(=O)(Nc1ccccc1)c2cccn2C
 
-  16. Fc1ccc2c(c1)ncnc2N3CCN(C(=O)C)CC3
-     route: Fc1ccc2c(Br)ncnc2c1.C1CNCCN1>>Fc1ccc2c(N3CCNCC3)ncnc2c1,CC(=O)O.Fc1ccc2c(N3CCNCC3)ncnc2c1>>Fc1ccc2c(c1)ncnc2N3CCN(C(=O)C)CC3
-     steps: 2, trivial: False
+16. BE=   N/A   [legacy] Fc1ccc2c(c1)CCN(C(=O)c1ccc(F)cc1)C2
+   Route: O=C(O)c1ccc(F)cc1.Fc1ccc2c(c1)CCNC2>>Fc1ccc2c(c1)CCN(C(=O)c1ccc(F)cc1)C2
 
-  17. O=S(=O)(Nc1ccc(Cl)cc1)N2CCNCC2
-     route: Clc1ccc(Br)cc1.[NH]S(=O)(=O)N1CCNCC1>>O=S(=O)(Nc1ccc(Cl)cc1)N2CCNCC2
-     steps: 1, trivial: False
+17. BE=   N/A   [legacy] c1ccc2c(c1)[nH]cc2C(=O)Nc3cc(F)ccc3F
+   Route: O=C(O)c1c[nH]c2ccccc12.Nc1cc(F)ccc1F>>c1ccc2c(c1)[nH]cc2C(=O)Nc3cc(F)ccc3F
 
-  18. c1ccc2c(c1)CCCN2S(=O)(=O)c3ccc(F)cc3
-     route: O=S(=O)(Cl)c1ccc(F)cc1.c1ccc2c(c1)CCCN2>>c1ccc2c(c1)CCCN2S(=O)(=O)c3ccc(F)cc3
-     steps: 1, trivial: False
+18. BE=   N/A   [legacy] c1ccc(cc1)N2CCOCC2C(=O)Nc3ccccc3Cl
+   Route: Brc1ccccc1.O=C(O)C1COCCN1>>O=C(O)C1COCCN1c1ccccc1,O=C(O)C1COCCN1c1ccccc1.Nc1ccccc1Cl>>c1ccc(cc1)N2CCOCC2C(=O)Nc3ccccc3Cl
 
-  19. Fc1ccc(N2CCCCC2)c(F)c1
-     route: Fc1ccc(Br)c(F)c1.C1CCNCC1>>Fc1ccc(N2CCCCC2)c(F)c1
-     steps: 1, trivial: False
+19. BE=   N/A   [legacy] c1ccc(cc1)C(=O)N2CCC(c3noc4cc(Cl)ccc34)CC2
+   Route: O=C(O)c1ccccc1.Clc1ccc2c(C3CCNCC3)noc2c1>>c1ccc(cc1)C(=O)N2CCC(c3noc4cc(Cl)ccc34)CC2
 
-  20. c1ccncc1C(=O)N2CCOCC2
-     route: O=C(O)c1cccnc1.C1COCCN1>>c1ccncc1C(=O)N2CCOCC2
-     steps: 1, trivial: False
+20. BE=   N/A   [legacy] c1ccc2c(c1)CCCN2S(=O)(=O)c3cc(F)c(F)cc3
+   Route: O=S(=O)(Cl)c1ccc(F)c(F)c1.c1ccc2c(c1)CCCN2>>c1ccc2c(c1)CCCN2S(=O)(=O)c3cc(F)c(F)cc3
 

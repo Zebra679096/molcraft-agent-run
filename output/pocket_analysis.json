@@ -1,0 +1,485 @@
+{
+  "n_pocket_residues": 36,
+  "n_inner_residues": 7,
+  "classification": {
+    "hydrophobic": [
+      "MET662",
+      "LEU670",
+      "ALA671",
+      "PRO694",
+      "LEU695",
+      "LEU718",
+      "LEU722",
+      "LEU725",
+      "VAL735",
+      "ILE740",
+      "LEU741",
+      "ILE755",
+      "LEU757",
+      "PRO760",
+      "TRP778",
+      "PHE800"
+    ],
+    "hydrophilic": [
+      "GLY733",
+      "HIS732",
+      "ASN734",
+      "CYS736",
+      "LYS642",
+      "LYS756",
+      "ASP759",
+      "ASP796",
+      "ARG775",
+      "GLU806",
+      "GLY761",
+      "THR803",
+      "HIS669",
+      "GLY737",
+      "ASP696",
+      "GLY799",
+      "SER758",
+      "ASN739",
+      "THR599",
+      "ARG738"
+    ],
+    "aromatic": [
+      "HIS669",
+      "HIS732",
+      "TRP778",
+      "PHE800"
+    ],
+    "positive_charge": [
+      "LYS642",
+      "HIS669",
+      "HIS732",
+      "ARG738",
+      "LYS756",
+      "ARG775"
+    ],
+    "negative_charge": [
+      "ASP696",
+      "ASP759",
+      "ASP796",
+      "GLU806"
+    ],
+    "polar": [
+      "THR599",
+      "ASN734",
+      "CYS736",
+      "ASN739",
+      "SER758",
+      "THR803"
+    ],
+    "hydropathy_ratio": 0.444
+  },
+  "pharmacophore": [
+    {
+      "type": "H-bond acceptor",
+      "reason": "Protein has 13 H-bond donors in core pocket",
+      "priority": "HIGH",
+      "suggested_groups": [
+        "carbonyl O",
+        "ether O",
+        "pyridine N",
+        "nitro O",
+        "sulfonyl O"
+      ]
+    },
+    {
+      "type": "H-bond donor",
+      "reason": "Protein has 13 H-bond acceptors in core pocket",
+      "priority": "HIGH",
+      "suggested_groups": [
+        "NH (amine)",
+        "OH (alcohol)",
+        "NH\u2082 (amine)",
+        "NH (amide)",
+        "NH (imidazole)"
+      ]
+    },
+    {
+      "type": "Aromatic ring",
+      "reason": "5 aromatic residues in pocket enable pi-stacking",
+      "priority": "HIGH",
+      "suggested_groups": [
+        "phenyl",
+        "pyridine",
+        "indole",
+        "benzimidazole",
+        "naphthalene"
+      ]
+    },
+    {
+      "type": "Negative charge / Acidic group",
+      "reason": "12 positively charged groups (ARG/LYS/HIS)",
+      "priority": "HIGH",
+      "suggested_groups": [
+        "carboxylic acid (COOH\u2192COO\u207b)",
+        "sulfonamide",
+        "tetrazole",
+        "phosphonate"
+      ]
+    },
+    {
+      "type": "Positive charge / Basic group",
+      "reason": "8 negatively charged groups (ASP/GLU)",
+      "priority": "HIGH",
+      "suggested_groups": [
+        "amine (NH\u2082\u2192NH\u2083\u207a)",
+        "guanidinium",
+        "pyridinium",
+        "imidazolium"
+      ]
+    },
+    {
+      "type": "Hydrophobic moiety",
+      "reason": "Pocket is 44% hydrophobic",
+      "priority": "MEDIUM",
+      "suggested_groups": [
+        "alkyl chains",
+        "cycloalkyl",
+        "halogenated aromatics",
+        "tert-butyl",
+        "isopropyl"
+      ]
+    },
+    {
+      "type": "Size constraint",
+      "reason": "Cavity volume supports up to ~35 heavy atoms",
+      "priority": "MEDIUM",
+      "suggested_groups": [
+        "MW 200-500 Da, 10-35 heavy atoms"
+      ]
+    }
+  ],
+  "charged_groups": [
+    {
+      "residue": "HIS732",
+      "atom": "NE2",
+      "charge": "+0.5",
+      "coord": [
+        20.985,
+        5.004,
+        23.611
+      ],
+      "dist_to_center": 4.392
+    },
+    {
+      "residue": "HIS732",
+      "atom": "ND1",
+      "charge": "+0.5",
+      "coord": [
+        21.668,
+        5.125,
+        21.527
+      ],
+      "dist_to_center": 4.406
+    },
+    {
+      "residue": "ARG775",
+      "atom": "NH1",
+      "charge": "+1",
+      "coord": [
+        24.871,
+        -1.337,
+        19.171
+      ],
+      "dist_to_center": 7.867
+    },
+    {
+      "residue": "GLU806",
+      "atom": "OE1",
+      "charge": "-0.5",
+      "coord": [
+        12.738,
+        0.492,
+        15.933
+      ],
+      "dist_to_center": 8.022
+    },
+    {
+      "residue": "ARG775",
+      "atom": "NH2",
+      "charge": "+1",
+      "coord": [
+        24.455,
+        -3.063,
+        20.625
+      ],
+      "dist_to_center": 8.226
+    },
+    {
+      "residue": "ARG775",
+      "atom": "NE",
+      "charge": "+1",
+      "coord": [
+        23.881,
+        -3.278,
+        18.406
+      ],
+      "dist_to_center": 8.474
+    },
+    {
+      "residue": "ASP796",
+      "atom": "OD1",
+      "charge": "-0.5",
+      "coord": [
+        23.946,
+        7.357,
+        17.575
+      ],
+      "dist_to_center": 8.516
+    },
+    {
+      "residue": "LYS642",
+      "atom": "NZ",
+      "charge": "+1",
+      "coord": [
+        19.258,
+        -1.343,
+        29.195
+      ],
+      "dist_to_center": 8.628
+    },
+    {
+      "residue": "ASP759",
+      "atom": "OD1",
+      "charge": "-0.5",
+      "coord": [
+        20.998,
+        0.689,
+        29.604
+      ],
+      "dist_to_center": 8.756
+    },
+    {
+      "residue": "ASP759",
+      "atom": "OD2",
+      "charge": "-0.5",
+      "coord": [
+        22.852,
+        0.039,
+        28.627
+      ],
+      "dist_to_center": 8.816
+    },
+    {
+      "residue": "GLU806",
+      "atom": "OE2",
+      "charge": "-0.5",
+      "coord": [
+        11.658,
+        -1.309,
+        16.571
+      ],
+      "dist_to_center": 8.981
+    },
+    {
+      "residue": "ASP696",
+      "atom": "OD1",
+      "charge": "-0.5",
+      "coord": [
+        10.742,
+        -2.878,
+        21.584
+      ],
+      "dist_to_center": 9.152
+    },
+    {
+      "residue": "ARG738",
+      "atom": "NE",
+      "charge": "+1",
+      "coord": [
+        12.71,
+        -4.882,
+        22.54
+      ],
+      "dist_to_center": 9.163
+    },
+    {
+      "residue": "ASP796",
+      "atom": "OD2",
+      "charge": "-0.5",
+      "coord": [
+        24.074,
+        9.18,
+        18.812
+      ],
+      "dist_to_center": 9.363
+    },
+    {
+      "residue": "ASP696",
+      "atom": "OD2",
+      "charge": "-0.5",
+      "coord": [
+        11.204,
+        -4.313,
+        19.976
+      ],
+      "dist_to_center": 9.802
+    },
+    {
+      "residue": "ARG738",
+      "atom": "NH2",
+      "charge": "+1",
+      "coord": [
+        13.479,
+        -6.987,
+        23.071
+      ],
+      "dist_to_center": 10.59
+    },
+    {
+      "residue": "ARG738",
+      "atom": "NH1",
+      "charge": "+1",
+      "coord": [
+        11.855,
+        -6.731,
+        21.477
+      ],
+      "dist_to_center": 11.092
+    },
+    {
+      "residue": "HIS669",
+      "atom": "ND1",
+      "charge": "+0.5",
+      "coord": [
+        11.201,
+        11.997,
+        27.409
+      ],
+      "dist_to_center": 13.401
+    },
+    {
+      "residue": "LYS756",
+      "atom": "NZ",
+      "charge": "+1",
+      "coord": [
+        13.309,
+        9.802,
+        33.276
+      ],
+      "dist_to_center": 14.864
+    },
+    {
+      "residue": "HIS669",
+      "atom": "NE2",
+      "charge": "+0.5",
+      "coord": [
+        10.509,
+        14.025,
+        26.938
+      ],
+      "dist_to_center": 15.095
+    }
+  ],
+  "aromatic_interactions": [
+    {
+      "residue": "HIS732",
+      "ring_atoms": [
+        "CG",
+        "ND1",
+        "CD2",
+        "CE1",
+        "NE2"
+      ],
+      "centroid": [
+        21.497,
+        5.388,
+        22.653
+      ],
+      "dist_to_center": 4.614
+    },
+    {
+      "residue": "TRP778",
+      "ring_atoms": [
+        "CG",
+        "CD1",
+        "CD2",
+        "NE1",
+        "CE2"
+      ],
+      "centroid": [
+        16.335,
+        -0.21,
+        14.343
+      ],
+      "dist_to_center": 7.778
+    },
+    {
+      "residue": "TRP778",
+      "ring_atoms": [
+        "CE2",
+        "CD2",
+        "CE3",
+        "CZ2",
+        "CZ3",
+        "CH2"
+      ],
+      "centroid": [
+        16.084,
+        -2.346,
+        14.226
+      ],
+      "dist_to_center": 8.863
+    },
+    {
+      "residue": "PHE800",
+      "ring_atoms": [
+        "CG",
+        "CD1",
+        "CD2",
+        "CE1",
+        "CE2",
+        "CZ"
+      ],
+      "centroid": [
+        14.549,
+        11.258,
+        15.089
+      ],
+      "dist_to_center": 11.59
+    },
+    {
+      "residue": "HIS669",
+      "ring_atoms": [
+        "CG",
+        "ND1",
+        "CD2",
+        "CE1",
+        "NE2"
+      ],
+      "centroid": [
+        11.196,
+        13.106,
+        27.048
+      ],
+      "dist_to_center": 14.079
+    }
+  ],
+  "key_donors_count": 13,
+  "key_acceptors_count": 13,
+  "net_charge": 6.0,
+  "pocket_volume": 5598.6,
+  "recommended_scaffolds": [
+    "c1ccc2c(c1)ncnc2C(=O)O",
+    "c1ccc2c(c1)[nH]c2C(=O)O",
+    "c1ccc2c(c1)nccn2C(=O)O",
+    "c1cc(cnc1)C(=O)O",
+    "c1ccc(cc1)c2nnnn2",
+    "c1ccc2c(c1)nccn2N",
+    "c1ccc2c(c1)nc(n2)N",
+    "c1cc(cnc1)N",
+    "N=c1nc2ccccc2n1N",
+    "c1ccc2c(c1)ncnc2",
+    "c1ccc2c(c1)nccn2",
+    "c1ccc2c(c1)scn2",
+    "c1ccc2c(c1)ocn2",
+    "c1ccc2c(c1)[nH]cn2",
+    "c1ccc(cc1)c2ccccc2",
+    "c1cc(c(cc1F)Cl)c2ccccc2",
+    "c1ccc2c(c1)CCCC2",
+    "CC(C)c1ccc(cc1)C(=O)O"
+  ]
+}
