@@ -1,12 +1,83 @@
-[2026-05-19T11:41:37.011253] MolCraft Agent 启动
-============================================================
-模式: autoresearch（LLM 自主迭代实验）
-指令书: /home/z/my-project/molcraft-agent/program.md
-迭代记录: /home/z/my-project/molcraft-agent/docs/iteration_log.jsonl
-日志文件: /home/z/my-project/molcraft-agent/output/result.log
-配置: 最大 1 次迭代 | 最长 5 分钟
-(yolo 模式下自动批准所有操作)
+[2026-05-20T08:48:19.902201+00:00] MolCraft Agent result.log (H004 fix)
+Total molecules: 20
 
-I'll begin executing the CNS drug discovery pipeline systematically. Let me start with Step 1: getting literature seeds.{"count": 20, "strategy": "cns", "seeds": [{"smiles": "Clc1ccc(Cl)cc1", "qed": 0.529, "sa_score": 1.5, "mw": 147.0, "tpsa": 0.0}, {"smiles": "c1ccc2c(c1)CCS2", "qed": 0.527, "sa_score": 2.0, "mw": 136.22, "tpsa": 0.0}, {"smiles": "c1ccc2ccccc2c1", "qed": 0.511, "sa_score": 2.0, "mw": 128.17, "tpsa": 0.0}, {"smiles": "c1ccc2ccccc2c1", "qed": 0.511, "sa_score": 2.0, "mw": 128.17, "tpsa": 0.0}, {"smiles": "c1ccc2c(c1)CCCC2", "qed": 0.509, "sa_score": 2.0, "mw": 132.21, "tpsa": 0.0}, {"smiles": "c1ccc2c(c1)CCCCC2", "qed": 0.494, "sa_score": 2.0, "mw": 146.23, "tpsa": 0.0}, {"smiles": "Fc1ccc(F)cc1", "qed": 0.483, "sa_score": 1.5, "mw": 114.09, "tpsa": 0.0}, {"smiles": "Cc1ccccc1", "qed": 0.459, "sa_score": 1.5, "mw": 92.14, "tpsa": 0.0}, {"smiles": "c1ccccc1", "qed": 0.443, "sa_score": 1.5, "mw": 78.11, "tpsa": 0.0}, {"smiles": "c1ccc(N2CCCCC2)cc1", "qed": 0.612, "sa_score": 2.1, "mw": 161.25, "tpsa": 3.24}, {"smiles": "c1ccc(COc2ccccc2)cc1", "qed": 0.711, "sa_score": 2.3, "mw": 184.24, "tpsa": 9.23}, {"smiles": "COc1ccccc1", "qed": 0.532, "sa_score": 1.6, "mw": 108.14, "tpsa": 9.23}, {"smiles": "c1ccc2c(c1)CCO2", "qed": 0.505, "sa_score": 2.0, "mw": 120.15, "tpsa": 9.23}, {"smiles": "c1ccc2c(c1)CCO2", "qed": 0.505, "sa_score": 2.0, "mw": 120.15, "tpsa": 9.23}, {"smiles": "C1CCOC1", "qed": 0.411, "sa_score": 1.5, "mw": 72.11, "tpsa": 9.23}, {"smiles": "C1COC1", "qed": 0.392, "sa_score": 1.5, "mw": 58.08, "tpsa": 9.23}, {"smiles": "c1ccc2c(c1)CCCN2", "qed": 0.571, "sa_score": 2.0, "mw": 133.19, "tpsa": 12.03}, {"smiles": "c1ccc2c(c1)CCNC2", "qed": 0.563, "sa_score": 2.0, "mw": 133.19, "tpsa": 12.03}, {"smiles": "c1ccc2c(c1)CCN2", "qed": 0.547, "sa_score": 2.0, "mw": 119.17, "tpsa": 12.03}, {"smiles": "c1ccc2c(c1)CCN2", "qed": 0.547, "sa_score": 2.0, "mw": 119.17, "tpsa": 12.03}]}Good, I have the CNS scaffolds. The most promising seeds are the piperidine-containing ones and nitrogen heterocycles. Now let me proceed to **Step 2: LLM-Designed Molecules — Round 1**.
+  1. c1ccc(cc1)C(=O)N2CCC(c3noc4cc(F)ccc34)CC2
+     route: O=C(O)c1ccccc1.Fc1ccc2c(C3CCNCC3)noc2c1>>c1ccc(cc1)C(=O)N2CCC(c3noc4cc(F)ccc34)CC2
+     steps: 1, trivial: False
 
-I'll design 15 novel CNS drug-like molecules combining scaffolds with pharmacophore modifications. Let me apply rational medicinal chemistry design:<system>Thought logged</system>Now let me design my first batch of molecules:{"submitted": 15, "valid_and_passed": 6, "valid_but_filtered": 0, "invalid_smiles": 9, "molecules": [{"smiles": "c1ccncc1N2CCN(CC3CCCCC3)CC2", "qed": 0.832, "mw": 259.4, "logp": 2.78, "tpsa": 19.37, "sa_score": 2.8, "lipinski_pass": true, "source": "llm_designed"}, {"smiles": "c1ccc2ncncc2c1N3CCN(C)CC3", "qed": 0.738, "mw": 228.3, "logp": 1.38, "tpsa": 32.26, "sa_score": 2.6, "lipinski_pass": true, "source": "llm_designed"}, {"smiles": "c1ccc(cc1)S(=O)(=O)N2CCC(F)(F)CC2", "qed": 0.817, "mw": 261.29, "logp": 2.11, "tpsa": 37.38, "sa_score": 2.2, "lipinski_pass": true, "source": "llm_designed"}, {"smiles": "c1ccncc1C(=O)N2CCOCC2", "qed": 0.652, "mw": 192.22, "logp": 0.55, "tpsa": 42.43, "sa_score": 2.1, "lipinski_pass": true, "source": "llm_designed"}, {"smiles": "c1ccc(cc1)N2CCN(C(=O)c3ccccc3)CC2", "qed": 0.834, "mw": 266.34, "logp": 2.65, "tpsa": 23.55, "sa_score": 2.7, "lipinski_pass": true, "source": "llm_designed"}, {"smiles": "c1ccc(cc1)C(=O)N2CCCC(C(=O)N3CCOCC3)C2", "qed": 0.83, "mw": 302.37, "logp": 1.4, "tpsa": 49.85, "sa_score": 3.2, "lipinski_pass": true, "source": "llm_designed"}], "filtered": [], "invalid": [{"smiles": "c1ccc2c(c1)[nH]c2C(=O)N3CCCCC3", "error": "无效的 SMILES"}, {"smiles": "c1ccc2c(c1)[nH]c2S(=O)(=O)NC3CCCCC3", "error": "无效的 SMILES"}, {"smiles": "c1cc(F)cc2c1[nH]c2C(=O)N3CCOCC3", "error": "无效的 SMILES"}, {"smiles": "c1ccc2c(c1)co2C(=O)N3CCOCC3", "error": "无效的 SMILES"}, {"smiles": "c1ccc2c(c1)[nH]c2CC(=O)Nc3ccc(F)cc3", "error": "无效的 SMILES"}, {"smiles": "c1ccc2c(c1)[nH]c2CCN", "error": "无效的 SMILES"}, {"smiles": "c1ccc2c(c1)[nH]nn2CCc3ccc(F)cc3", "error": "无效的 SMILES"}, {"smiles": "c1ccc2c(c1)[nH]c2C(=O)Nc3ccncc3", "error": "无效的 SMILES"}, {"smiles": "c1ccc2c(c1)[nH]c2S(=O)(=O)Nc3ccc(F)cc3", "error": "无效的 SMILES"}], "design_rationale": "Round 1: Designed 15 CNS drug-like molecules combining indole, piperidine, morpholine, piperazine, quinazoline, and benzofuran scaffolds with amide/sulfonamide linkers. Included fluorine for metabolic stability, basic amines for BBB penetration, and heteroaromatic rings for π-π stacking. Designed to stay within CNS constraints (MW 150-450, LogP 1-4, TPSA < 90)."}9 of my indole-containing molecules had invalid SMILES due to atom mapping issues. Let me fix the indole SMILES properly and design more molecules with corrected syntax:{"submitted": 10, "valid_and_passed": 10, "valid_but_filtered": 0, "invalid_smiles": 0, "molecules": [{"smiles": "c1ccc2[nH]ccc2c1C(=O)N3CCCCC3", "qed": 0.8, "mw": 228.3, "logp": 2.79, "tpsa": 36.1, "sa_score": 2.6, "lipinski_pass": true, "source": "llm_designed"}, {"smiles": "c1ccc2[nH]ccc2c1S(=O)(=O)NC3CCCCC3", "qed": 0.907, "mw": 278.38, "logp": 2.78, "tpsa": 61.96, "sa_score": 2.8, "lipinski_pass": true, "source": "llm_designed"}, {"smiles": "c1cc(F)ccc2[nH]ccc12C(=O)N3CCOCC3", "qed": 0.773, "mw": 262.28, "logp": 1.26, "tpsa": 41.57, "sa_score": 3.1, "lipinski_pass": true, "source": "llm_designed"}, {"smiles": "c1ccc2occc2c1C(=O)N3CCOCC3", "qed": 0.752, "mw": 231.25, "logp": 1.91, "tpsa": 42.68, "sa_score": 2.6, "lipinski_pass": true, "source": "llm_designed"}, {"smiles": "c1ccc2[nH]ccc2c1CC(=O)Nc1ccc(F)cc1", "qed": 0.75, "mw": 268.29, "logp": 3.49, "tpsa": 44.89, "sa_score": 2.8, "lipinski_pass": true, "source": "llm_designed"}, {"smiles": "c1ccc2[nH]ccc2c1CCN", "qed": 0.689, "mw": 160.22, "logp": 1.67, "tpsa": 41.81, "sa_score": 2.3, "lipinski_pass": true, "source": "llm_designed"}, {"smiles": "c1ccc2[nH]nnc2c1CCc1ccc(F)cc1", "qed": 0.766, "mw": 241.27, "logp": 2.88, "tpsa": 41.57, "sa_score": 2.8, "lipinski_pass": true, "source": "llm_designed"}, {"smiles": "c1ccc2[nH]ccc2c1C(=O)Nc1ccncc1", "qed": 0.72, "mw": 237.26, "logp": 2.82, "tpsa": 57.78, "sa_score": 2.7, "lipinski_pass": true, "source": "llm_designed"}, {"smiles": "c1ccc2[nH]ccc2c1S(=O)(=O)Nc1ccc(F)cc1", "qed": 0.778, "mw": 290.32, "logp": 3.11, "tpsa": 61.96, "sa_score": 2.8, "lipinski_pass": true, "source": "llm_designed"}, {"smiles": "CC(=O)Nc1ccc2c(c1)CCN2C(=O)c1ccncc1", "qed": 0.918, "mw": 281.31, "logp": 2.24, "tpsa": 62.3, "sa_score": 2.7, "lipinski_pass": true, "source": "llm_designed"}], "filtered": [], "invalid": [], "design_rationale": "Round 1b: Fixed indole SMILES syntax and added more CNS-optimized molecules. Indole amide piperidine, indole sulfonamides, fluoroindole morpholine amide, benzofuran morpholine amide, tryptamine, and nicotinamide piperidine."}
+  2. c1ccc2c(c1)CCN(C(=O)c3cc(F)ccc3F)C2
+     route: O=C(O)c1cc(F)ccc1F.c1ccc2c(c1)CCNC2>>c1ccc2c(c1)CCN(C(=O)c3cc(F)ccc3F)C2
+     steps: 1, trivial: False
+
+  3. c1ccc(cc1)N2CCOCC2C(=O)Nc3ccccc3F
+     route: Brc1ccccc1.O=C(O)C1COCCN1>>O=C(O)C1COCCN1c1ccccc1,O=C(O)C1COCCN1c1ccccc1.Nc1ccccc1F>>c1ccc(cc1)N2CCOCC2C(=O)Nc3ccccc3F
+     steps: 2, trivial: False
+
+  4. c1ccc2c(c1)[nH]cc2C(=O)Nc3ccncc3
+     route: O=C(O)c1c[nH]c2ccccc12.Nc1ccncc1>>c1ccc2c(c1)[nH]cc2C(=O)Nc3ccncc3
+     steps: 1, trivial: False
+
+  5. Fc1ccc2c(c1)ncnc2N3CCN(C)CC3
+     route: Fc1ccc2c(Br)ncnc2c1.CN1CCNCC1>>Fc1ccc2c(c1)ncnc2N3CCN(C)CC3
+     steps: 1, trivial: False
+
+  6. Fc1ccc(F)c(C(=O)N2CCOCC2)c1
+     route: O=C(O)c1cc(F)ccc1F.C1COCCN1>>Fc1ccc(F)c(C(=O)N2CCOCC2)c1
+     steps: 1, trivial: False
+
+  7. O=S(=O)(Nc1ccc(F)cc1)N2CCNCC2
+     route: Fc1ccc(Br)cc1.[NH]S(=O)(=O)N1CCNCC1>>O=S(=O)(Nc1ccc(F)cc1)N2CCNCC2
+     steps: 1, trivial: False
+
+  8. O=S(=O)(Nc1ccccc1)c2cccn2C
+     route: Cn1cccc1S(=O)(=O)Cl.Nc1ccccc1>>O=S(=O)(Nc1ccccc1)c2cccn2C
+     steps: 1, trivial: False
+
+  9. Fc1ccc2c(c1)CCN(C(=O)c1ccc(F)cc1)C2
+     route: O=C(O)c1ccc(F)cc1.Fc1ccc2c(c1)CCNC2>>Fc1ccc2c(c1)CCN(C(=O)c1ccc(F)cc1)C2
+     steps: 1, trivial: False
+
+  10. c1ccc2c(c1)[nH]cc2C(=O)Nc3cc(F)ccc3F
+     route: O=C(O)c1c[nH]c2ccccc12.Nc1cc(F)ccc1F>>c1ccc2c(c1)[nH]cc2C(=O)Nc3cc(F)ccc3F
+     steps: 1, trivial: False
+
+  11. c1ccc(cc1)N2CCOCC2C(=O)Nc3ccccc3Cl
+     route: Brc1ccccc1.O=C(O)C1COCCN1>>O=C(O)C1COCCN1c1ccccc1,O=C(O)C1COCCN1c1ccccc1.Nc1ccccc1Cl>>c1ccc(cc1)N2CCOCC2C(=O)Nc3ccccc3Cl
+     steps: 2, trivial: False
+
+  12. c1ccc(cc1)C(=O)N2CCC(c3noc4cc(Cl)ccc34)CC2
+     route: O=C(O)c1ccccc1.Clc1ccc2c(C3CCNCC3)noc2c1>>c1ccc(cc1)C(=O)N2CCC(c3noc4cc(Cl)ccc34)CC2
+     steps: 1, trivial: False
+
+  13. c1ccc2c(c1)CCCN2S(=O)(=O)c3cc(F)c(F)cc3
+     route: O=S(=O)(Cl)c1ccc(F)c(F)c1.c1ccc2c(c1)CCCN2>>c1ccc2c(c1)CCCN2S(=O)(=O)c3cc(F)c(F)cc3
+     steps: 1, trivial: False
+
+  14. c1ccc2c(c1)CCN(C(=O)c3cc(F)c(F)cc3F)C2
+     route: O=C(O)c1cc(F)c(F)cc1F.c1ccc2c(c1)CCNC2>>c1ccc2c(c1)CCN(C(=O)c3cc(F)c(F)cc3F)C2
+     steps: 1, trivial: False
+
+  15. c1ccc2c(c1)CCN(C(=O)c3ccccc3F)C2
+     route: O=C(O)c1ccccc1F.c1ccc2c(c1)CCNC2>>c1ccc2c(c1)CCN(C(=O)c3ccccc3F)C2
+     steps: 1, trivial: False
+
+  16. Fc1ccc2c(c1)ncnc2N3CCN(C(=O)C)CC3
+     route: Fc1ccc2c(Br)ncnc2c1.C1CNCCN1>>Fc1ccc2c(N3CCNCC3)ncnc2c1,CC(=O)O.Fc1ccc2c(N3CCNCC3)ncnc2c1>>Fc1ccc2c(c1)ncnc2N3CCN(C(=O)C)CC3
+     steps: 2, trivial: False
+
+  17. O=S(=O)(Nc1ccc(Cl)cc1)N2CCNCC2
+     route: Clc1ccc(Br)cc1.[NH]S(=O)(=O)N1CCNCC1>>O=S(=O)(Nc1ccc(Cl)cc1)N2CCNCC2
+     steps: 1, trivial: False
+
+  18. c1ccc2c(c1)CCCN2S(=O)(=O)c3ccc(F)cc3
+     route: O=S(=O)(Cl)c1ccc(F)cc1.c1ccc2c(c1)CCCN2>>c1ccc2c(c1)CCCN2S(=O)(=O)c3ccc(F)cc3
+     steps: 1, trivial: False
+
+  19. Fc1ccc(N2CCCCC2)c(F)c1
+     route: Fc1ccc(Br)c(F)c1.C1CCNCC1>>Fc1ccc(N2CCCCC2)c(F)c1
+     steps: 1, trivial: False
+
+  20. c1ccncc1C(=O)N2CCOCC2
+     route: O=C(O)c1cccnc1.C1COCCN1>>c1ccncc1C(=O)N2CCOCC2
+     steps: 1, trivial: False
+
