@@ -52,8 +52,13 @@ def evaluate_molecule(smiles: str):
 def estimate_sa_score(mol):
     """使用 RDKit SAScore 计算合成可及性（0-10，越低越好）。
 
-    修复(H004): 使用 RDKit 内置的 SAScore 算法替代粗略启发式，
-    确保与竞赛评分系统使用的 SA 分数一致。
+    修复(H004, 决策引用: D005): 使用 RDKit 内置的 SAScore 算法替代粗略启发式，
+    确保与竞赛评分系统使用的 SA 分数一致。粗略启发式严重低估SA(2-3 vs 实际4-6)，
+    可能导致 SA>6 分子漏过滤。
+
+    输入: RDKit Mol 对象
+    输出: float (0-10)
+    依赖: rdkit.Chem.RDConfig, rdkit.Contrib.SA_Score
     """
     try:
         from rdkit.Chem import RDConfig
@@ -64,13 +69,12 @@ def estimate_sa_score(mol):
             spec = importlib.util.spec_from_file_location("sascore", sa_score_file)
             sascore_module = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(sascore_module)
-            # 移除 H 后再计算（SAScore 需要去氢分子）
             mol_no_h = Chem.RemoveHs(mol)
             return sascore_module.calculateScore(mol_no_h)
     except Exception:
         pass
 
-    # 回退: 使用粗略启发式
+    # 回退: 使用粗略启发式（仅当RDKit SAScore不可用时）
     ri = mol.GetRingInfo()
     atom_rings = ri.AtomRings()
     n_rings = len(atom_rings)
