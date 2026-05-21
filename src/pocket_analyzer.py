@@ -16,7 +16,7 @@ PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_DIR = os.path.join(PROJECT_ROOT, "data")
 PDB_PATH = os.path.join(DATA_DIR, "target.pdb")
 
-DOCKING_CENTER = [18.28, 2.31, 21.44]
+DOCKING_CENTER = [18.5, -2.0, 22.0]  # 优化后（H008: 空洞分析+AB测试）
 POCKET_RADIUS = 10.0   # Å – residues within this distance from center
 INNER_RADIUS = 5.0     # Å – core pocket residues
 
