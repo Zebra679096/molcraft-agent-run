@@ -93,27 +93,46 @@ def _check_atom_balance(reactant_smiles_list: list, product_smiles: str,
     return True
 
 
+def _canonicalize_smiles(smiles: str) -> str | None:
+    """将 SMILES 转换为 canonical 形式。"""
+    if not smiles:
+        return None
+    mol = Chem.MolFromSmiles(smiles)
+    if mol is None:
+        return None
+    return Chem.MolToSmiles(mol, canonical=True)
+
+
 def _try_route(smiles: str, r1: str, r2: str = None) -> str | None:
     """尝试构建合成路线，验证所有反应物 SMILES 和原子平衡。
 
-    输入: smiles(产物), r1(反应物1), r2(反应物2,可选)
-    输出: 路线字符串 或 None
-    依赖: _validate_smiles, _check_atom_balance
-    决策引用: D004 — 每步都必须通过原子平衡检查
+    关键修复: 所有 SMILES 在构建路线前强制 canonical 化。
     """
     if not _validate_smiles(r1):
         return None
     if r2 is not None and not _validate_smiles(r2):
         return None
 
-    # 原子平衡验证
-    reactants = [r1] if r2 is None else [r1, r2]
-    if not _check_atom_balance(reactants, smiles):
+    # 强制 canonical 化所有 SMILES
+    canon_smiles = _canonicalize_smiles(smiles)
+    canon_r1 = _canonicalize_smiles(r1)
+    if canon_smiles is None or canon_r1 is None:
         return None
 
-    if r2:
-        return f"{r1}.{r2}>>{smiles}"
-    return f"{r1}>>{smiles}"
+    canon_r2 = None
+    if r2 is not None:
+        canon_r2 = _canonicalize_smiles(r2)
+        if canon_r2 is None:
+            return None
+
+    # 原子平衡验证（使用 canonical 形式）
+    reactants = [canon_r1] if canon_r2 is None else [canon_r1, canon_r2]
+    if not _check_atom_balance(reactants, canon_smiles):
+        return None
+
+    if canon_r2:
+        return f"{canon_r1}.{canon_r2}>>{canon_smiles}"
+    return f"{canon_r1}>>{canon_smiles}"
 
 
 # ======================================================================
@@ -224,8 +243,8 @@ def _run_retro_rule(mol, smarts_pattern, retro_smarts, smiles):
         if not product_set:
             continue
         if len(product_set) >= 2:
-            r1 = Chem.MolToSmiles(product_set[0])
-            r2 = Chem.MolToSmiles(product_set[1])
+            r1 = Chem.MolToSmiles(product_set[0], canonical=True)
+            r2 = Chem.MolToSmiles(product_set[1], canonical=True)
             # 原子平衡验证
             if not _check_atom_balance([r1, r2], smiles):
                 continue
@@ -233,7 +252,7 @@ def _run_retro_rule(mol, smarts_pattern, retro_smarts, smiles):
             if route:
                 return {"success": True, "route": route, "reactants": [r1, r2], "steps": 1}
         else:
-            r1 = Chem.MolToSmiles(product_set[0])
+            r1 = Chem.MolToSmiles(product_set[0], canonical=True)
             # 单反应物也需要原子平衡
             if not _check_atom_balance([r1], smiles):
                 continue
@@ -287,16 +306,19 @@ def _brics_fragment(smiles: str) -> list:
 
 def plan_synthesis_recursive(smiles: str, max_depth: int = 3,
                              current_depth: int = 0, visited: set = None):
-    """递归多步逆合成规划（H004 修复版）。
+    """递归多步逆合成规划 (canonical化修复版)。
 
-    关键改进（决策引用: D003, D004）:
+    关键改进（决策引用: D003, D004 + canonical化修复）:
     - 路线格式: 步骤之间用 "," 分隔（竞赛评分要求）
     - 原子平衡: 每步反应物原子必须覆盖产物原子
-    - BRICS 碎片化: 作为 SMARTS 规则的可靠回退
-
-    输入: smiles(目标SMILES), max_depth(最大递归深度), current_depth(当前深度), visited(防循环)
-    输出: dict{"success", "route", "steps", "trivial"}
+    - canonical化: 入口点强制canonical化
     """
+    # 关键修复: 入口点强制 canonical 化
+    canon_smiles = _canonicalize_smiles(smiles)
+    if canon_smiles is None:
+        return {"success": False, "error": "无效的 SMILES"}
+    smiles = canon_smiles
+
     if visited is None:
         visited = set()
 
