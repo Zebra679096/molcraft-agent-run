@@ -593,9 +593,48 @@ class SubmitResults(CallableTool2):
             # ====== 路线验证与过滤 ======
             validated_results = []
             rejected = []
+            from rdkit import Chem as _Chem
+            from src.synthesis_v2 import _check_atom_balance
+
             for row in params.molecules:
                 mol_smi = row.get("mol_smiles", "")
                 route = row.get("route", "")
+
+                # 关键修复: 强制 canonical 化 mol_smiles
+                mol_mol = _Chem.MolFromSmiles(mol_smi)
+                if mol_mol is None:
+                    rejected.append({"mol": mol_smi, "reason": "invalid mol_smiles"})
+                    continue
+                mol_smi = _Chem.MolToSmiles(mol_mol, canonical=True)
+
+                # 关键修复: canonical 化路线中的所有 SMILES
+                canonical_route_parts = []
+                steps = route.replace(" | ", ",").split(",")
+                route_valid = True
+                for step in steps:
+                    sp = step.split(">>")
+                    if len(sp) != 2:
+                        canonical_route_parts.append(step)
+                        continue
+                    reactant_str, product_str = sp
+                    canon_reactants = []
+                    for r in reactant_str.split("."):
+                        rmol = _Chem.MolFromSmiles(r)
+                        if rmol is None:
+                            route_valid = False
+                            break
+                        canon_reactants.append(_Chem.MolToSmiles(rmol, canonical=True))
+                    if not route_valid:
+                        break
+                    pmol = _Chem.MolFromSmiles(product_str)
+                    if pmol is None:
+                        route_valid = False
+                        break
+                    canon_product = _Chem.MolToSmiles(pmol, canonical=True)
+                    canonical_route_parts.append(f"{'.'.join(canon_reactants)}>>{canon_product}")
+
+                if route_valid:
+                    route = ",".join(canonical_route_parts)
 
                 # 验证1: 路线不为空
                 if not route or not mol_smi:
@@ -607,28 +646,24 @@ class SubmitResults(CallableTool2):
                     rejected.append({"mol": mol_smi, "reason": "no >> in route"})
                     continue
 
-                # 验证3: 最后一步产物 = 目标分子
+                # 验证3: 最后一步产物 = 目标分子（canonical化后应完全匹配）
                 last_step = route.split(",")[-1] if "," in route else route
                 parts = last_step.split(">>")
                 if len(parts) != 2:
                     rejected.append({"mol": mol_smi, "reason": "invalid step format"})
                     continue
 
-                from rdkit import Chem as _Chem
                 product_smi = parts[1]
-                prod_mol = _Chem.MolFromSmiles(product_smi)
-                target_mol = _Chem.MolFromSmiles(mol_smi)
-                if prod_mol and target_mol:
-                    if _Chem.MolToSmiles(prod_mol) != _Chem.MolToSmiles(target_mol):
-                        rejected.append({"mol": mol_smi, "reason": f"final product != mol_smiles"})
-                        continue
+                if product_smi != mol_smi:
+                    rejected.append({"mol": mol_smi, "reason": f"final product != mol_smiles (canonical)"})
+                    continue
 
                 # 验证4: 不是 trivial 路线 (SMILES>>SMILES)
                 if route == f"{mol_smi}>>{mol_smi}":
                     rejected.append({"mol": mol_smi, "reason": "trivial route"})
                     continue
 
-                # 验证5: 路线不含 | 分隔符（应用 , 分隔）
+                # 验证5: 路线不含 | 分隔符（已在canonical化阶段处理）
                 if " | " in route:
                     route = route.replace(" | ", ",")
 
@@ -641,7 +676,6 @@ class SubmitResults(CallableTool2):
                         continue
                     reactant_str, product_str = step_parts
                     reactant_smis = reactant_str.split(".")
-                    from src.synthesis_v2 import _check_atom_balance
                     if not _check_atom_balance(reactant_smis, product_str):
                         all_balanced = False
                         break

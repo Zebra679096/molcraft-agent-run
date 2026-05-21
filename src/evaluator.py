@@ -33,9 +33,13 @@ def evaluate_molecule(smiles: str):
     if hba > 10: lipinski_violations += 1
     lipinski_ok = lipinski_violations <= 1  # 允许违反 1 条
 
+    # 关键修复: 始终返回 canonical SMILES，避免非canonical形式
+    # 传递到逆合成路线和提交CSV中导致平台解析失败
+    canonical_smiles = Chem.MolToSmiles(Chem.RemoveHs(mol), canonical=True)
+
     return {
         "valid": True,
-        "smiles": smiles,
+        "smiles": canonical_smiles,
         "mw": round(mw, 2),
         "logp": round(logp, 2),
         "tpsa": round(tpsa, 2),
